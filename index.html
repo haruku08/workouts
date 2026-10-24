@@ -302,6 +302,27 @@ main .wrap{padding-block:8px 32px}
 .fav span{font-size:12px;line-height:16px;color:var(--on-surface-variant)}
 .fav .ms{margin-top:auto;align-self:flex-end;width:40px;height:40px;border-radius:20px;display:grid;place-items:center;background:var(--primary);color:var(--on-primary);font-size:24px}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:16px}
+.rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+.rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
+.rt-head h2{flex:1;font-size:24px;line-height:32px}
+.rt-label{font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--on-surface-variant);margin-bottom:-8px}
+.rt-name{height:52px;border:1px solid var(--outline);border-radius:12px;padding:0 14px;font:500 17px var(--font);background:var(--sc-lowest);color:var(--on-surface);width:100%;box-sizing:border-box}
+.rt-name:focus{outline:2px solid var(--primary);border-color:transparent}
+.rt-times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rt-sum{font-size:14px;color:var(--on-surface-variant)}
+.rt-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rt-list li{display:flex;align-items:center;gap:2px;background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:14px;padding:4px 4px 4px 12px}
+.rt-list .num{width:22px;flex:none;font-size:13px;color:var(--on-surface-variant);font-variant-numeric:tabular-nums}
+.rt-list .nm{flex:1;min-width:0;font-size:15px;font-weight:500;overflow-wrap:anywhere}
+.rt-list .icon-btn{width:36px;height:36px}
+.rt-list .icon-btn .ms{font-size:20px}
+.rt-list .icon-btn:disabled{opacity:.3}
+.rt-add{display:flex;gap:8px}
+.rt-add select{flex:1;min-width:0;height:44px;border:1px solid var(--outline);border-radius:12px;padding:0 10px;font:15px var(--font);background:var(--sc-lowest);color:var(--on-surface)}
+.rt-fav{display:flex;align-items:center;gap:10px;font-size:15px}
+.rt-fav input{width:20px;height:20px;accent-color:var(--primary)}
+.rt-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rt-actions .sp{flex:1}
 .log-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
 .stat{background:var(--sc-low);border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .stat b{font-size:28px;line-height:34px;font-weight:600;color:var(--primary)}
@@ -359,7 +380,7 @@ main .wrap{padding-block:8px 32px}
     </div>
     <div class="cat-head"><h3><span class="ms fill" style="--c:#B88600;--cc:#FFF1C2">star</span>Favorites</h3></div>
     <div class="fav-grid" id="favs"></div>
-    <p class="hint" id="fav-hint" hidden>Build a workout in the Catalog, save it, and tap the star to pin it here.</p>
+    <p class="hint" id="fav-hint" hidden>Make your own routine in the Catalog (or copy one of the workouts below) and star it to pin it here.</p>
     <section class="wo-block">
       <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Workouts</h3><span class="sub">Ready to go: 1-minute rounds, 45s work and 15s rest</span></div>
       <div class="wo-grid" id="workouts"></div>
@@ -369,9 +390,9 @@ main .wrap{padding-block:8px 32px}
   <section id="view-lib" class="wrap" hidden>
     <div class="intro">
       <h2>Exercise catalog</h2>
-      <p>Tap a move to see how it's done. Add the ones you like, then save them as your own workout.</p>
+      <p>Tap a move to see how it's done. Build your own routines from any of these moves.</p>
     </div>
-    <div class="cat-head"><h3><span class="ms fill" style="--c:var(--kin);--cc:var(--kin-c)">bookmarks</span>My workouts</h3><button class="btn btn-tonal with-icon sl" id="mw-save" style="margin-left:auto"><span class="ms">bookmark_add</span>Save selection</button></div>
+    <div class="cat-head"><h3><span class="ms fill" style="--c:var(--kin);--cc:var(--kin-c)">bookmarks</span>My routines</h3><button class="btn btn-tonal with-icon sl" id="mw-save" style="margin-left:auto"><span class="ms">add</span>New routine</button></div>
     <div class="mw-grid" id="mw-list"></div>
     <div class="lib-tools">
       <div class="chips" id="filters"></div>
@@ -465,6 +486,23 @@ main .wrap{padding-block:8px 32px}
 
 <div class="fab-wrap" id="tray" hidden>
   <button class="efab sl" id="tray-go"><span class="ms fill">play_arrow</span><span id="tray-txt">Start workout</span><span class="badge" id="tray-n">6</span></button>
+</div>
+
+<div class="sheet" id="rt" hidden>
+  <div class="sheet-in rt-in" role="dialog" aria-modal="true" aria-labelledby="rt-title">
+    <div class="rt-head"><h2 id="rt-title">New routine</h2><button class="icon-btn sl" id="rt-close" aria-label="Close"><span class="ms">close</span></button></div>
+    <div class="rt-label">Name</div>
+    <input class="rt-name" id="rt-name" maxlength="40" placeholder="e.g. Morning Routine" autocomplete="off">
+    <div class="rt-label">Timing</div>
+    <div class="rt-times" id="rt-times"></div>
+    <div class="rt-sum" id="rt-sum"></div>
+    <div class="rt-label">Moves, in order</div>
+    <ol class="rt-list" id="rt-list"></ol>
+    <div class="rt-add"><select id="rt-pick" aria-label="Move to add"></select><button class="btn btn-tonal with-icon sl" id="rt-addbtn"><span class="ms">add</span>Add</button></div>
+    <label class="rt-fav"><input type="checkbox" id="rt-fav">Show on Home as a favorite</label>
+    <div class="rt-actions"><button class="text-btn sl" id="rt-del" style="color:var(--alert)"><span class="ms">delete</span>Delete</button><span class="sp"></span>
+      <button class="text-btn sl" id="rt-cancel">Cancel</button><button class="btn btn-filled with-icon sl" id="rt-save"><span class="ms">check</span>Save</button></div>
+  </div>
 </div>
 
 <div class="sheet" id="sheet" hidden>
@@ -1050,6 +1088,10 @@ function renderWorkouts(){
     uniq.forEach(id=>{ const d=document.createElement("div"); d.className="wo-fig"; d.title=byId[id].name; const fg=new Figure(byId[id],{animate:false}); d.appendChild(fg.svg); woFigs.push(fg); figs.appendChild(d); });
     const names=document.createElement("p"); names.className="wo-names"; names.textContent=uniq.map(id=>byId[id].name).join(" · "); card.insertBefore(names,card.querySelector(".wo-foot"));
     card.querySelector("button").onclick=()=>useWorkout(w);
+    const cp=document.createElement("button"); cp.className="icon-btn sl"; cp.setAttribute("aria-label","Copy and edit"); cp.title="Copy to My routines and edit";
+    cp.innerHTML=`<span class="ms">edit</span>`; cp.style.marginLeft="auto";
+    cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w)},null);
+    card.querySelector(".wo-foot").insertBefore(cp,card.querySelector(".wo-foot button"));
     el.appendChild(card);
   });
 }
@@ -1435,36 +1477,85 @@ function runMy(w,go){
   playlist=w.moves.slice(); cfg=Object.assign({},w.cfg||cfg); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); if(go) start();
 }
-function myMeta(w){ const c=w.cfg||cfg; return `${w.moves.length} move${w.moves.length===1?"":"s"} · ${c.work}s / ${c.rest}s · ${c.sets} set${c.sets===1?"":"s"}`; }
+function runNames(ms){ const out=[]; ms.forEach(id=>{ const l=out[out.length-1]; if(l&&l.id===id) l.n++; else out.push({id,n:1}); });
+  return out.map(r=>byId[r.id].name+(r.n>1?` ×${r.n}`:"")).join(" · "); }
+function myMeta(w){ const c=w.cfg||cfg; return `${w.moves.length} round${w.moves.length===1?"":"s"} · ${c.work}s / ${c.rest}s${c.sets>1?` · ${c.sets} sets`:""}`; }
 function renderMy(){
   const el=$("mw-list"); el.innerHTML="";
-  if(!myWos.length){ el.innerHTML=`<p class="hint" style="margin:0;grid-column:1/-1">Nothing saved yet. Tap + on the moves you want below, set your times on the Timer if you like, then tap Save selection.</p>`; }
+  if(!myWos.length){ el.innerHTML=`<p class="hint" style="margin:0;grid-column:1/-1">No routines yet. Tap New routine to build one, or copy a ready-made workout from Home with its edit button.</p>`; }
   myWos.forEach((w,i)=>{
     const c=document.createElement("article"); c.className="mw";
     c.innerHTML=`<div class="mw-top"><h4></h4><button class="icon-btn sl star" aria-label="Favorite" title="Show on Home"><span class="ms">star</span></button></div><p class="meta"></p><p class="mv"></p>
       <div class="row"><button class="btn btn-filled with-icon sl go"><span class="ms fill">play_arrow</span>Start</button>
-      <button class="icon-btn sl ed" aria-label="Load to edit" title="Load into Timer to edit"><span class="ms">tune</span></button>
-      <button class="icon-btn sl rn" aria-label="Rename" title="Rename"><span class="ms">drive_file_rename_outline</span></button>
+      <button class="icon-btn sl ed" aria-label="Edit routine" title="Edit"><span class="ms">edit</span></button>
       <button class="icon-btn sl del" aria-label="Delete" title="Delete"><span class="ms">delete</span></button></div>`;
     c.querySelector("h4").textContent=w.name; c.querySelector(".meta").textContent=myMeta(w);
-    c.querySelector(".mv").textContent=w.moves.map(id=>byId[id].name).join(" · ");
+    c.querySelector(".mv").textContent=runNames(w.moves);
     const st=c.querySelector(".star"); st.setAttribute("aria-pressed",!!w.fav);
     st.onclick=()=>{ if(!w.fav&&myWos.filter(x=>x.fav).length>=MAX_FAV){ snack(`You can pin ${MAX_FAV} favorites. Unstar one first.`); return; } w.fav=!w.fav; saveMy(); if(w.fav) snack(`${w.name} is on your Home screen.`); };
     c.querySelector(".go").onclick=()=>runMy(w,true);
-    c.querySelector(".ed").onclick=()=>{ runMy(w,false); snack(`Loaded ${w.name}. Change it, then save again from the Catalog.`); };
-    c.querySelector(".rn").onclick=()=>{ const n=(prompt("Workout name",w.name)||"").trim(); if(n){ w.name=n; saveMy(); } };
+    c.querySelector(".ed").onclick=()=>openRoutine(w,w);
     c.querySelector(".del").onclick=()=>{ if(confirm(`Delete ${w.name}?`)){ myWos.splice(i,1); saveMy(); } };
     el.appendChild(c);
   });
 }
-$("mw-save").onclick=()=>{
-  if(!playlist.length){ snack("Add some moves first with the + buttons below."); return; }
-  const n=(prompt("Name this workout","My workout "+(myWos.length+1))||"").trim(); if(!n) return;
-  const same=myWos.find(w=>w.name.toLowerCase()===n.toLowerCase());
-  const data={name:n, moves:playlist.slice(), cfg:Object.assign({},cfg)};
-  if(same){ if(!confirm(`Replace your saved "${same.name}"?`)) return; Object.assign(same,data); }
-  else myWos.unshift(Object.assign(data,{id:"m"+Date.now(), fav:myWos.filter(x=>x.fav).length<MAX_FAV}));
-  saveMy(); snack(`Saved ${n}.`);
+$("mw-save").onclick=()=>openRoutine({name:"",moves:playlist.slice(),cfg:{work:cfg.work,rest:cfg.rest,sets:1}},null);
+/* Routine editor */
+let rtD=null, rtT=null;
+const RT_F=[{k:"work",label:"Work",unit:"sec",min:5,max:600,step:5},{k:"rest",label:"Rest",unit:"sec",min:0,max:300,step:5},{k:"sets",label:"Repeat",unit:"times",min:1,max:10,step:1}];
+function openRoutine(src,target){
+  const c=src.cfg||{};
+  rtT=target; rtD={name:src.name||"", moves:(src.moves||[]).filter(id=>byId[id]), work:c.work||40, rest:c.rest==null?20:c.rest, sets:c.sets||1, fav:target?!!target.fav:false};
+  $("rt-title").textContent=target?"Edit routine":"New routine"; $("rt-name").value=rtD.name; $("rt-fav").checked=rtD.fav; $("rt-del").hidden=!target;
+  const t=$("rt-times"); t.innerHTML="";
+  RT_F.forEach(o=>{ const d=document.createElement("div"); d.className="field";
+    d.innerHTML=`<label>${o.label}</label><div class="stepper"><button class="sl" aria-label="Less ${o.label}"><span class="ms">remove</span></button><input type="number" inputmode="numeric" min="${o.min}" max="${o.max}" aria-label="${o.label}"><button class="sl" aria-label="More ${o.label}"><span class="ms">add</span></button></div><div class="unit">${o.unit}</div>`;
+    const [mi,pl]=d.querySelectorAll("button"), inp=d.querySelector("input"); inp.value=rtD[o.k];
+    const set=v=>{v=Math.round(Number(v)); if(!isFinite(v)) v=rtD[o.k]; v=Math.min(o.max,Math.max(o.min,v)); rtD[o.k]=v; inp.value=v; rtSum();};
+    mi.onclick=()=>set(rtD[o.k]-o.step); pl.onclick=()=>set(rtD[o.k]+o.step); inp.onchange=()=>set(inp.value);
+    t.appendChild(d); });
+  renderRt(); $("rt").hidden=false; setTimeout(()=>{ if(!rtD.name) $("rt-name").focus(); },50);
+}
+function rtSum(){
+  const n=rtD.moves.length, secs=10+rtD.sets*n*(rtD.work+rtD.rest)-rtD.rest+(rtD.sets-1)*60;
+  $("rt-sum").textContent=n?`${n} round${n===1?"":"s"}${rtD.sets>1?` × ${rtD.sets}`:""} · about ${Math.max(1,Math.round(secs/60))} min`:"Add at least one move.";
+}
+function renderRt(){
+  const ol=$("rt-list"); ol.innerHTML="";
+  rtD.moves.forEach((id,i)=>{ const li=document.createElement("li");
+    li.innerHTML=`<span class="num">${i+1}</span><span class="nm"></span>
+      <button class="icon-btn sl" data-a="up" aria-label="Move up"><span class="ms">arrow_upward</span></button>
+      <button class="icon-btn sl" data-a="down" aria-label="Move down"><span class="ms">arrow_downward</span></button>
+      <button class="icon-btn sl" data-a="dup" aria-label="Repeat this move" title="Repeat (for the other side)"><span class="ms">content_copy</span></button>
+      <button class="icon-btn sl" data-a="del" aria-label="Remove"><span class="ms">close</span></button>`;
+    li.querySelector(".nm").textContent=byId[id].name;
+    li.querySelector('[data-a="up"]').disabled=i===0; li.querySelector('[data-a="down"]').disabled=i===rtD.moves.length-1;
+    li.querySelectorAll("button").forEach(b=>b.onclick=()=>{ const m=rtD.moves, a=b.dataset.a;
+      if(a==="up"&&i>0) [m[i-1],m[i]]=[m[i],m[i-1]]; else if(a==="down"&&i<m.length-1) [m[i+1],m[i]]=[m[i],m[i+1]];
+      else if(a==="dup") m.splice(i+1,0,id); else if(a==="del") m.splice(i,1); renderRt(); });
+    ol.appendChild(li); });
+  rtSum();
+}
+(function(){ const sel=$("rt-pick"); sel.innerHTML=`<option value="">Pick a move…</option>`;
+  CATS.forEach(c=>{ const g=document.createElement("optgroup"); g.label=c.name; EX.filter(e=>e.cat===c.id).forEach(e=>{ const o=document.createElement("option"); o.value=e.id; o.textContent=e.name; g.appendChild(o); }); sel.appendChild(g); }); })();
+$("rt-addbtn").onclick=()=>{ const v=$("rt-pick").value; if(!v){ $("rt-pick").focus(); return; } rtD.moves.push(v); $("rt-pick").value=""; renderRt(); };
+$("rt-pick").onchange=()=>$("rt-addbtn").click();
+function closeRt(){ $("rt").hidden=true; rtD=rtT=null; }
+$("rt-close").onclick=closeRt; $("rt-cancel").onclick=closeRt;
+$("rt").addEventListener("click",e=>{ if(e.target.id==="rt") closeRt(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("rt").hidden) closeRt(); });
+$("rt-del").onclick=()=>{ if(rtT&&confirm(`Delete ${rtT.name}?`)){ myWos.splice(myWos.indexOf(rtT),1); saveMy(); renderFavs(); closeRt(); } };
+$("rt-save").onclick=()=>{
+  const name=$("rt-name").value.trim();
+  if(!name){ $("rt-name").focus(); snack("Give your routine a name."); return; }
+  if(!rtD.moves.length){ snack("Add at least one move."); return; }
+  let fav=$("rt-fav").checked;
+  if(fav&&!(rtT&&rtT.fav)&&myWos.filter(x=>x.fav).length>=MAX_FAV){ fav=false; snack(`Saved. Home already has ${MAX_FAV} favorites, so this one isn't pinned.`); }
+  else snack(`Saved ${name}.`);
+  const c=Object.assign({},woCfg({moves:rtD.moves}),{work:rtD.work,rest:rtD.rest,sets:rtD.sets,rounds:rtD.moves.length,roundLen:rtD.work+rtD.rest});
+  const data={name,moves:rtD.moves.slice(),cfg:c,fav};
+  if(rtT) Object.assign(rtT,data); else myWos.unshift(Object.assign(data,{id:"m"+Date.now()}));
+  saveMy(); renderFavs(); closeRt();
 };
 function renderFavs(){
   const favs=myWos.filter(w=>w.fav).slice(0,MAX_FAV), el=$("favs"); el.innerHTML="";
@@ -1532,7 +1623,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.7.1";
+const APP_VERSION = "1.8.0";
 let snackTimer=null, newVersion=null;
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;
