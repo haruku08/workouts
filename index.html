@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pulse &amp; Pose</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,0..1,0&display=block">
+<style>
+/* Layout: Material 3. Small top app bar, navigation bar at the bottom (rail on wide screens), extended FAB to start the workout.
+   Color roles follow an M3 tonal scheme from a coral seed; category colors are harmonized custom colors. */
+:root{
+  --primary:#A43D17; --on-primary:#FFFFFF; --primary-container:#FFDBD0; --on-primary-container:#3A0A00;
+  --secondary:#77574C; --secondary-container:#FFDBD0; --on-secondary-container:#2C160E;
+  --tertiary:#6B5E2F; --tertiary-container:#F4E2A7; --on-tertiary-container:#221B00;
+  --surface:#FFF8F6; --on-surface:#231917; --on-surface-variant:#53433F; --outline:#85736E; --outline-variant:#D8C2BC;
+  --sc-lowest:#FFFFFF; --sc-low:#FFF1ED; --sc:#FCEAE5; --sc-high:#F7E4DF; --sc-highest:#F1DFDA;
+  --inverse-surface:#392E2B; --inverse-on-surface:#FFEDE8; --scrim:rgb(0 0 0 / .32);
+  --kin:#A43D17; --kin-c:#FFDBD0; --str:#3F5AA9; --str-c:#DBE1FF; --stretch:#006A60; --stretch-c:#9EF2E4; --yoga:#8B4789; --yoga-c:#FFD7F5;
+  --work:var(--primary); --rest:var(--stretch); --prep:#7A5900; --setrest:var(--str);
+  --fig:#231917; --fig-far:#A8948E;
+  --font:"Roboto Flex","Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --e1:0 1px 2px rgb(0 0 0 / .3),0 1px 3px 1px rgb(0 0 0 / .15);
+  --e3:0 1px 3px rgb(0 0 0 / .3),0 4px 8px 3px rgb(0 0 0 / .15);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --primary:#FFB59E; --on-primary:#5E1700; --primary-container:#842A04; --on-primary-container:#FFDBD0;
+  --secondary:#E7BDB1; --secondary-container:#5D4037; --on-secondary-container:#FFDBD0;
+  --tertiary:#D7C68D; --tertiary-container:#524619; --on-tertiary-container:#F4E2A7;
+  --surface:#1A110F; --on-surface:#F1DFDA; --on-surface-variant:#D8C2BC; --outline:#A08C87; --outline-variant:#53433F;
+  --sc-lowest:#140C0A; --sc-low:#231917; --sc:#271D1B; --sc-high:#322825; --sc-highest:#3D3230;
+  --inverse-surface:#F1DFDA; --inverse-on-surface:#392E2B;
+  --kin:#FFB59E; --kin-c:#55291C; --str:#B4C5FF; --str-c:#283458; --stretch:#53DBC9; --stretch-c:#123F39; --yoga:#FFA9F6; --yoga-c:#4C2A4A;
+  --prep:#F6BE48; --fig:#F1DFDA; --fig-far:#7D6B66; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --primary:#FFB59E; --on-primary:#5E1700; --primary-container:#842A04; --on-primary-container:#FFDBD0;
+  --secondary:#E7BDB1; --secondary-container:#5D4037; --on-secondary-container:#FFDBD0;
+  --tertiary:#D7C68D; --tertiary-container:#524619; --on-tertiary-container:#F4E2A7;
+  --surface:#1A110F; --on-surface:#F1DFDA; --on-surface-variant:#D8C2BC; --outline:#A08C87; --outline-variant:#53433F;
+  --sc-lowest:#140C0A; --sc-low:#231917; --sc:#271D1B; --sc-high:#322825; --sc-highest:#3D3230;
+  --inverse-surface:#F1DFDA; --inverse-on-surface:#392E2B;
+  --kin:#FFB59E; --kin-c:#55291C; --str:#B4C5FF; --str-c:#283458; --stretch:#53DBC9; --stretch-c:#123F39; --yoga:#FFA9F6; --yoga-c:#4C2A4A;
+  --prep:#F6BE48; --fig:#F1DFDA; --fig-far:#7D6B66; color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--surface)}
+body{color:var(--on-surface);font-family:var(--font);font-size:14px;line-height:20px;letter-spacing:.25px;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;letter-spacing:inherit}
+:focus-visible{outline:3px solid var(--secondary);outline-offset:2px}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+.ms{font-family:"Material Symbols Rounded";font-weight:500;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:"liga";font-feature-settings:"liga";-webkit-font-smoothing:antialiased;font-variation-settings:"FILL" 0;overflow:hidden;width:1em;flex:none}
+.ms.fill{font-variation-settings:"FILL" 1}
+
+/* state layer */
+.sl{position:relative;overflow:hidden}
+.sl::after{content:"";position:absolute;inset:0;background:currentColor;opacity:0;transition:opacity .15s;pointer-events:none;border-radius:inherit}
+.sl:hover::after{opacity:.08}.sl:active::after{opacity:.12}
+
+/* Top app bar */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);transition:background .2s}
+.appbar.scrolled{background:var(--sc)}
+.appbar-in{height:64px;display:flex;align-items:center;gap:12px;max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.appbar .logo{width:40px;height:40px;border-radius:12px;background:var(--primary-container);color:var(--on-primary-container);display:grid;place-items:center}
+.appbar h1{font-size:22px;line-height:28px;font-weight:500}
+
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+main .wrap{padding-block:8px 32px}
+
+/* Navigation bar / rail */
+.navbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--sc);display:flex;justify-content:center;gap:8px;padding:12px max(8px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+.nav-item{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;width:min(160px,45%);padding:0;color:var(--on-surface-variant);font-size:12px;line-height:16px;font-weight:500;letter-spacing:.5px}
+.nav-item .pill{width:64px;height:32px;border-radius:16px;display:grid;place-items:center;transition:background .2s}
+.nav-item[aria-selected="true"]{color:var(--on-surface)}
+.nav-item[aria-selected="true"] .pill{background:var(--secondary-container);color:var(--on-secondary-container)}
+.nav-item[aria-selected="true"] .ms{font-variation-settings:"FILL" 1}
+.nav-item .pill.sl::after{border-radius:16px}
+@media (min-width:840px){
+  .navbar{top:0;right:auto;width:88px;flex-direction:column;justify-content:flex-start;padding:calc(88px + env(safe-area-inset-top,0px)) 0 0 env(safe-area-inset-left,0px);background:var(--surface);gap:12px}
+  .nav-item{width:88px}
+  .appbar-in,.wrap{padding-left:max(104px,calc(env(safe-area-inset-left,0px) + 104px))}
+  main{padding-bottom:40px}
+}
+
+/* Headline + chips */
+.intro{padding:8px 0 16px}
+.intro h2{font-size:clamp(28px,5vw,36px);line-height:1.2}
+.intro p{margin:8px 0 0;color:var(--on-surface-variant);max-width:56ch;font-size:16px;line-height:24px;letter-spacing:.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{height:32px;border:1px solid var(--outline-variant);background:transparent;border-radius:8px;padding:0 16px;font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px;color:var(--on-surface-variant)}
+.chip .ms{font-size:18px}
+.chip .dot{width:10px;height:10px;border-radius:50%;background:var(--c,var(--outline))}
+.chip[aria-pressed="true"]{background:var(--secondary-container);border-color:transparent;color:var(--on-secondary-container);padding-left:8px}
+
+/* Library */
+.cat-block{margin-bottom:32px}
+.cat-head{display:flex;align-items:center;gap:4px 12px;margin-bottom:12px;flex-wrap:wrap}
+.cat-head h3{font-size:22px;line-height:28px;font-weight:500;display:flex;align-items:center;gap:10px}
+.cat-head h3 .ms{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--cc);color:var(--c);font-size:22px}
+.cat-head span.sub{color:var(--on-surface-variant);flex-basis:100%;padding-left:50px;margin-top:-6px}
+.cat-head .fill{margin-left:auto}
+.text-btn{height:40px;border:0;background:none;border-radius:20px;padding:0 12px;color:var(--primary);font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px}
+.text-btn .ms{font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.card{position:relative;background:var(--sc-low);border-radius:12px;box-shadow:var(--e1);overflow:hidden;display:flex;flex-direction:column}
+.card .pic{background:var(--cc);aspect-ratio:1/1;max-width:100%;display:block;margin:8px 8px 0;border-radius:8px}
+.card .pic svg{width:100%;height:100%;display:block}
+.card .meta{padding:12px 16px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.card .name{font-weight:500;font-size:16px;line-height:24px;letter-spacing:.15px}
+.card .sub{font-size:12px;line-height:16px;color:var(--on-surface-variant);letter-spacing:.4px}
+.open{position:absolute;inset:0;border:0;background:none;padding:0;border-radius:12px}
+.add{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:20px;border:0;background:var(--sc-lowest);color:var(--on-surface-variant);display:grid;place-items:center;z-index:1}
+.add[aria-pressed="true"]{background:var(--c);color:var(--sc-lowest)}
+.add[aria-pressed="true"] .ms{font-variation-settings:"FILL" 1}
+
+/* Extended FAB */
+.fab-wrap{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:7}
+.efab{height:56px;border:0;border-radius:16px;padding:0 20px 0 16px;background:var(--primary-container);color:var(--on-primary-container);box-shadow:var(--e3);display:flex;align-items:center;gap:12px;font-weight:500;font-size:14px;letter-spacing:.1px}
+.efab .badge{min-width:24px;height:24px;border-radius:12px;background:var(--primary);color:var(--on-primary);font-size:12px;display:grid;place-items:center;padding:0 6px}
+@media (min-width:840px){.fab-wrap{bottom:24px;right:max(24px,env(safe-area-inset-right,0px))}}
+
+/* Bottom sheet / dialog */
+.sheet{position:fixed;inset:0;z-index:20;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center}
+.sheet-in{background:var(--sc-low);width:100%;max-width:640px;max-height:92%;overflow:auto;border-radius:28px 28px 0 0;padding:0 0 calc(24px + env(safe-area-inset-bottom,0px));box-shadow:var(--e1)}
+.handle{width:32px;height:4px;border-radius:2px;background:var(--on-surface-variant);opacity:.4;margin:16px auto 8px}
+@media (min-width:720px){.sheet{align-items:center}.sheet-in{border-radius:28px;background:var(--sc-high)}.handle{visibility:hidden;margin-top:8px}}
+.sheet .pic{position:relative;display:flex;justify-content:center;background:var(--cc);margin:0 16px;border-radius:16px}
+.sheet .pic svg{width:min(300px,78%);height:auto;aspect-ratio:1/1;display:block}
+.icon-btn{width:40px;height:40px;border-radius:20px;border:0;background:none;display:grid;place-items:center;color:var(--on-surface-variant)}
+.sheet .close{position:absolute;top:8px;right:8px;background:var(--sc-lowest)}
+.sheet .body{padding:20px 24px 0;display:flex;flex-direction:column;gap:16px}
+.overline{font-size:12px;font-weight:500;letter-spacing:.5px;color:var(--c);display:flex;align-items:center;gap:6px}
+.overline .ms{font-size:18px}
+.sheet h2{font-size:28px;line-height:36px;margin-top:-10px}
+.sheet ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:24px;letter-spacing:.5px}
+.cue{background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{height:32px;display:inline-flex;align-items:center;border:1px solid var(--outline-variant);border-radius:8px;padding:0 12px;font-size:14px;font-weight:500;color:var(--on-surface-variant)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.btn{height:40px;border:0;border-radius:20px;padding:0 24px;font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn .ms{font-size:18px}
+.btn.with-icon{padding-left:16px}
+.btn-filled{background:var(--primary);color:var(--on-primary)}
+.btn-tonal{background:var(--secondary-container);color:var(--on-secondary-container)}
+
+/* Timer */
+.timer-grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media (min-width:1000px){.timer-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start}.timer-grid:has(> #setup[hidden]){grid-template-columns:minmax(0,640px);justify-content:center}}
+.stage{--pc:var(--on-surface-variant);--pcc:var(--sc-highest);background:var(--sc);border-radius:28px;padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:background .3s}
+.stage[data-phase="work"]{--pc:var(--work);--pcc:var(--kin-c)} .stage[data-phase="rest"]{--pc:var(--rest);--pcc:var(--stretch-c)}
+.stage[data-phase="prep"]{--pc:var(--prep);--pcc:var(--tertiary-container)} .stage[data-phase="setrest"]{--pc:var(--setrest);--pcc:var(--str-c)} .stage[data-phase="done"]{--pc:var(--rest);--pcc:var(--stretch-c)}
+.stage-top{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.phase{height:32px;border-radius:8px;padding:0 12px 0 8px;background:var(--pcc);color:var(--pc);display:inline-flex;align-items:center;gap:6px;font-weight:500;font-size:14px;letter-spacing:.1px;transition:background .3s}
+.phase .ms{font-size:18px}
+.counts{display:flex;gap:8px}
+.count{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.5px;color:var(--on-surface-variant)}
+.ring-wrap{position:relative;width:min(300px,76vw);aspect-ratio:1/1;max-width:100%;margin-top:8px}
+.ring-wrap>svg{position:absolute;inset:0;width:100%;height:100%}
+.ring-bg{stroke:var(--pcc);transition:stroke .3s} .ring-fg{stroke:var(--pc);transition:stroke .3s}
+.ring-fig{position:absolute;inset:15%;border-radius:50%}
+.ring-fig svg{width:100%;height:100%;display:block}
+.digits{font-weight:400;font-size:clamp(80px,22vw,128px);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-variation-settings:"opsz" 144;margin-top:8px}
+.digits.blink{color:var(--pc);font-weight:600}
+.exname{font-weight:500;font-size:22px;line-height:28px;text-align:center}
+.next{color:var(--on-surface-variant);font-size:14px;text-align:center;min-height:20px;max-width:40ch}
+.dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:12px 0 4px;width:min(280px,100%)}
+.dots i{flex:1;max-width:28px;height:4px;border-radius:2px;background:var(--pcc)}
+.dots i.on{background:var(--pc);opacity:.5} .dots i.cur{background:var(--pc)}
+.controls{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:12px}
+.tonal-icon{width:56px;height:56px;border-radius:28px;border:0;background:var(--secondary-container);color:var(--on-secondary-container);display:grid;place-items:center}
+.lfab{width:96px;height:96px;border-radius:28px;border:0;background:var(--primary-container);color:var(--on-primary-container);display:grid;place-items:center;box-shadow:var(--e3)}
+.lfab .ms{font-size:36px}
+.switches{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;justify-content:center}
+.sw-row{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500;color:var(--on-surface);border:0;background:none;padding:0}
+.switch{width:52px;height:32px;border-radius:16px;border:2px solid var(--outline);background:var(--sc-highest);position:relative;transition:background .2s,border-color .2s;flex:none}
+.switch::after{content:"";position:absolute;top:50%;left:6px;width:16px;height:16px;border-radius:50%;background:var(--outline);transform:translateY(-50%);transition:all .2s}
+.sw-row[aria-checked="true"] .switch{background:var(--primary);border-color:var(--primary)}
+.sw-row[aria-checked="true"] .switch::after{left:22px;width:24px;height:24px;background:var(--on-primary)}
+
+.panel{background:var(--sc-low);border-radius:28px;padding:24px 20px;display:flex;flex-direction:column;gap:20px;min-width:0}
+.panel h3{font-size:22px;line-height:28px;font-weight:500}
+.panel .supporting{color:var(--on-surface-variant);margin:4px 0 0}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg .chip small{font-weight:400;opacity:.8;font-variant-numeric:tabular-nums}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}
+@media (min-width:520px){.fields{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.field{position:relative;border:1px solid var(--outline);border-radius:4px;padding:10px 4px 4px;min-width:0}
+.field:focus-within{border:2px solid var(--primary);padding:9px 3px 3px}
+.field label{position:absolute;top:-9px;left:10px;padding:0 4px;background:var(--sc-low);font-size:12px;line-height:16px;color:var(--on-surface-variant);letter-spacing:.4px}
+.field:focus-within label{color:var(--primary)}
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:2px}
+.stepper button{width:36px;height:36px;border-radius:18px;border:0;background:none;color:var(--on-surface-variant);display:grid;place-items:center;flex:none}
+.stepper button .ms{font-size:20px}
+.stepper input{width:100%;min-width:0;border:0;background:none;text-align:center;font-family:var(--font);font-size:22px;color:var(--on-surface);font-variant-numeric:tabular-nums;-moz-appearance:textfield;padding:0;outline:none}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.unit{font-size:12px;line-height:16px;color:var(--on-surface-variant);text-align:center;padding-bottom:4px;letter-spacing:.4px}
+.total{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--sc-highest);border-radius:16px;padding:12px 16px}
+.total b{font-size:28px;line-height:36px;font-weight:400;font-variant-numeric:tabular-nums}
+.total span{color:var(--on-surface-variant);display:flex;align-items:center;gap:8px}
+.divider{height:1px;background:var(--outline-variant);margin:0 -20px}
+.plist{display:flex;flex-direction:column;margin:0 -8px;padding:0;list-style:none}
+.plist li{display:flex;align-items:center;gap:16px;padding:8px 8px;min-height:72px}
+.plist .mini{width:56px;height:56px;border-radius:12px;background:var(--cc);flex:none}
+.plist .mini svg{width:100%;height:100%;display:block}
+.plist .nm{flex:1;min-width:0;font-size:16px;line-height:24px;letter-spacing:.5px}
+.plist .nm small{display:block;color:var(--on-surface-variant);font-size:14px;line-height:20px;letter-spacing:.25px}
+.plist .icon-btn:disabled{opacity:.38;cursor:default}
+.plist li.empty{color:var(--on-surface-variant);min-height:0}
+.quick{display:flex;flex-wrap:wrap;gap:8px}
+.perset{display:flex;flex-direction:column;gap:12px}
+.sw-row{text-align:left}
+.wo-block{margin-bottom:28px}
+.wo-block .cat-head h3 .ms{background:var(--primary-container);color:var(--primary)}
+.wo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.wo{background:var(--cc);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.wo-head{display:flex;gap:12px;align-items:center}
+.wo-head>.ms{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--sc-lowest);color:var(--c)}
+.wo-head h4{margin:0;font-size:20px;line-height:26px;font-weight:500}
+.wo-head p{margin:0;color:var(--on-surface-variant);font-size:13px;line-height:18px}
+.wo-figs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;background:var(--sc-lowest);border-radius:12px;padding:4px}
+.wo-fig svg{width:100%;height:auto;aspect-ratio:1/1;display:block}
+.wo-names{margin:0;font-size:13px;line-height:18px;color:var(--on-surface-variant)}
+.wo-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.wo-foot span{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.lib-tools{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px 24px;margin-bottom:24px}
+.lib-tools .chips{margin-bottom:0}
+.segmented{display:inline-flex;border:1px solid var(--outline);border-radius:20px;overflow:hidden;height:40px}
+.segmented button{border:0;background:none;padding:0 16px;display:inline-flex;align-items:center;gap:6px;font-weight:500;font-size:14px;letter-spacing:.1px;color:var(--on-surface)}
+.segmented button+button{border-left:1px solid var(--outline)}
+.segmented button .ms{font-size:18px;display:none}
+.segmented button[aria-pressed="true"]{background:var(--secondary-container);color:var(--on-secondary-container)}
+.segmented button[aria-pressed="true"] .ms{display:inline-block}
+.mode-seg{align-self:stretch;display:flex}
+.mode-seg button{flex:1;justify-content:center}
+.wo-section{display:flex;flex-direction:column;gap:20px}
+.ring-ico{position:absolute;inset:0;display:grid;place-items:center;color:var(--pc)}
+.ring-ico .ms{font-size:min(120px,30vw);width:auto;opacity:.9}
+.voicebox{display:flex;flex-direction:column;gap:12px}
+.voice-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.field.sel{flex:1 1 200px;padding:0}
+.field.sel select{width:100%;height:52px;border:0;background:transparent;color:var(--on-surface);font:inherit;font-size:16px;padding:0 12px;outline:none;border-radius:4px}
+.field.sel select option{background:var(--sc-high);color:var(--on-surface)}
+.field.sel:focus-within{padding:0}
+.plan{display:flex;flex-direction:column;gap:12px}
+.setrow{border:1px solid var(--outline-variant);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:14px}
+.setrow-head{display:flex;justify-content:space-between;align-items:baseline;font-size:16px}
+.setrow-head b{font-weight:500}
+.setrow-head span{color:var(--on-surface-variant);font-variant-numeric:tabular-nums}
+.setrow-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.setrow-fields .stepper button{width:28px;height:28px}
+.setrow-fields .stepper input{font-size:18px}
+.setrow .chip{height:28px;padding:0 10px;font-size:13px}
+.setrow .chip[aria-pressed="true"]{padding-left:6px}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="appbar" id="appbar">
+  <div class="appbar-in">
+    <div class="logo"><span class="ms fill">sports_gymnastics</span></div>
+    <h1>Pulse &amp; Pose</h1>
+  </div>
+</header>
+
+<nav class="navbar" role="tablist" aria-label="Sections">
+  <button class="nav-item" role="tab" id="tab-lib" aria-selected="true" data-view="lib"><span class="pill sl"><span class="ms">fitness_center</span></span>Exercises</button>
+  <button class="nav-item" role="tab" id="tab-timer" aria-selected="false" data-view="timer"><span class="pill sl"><span class="ms">timer</span></span>Timer</button>
+</nav>
+
+<main>
+  <section id="view-lib" class="wrap">
+    <div class="intro">
+      <h2>Move, lift, stretch, flow</h2>
+      <p>Tap a move to see how it's done. Add moves to your workout, then run them on the Tabata timer.</p>
+    </div>
+    <section class="wo-block">
+      <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Workouts</h3><span class="sub">Ready to go: 1-minute rounds, 45s work and 15s rest</span></div>
+      <div class="wo-grid" id="workouts"></div>
+    </section>
+    <div class="lib-tools">
+      <div class="chips" id="filters"></div>
+      <div class="segmented" role="group" aria-label="Figure style">
+        <button class="sl" data-style="char"><span class="ms">check</span>Character</button>
+        <button class="sl" data-style="stick"><span class="ms">check</span>Stick figure</button>
+      </div>
+    </div>
+    <div id="library"></div>
+  </section>
+
+  <section id="view-timer" class="wrap" hidden>
+    <div class="timer-grid">
+      <div class="stage" id="stage" data-phase="idle">
+        <div class="stage-top">
+          <div class="phase"><span class="ms" id="phase-ico">timer</span><span id="phase">Ready</span></div>
+          <div class="counts"><span class="count" id="c-round">Round 0/8</span><span class="count" id="c-set">Set 1/1</span></div>
+        </div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="ring-bg" cx="50" cy="50" r="46" fill="none" stroke-width="4"/>
+            <circle class="ring-fg" id="ring" cx="50" cy="50" r="46" fill="none" stroke-width="4" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray="289.03" stroke-dashoffset="0"/>
+          </svg>
+          <div class="ring-fig" id="stage-fig"></div>
+          <div class="ring-ico" id="ring-ico" hidden><span class="ms fill" id="ring-ico-s">timer</span></div>
+        </div>
+        <div class="digits" id="digits" aria-live="off">0:00</div>
+        <div class="exname" id="exname">&nbsp;</div>
+        <div class="next" id="next">&nbsp;</div>
+        <div class="dots" id="dots"></div>
+        <div class="controls">
+          <button class="tonal-icon sl" id="btn-reset" aria-label="Reset timer"><span class="ms">replay</span></button>
+          <button class="lfab sl" id="btn-play" aria-label="Start"><span class="ms fill" id="ico-play">play_arrow</span><span class="ms fill" id="ico-pause" hidden>pause</span></button>
+          <button class="tonal-icon sl" id="btn-skip" aria-label="Skip to next interval"><span class="ms fill">skip_next</span></button>
+        </div>
+        <div class="switches">
+          <button class="sw-row" role="switch" id="t-sound" aria-checked="true"><span class="switch"></span>Beeps</button>
+          <button class="sw-row" role="switch" id="t-voice" aria-checked="true"><span class="switch"></span>Voice</button>
+        </div>
+      </div>
+
+      <div class="panel" id="setup">
+        <div class="segmented mode-seg" role="group" aria-label="Timer mode">
+          <button class="sl" data-mode="free"><span class="ms">check</span>Timer only</button>
+          <button class="sl" data-mode="ex"><span class="ms">check</span>With exercises</button>
+        </div>
+        <div>
+          <h3>Timing</h3>
+          <p class="supporting">Pick a preset or set your own intervals.</p>
+        </div>
+        <div class="seg" id="presets"></div>
+        <button class="sw-row" role="switch" id="t-lock" aria-checked="true"><span class="switch"></span>Keep every round the same length (work + rest)</button>
+        <div class="fields" id="fields"></div>
+        <div id="perset" class="perset" hidden>
+          <button class="sw-row" role="switch" id="t-perset" aria-checked="false"><span class="switch"></span>Different work and rest for each set</button>
+          <div id="plan" class="plan"></div>
+        </div>
+        <div class="total"><span><span class="ms">schedule</span>Total workout</span><b id="total">0:00</b></div>
+        <div class="voicebox">
+          <h3>Voice coach</h3>
+          <p class="supporting">Uses your device's own voice. Try others here and tap Test to compare.</p>
+          <div class="voice-row">
+            <div class="field sel"><label for="voice-sel">Voice</label><select id="voice-sel"></select></div>
+            <button class="btn btn-tonal with-icon sl" id="voice-test"><span class="ms">volume_up</span>Test</button>
+          </div>
+        </div>
+        <div id="wo-section" class="wo-section">
+        <div class="divider"></div>
+        <div>
+          <h3>Your workout</h3>
+          <p class="supporting">Each round uses the next move in this list, then the list starts over.</p>
+        </div>
+        <ul class="plist" id="plist"></ul>
+        <div class="quick" id="quick"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="fab-wrap" id="tray" hidden>
+  <button class="efab sl" id="tray-go"><span class="ms fill">play_arrow</span><span id="tray-txt">Start workout</span><span class="badge" id="tray-n">6</span></button>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-labelledby="sh-name">
+    <div class="handle"></div>
+    <div class="pic" id="sh-pic"><button class="icon-btn close sl" id="sh-close" aria-label="Close"><span class="ms">close</span></button></div>
+    <div class="body">
+      <div class="overline" id="sh-cat"></div>
+      <h2 id="sh-name"></h2>
+      <div class="tags" id="sh-tags"></div>
+      <ol id="sh-steps"></ol>
+      <div class="cue" id="sh-cue"></div>
+      <div class="actions">
+        <button class="btn btn-tonal with-icon sl" id="sh-add"><span class="ms">add</span><span>Add to workout</span></button>
+        <button class="btn btn-filled with-icon sl" id="sh-now"><span class="ms fill">play_arrow</span>Do this now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- Poses ----------
+   Points in a 100x100 box, ground at y≈96. Keys: h head, n neck/shoulders, p hips, c torso bend,
+   le/lh near elbow/hand, re/rh far elbow/hand, lk/lf near knee/foot, rk/rf far knee/foot. */
+const F = {h:[50,16],n:[50,26],p:[50,54],le:[42,39],lh:[39,52],re:[58,39],rh:[61,52],lk:[46,74],lf:[45,94],rk:[54,74],rf:[55,94]};
+const S = {h:[51,16],n:[50,26],p:[49,54],le:[51,40],lh:[53,53],re:[49,40],rh:[48,53],lk:[51,74],lf:[51,94],rk:[48,74],rf:[48,94]};
+const P = (b,o)=>Object.assign({},b,o||{});
+const mirror = p=>{const o={};for(const k in p)o[k]=[100-p[k][0],p[k][1]];return o};
+const shift = (p,dx,dy)=>{const o={};for(const k in p)o[k]=[p[k][0]+dx,p[k][1]+(dy||0)];return o};
+
+const PLANK = {h:[79,61],n:[70,66],p:[42,79],le:[70,80],lh:[70,93],re:[69,80],rh:[69,93],lk:[29,86],lf:[16,92],rk:[29,86],rf:[16,92]};
+const YPLANK = {h:[81,62],n:[72,67],p:[44,79],le:[73,80],lh:[74,93],re:[72,80],rh:[73,93],lk:[30,86],lf:[16,92],rk:[30,86],rf:[16,92]};
+const BSQ = {h:[66,66],n:[60,70],p:[40,72],le:[64,82],lh:[68,93],re:[63,82],rh:[67,93],lk:[56,78],lf:[44,94],rk:[55,79],rf:[43,94]};
+const GUARD = P(S,{le:[57,36],lh:[60,26],re:[55,38],rh:[58,27],lk:[54,74],lf:[57,94],rk:[45,74],rf:[41,94]});
+const SKATE = shift({h:[44,22],n:[46,31],p:[50,58],le:[40,37],lh:[32,31],re:[46,45],rh:[38,53],lk:[45,76],lf:[46,94],rk:[52,78],rf:[38,91]},-12);
+const ALL4 = {h:[78,66],n:[70,70],p:[40,70],c:[55,70],le:[70,82],lh:[70,93],re:[69,82],rh:[69,93],lk:[40,92],lf:[22,93],rk:[39,92],rf:[21,93]};
+const SIDEL = P(F,{n:[46,27],h:[41,19],c:[49,40],le:[39,17],lh:[30,10],re:[47,13],rh:[38,5]});
+const ARMX = P(F,{re:[42,35],rh:[30,33],le:[40,42],lh:[43,35]});
+const W1 = {h:[53,22],n:[50,31],p:[50,60],le:[36,31],lh:[22,31],re:[64,31],rh:[78,31],lk:[38,77],lf:[26,94],rk:[65,72],rf:[68,94]};
+const TREE1 = P(F,{lk:[49,74],lf:[49,94],rk:[65,63],rf:[52,70],le:[41,40],lh:[49,37],re:[59,40],rh:[51,37]});
+const SIT = {h:[50,51],n:[50,60],p:[50,88],le:[42,73],lh:[47,88],re:[58,73],rh:[53,88],lk:[32,82],lf:[47,92],rk:[68,82],rf:[53,92]};
+
+const CATS = [
+  {id:"kin",icon:"sports_gymnastics",name:"Calisthenics",blurb:"Bodyweight skills and conditioning",preset:"p4515"},
+  {id:"str",icon:"fitness_center",name:"Strength",blurb:"Bodyweight muscle work",preset:"p4515"},
+  {id:"stretch",icon:"accessibility_new",name:"Stretch",blurb:"Loosen up and lengthen",preset:"stretch"},
+  {id:"yoga",icon:"self_improvement",name:"Yoga",blurb:"Poses and slow flows",preset:"yoga"}
+];
+
+const EX = [
+ // Kinesthetic
+ {id:"jacks",cat:"kin",name:"Jumping Jacks",dur:1.0,level:"Easy",focus:"Cardio, shoulders, calves",
+  frames:[F,P(F,{h:[50,13],n:[50,23],p:[50,51],le:[39,14],lh:[33,3],re:[61,14],rh:[67,3],lk:[42,72],lf:[35,92],rk:[58,72],rf:[65,92]})],
+  steps:["Stand tall with feet together and arms at your sides.","Jump your feet out wide while swinging your arms overhead.","Jump back to the start. Keep a steady rhythm."],cue:"Land softly on the balls of your feet."},
+ {id:"highknees",cat:"kin",name:"High Knees",dur:0.7,level:"Medium",focus:"Cardio, hip flexors, core",
+  frames:[P(F,{h:[50,14],n:[50,24],p:[50,52],lk:[45,58],lf:[45,76],re:[60,32],rh:[57,22],rk:[54,73],rf:[55,93]}),P(F,{h:[50,14],n:[50,24],p:[50,52],rk:[55,58],rf:[55,76],le:[40,32],lh:[43,22],lk:[46,73],lf:[45,93]})],
+  steps:["Run in place.","Drive each knee up to hip height.","Pump your arms in time with your legs."],cue:"Stay tall. Don't lean back."},
+ {id:"buttkicks",cat:"kin",name:"Butt Kicks",dur:0.7,level:"Easy",focus:"Cardio, hamstrings",
+  frames:[P(S,{lk:[50,74],lf:[35,62],le:[56,37],lh:[62,29],re:[44,40],rh:[41,51]}),P(S,{rk:[49,74],rf:[34,62],lk:[51,74],lf:[51,94],le:[45,40],lh:[42,51],re:[55,37],rh:[61,29]})],
+  steps:["Jog in place.","Kick each heel back toward your glutes.","Swing your arms like you're running."],cue:"Keep your knees pointing down."},
+ {id:"skaters",cat:"kin",name:"Skaters",dur:1.4,level:"Medium",focus:"Legs, glutes, balance",
+  frames:[SKATE,mirror(SKATE)],
+  steps:["Leap sideways onto one leg.","Sweep the other leg behind you and swing your arms across.","Leap back to the other side."],cue:"Bend the landing knee to absorb the jump."},
+ {id:"climbers",cat:"kin",name:"Mountain Climbers",dur:0.8,level:"Hard",focus:"Core, shoulders, cardio",
+  frames:[P(PLANK,{lk:[58,82],lf:[48,90]}),P(PLANK,{rk:[58,82],rf:[48,90]})],
+  steps:["Start in a high plank, hands under shoulders.","Drive one knee toward your chest.","Switch legs quickly, like running on the floor."],cue:"Keep your hips level with your shoulders."},
+ {id:"boxing",cat:"kin",name:"Shadow Boxing",dur:1.6,level:"Easy",focus:"Arms, shoulders, cardio",
+  frames:[P(GUARD,{le:[64,27],lh:[78,25]}),GUARD,P(GUARD,{re:[63,28],rh:[77,26],n:[52,26],h:[53,16]}),GUARD],
+  steps:["Stand with one foot forward and fists up by your chin.","Throw a straight jab with the front hand.","Pull back, then throw a cross with the back hand and turn your hips."],cue:"Return to guard after every punch."},
+
+ {id:"burpee",cat:"kin",name:"Burpees",dur:3.6,level:"Hard",focus:"Full body, cardio",
+  frames:[S,BSQ,PLANK,BSQ,shift(P(S,{le:[53,16],lh:[55,4],re:[51,16],rh:[52,4]}),0,-5)],
+  steps:["Stand tall, then squat down and put your hands on the floor.","Jump your feet back into a plank.","Jump your feet back in and leap up with your arms overhead."],cue:"Easier version: step back and forward instead of jumping."},
+ {id:"squatjump",cat:"kin",name:"Squat Jumps",dur:1.6,level:"Medium",focus:"Legs, power, cardio",
+  frames:[{h:[55,33],n:[51,42],p:[35,68],le:[46,52],lh:[40,62],re:[45,53],rh:[39,63],lk:[54,76],lf:[51,94],rk:[53,77],rf:[50,94]},
+          shift(P(S,{le:[54,18],lh:[58,8],re:[53,19],rh:[57,9],lf:[52,93],rf:[49,93]}),0,-6)],
+  steps:["Squat down with your arms back.","Explode up and swing your arms overhead.","Land softly and sink straight into the next squat."],cue:"Land quietly, knees soft."},
+ {id:"pullup",cat:"kin",name:"Pull-ups",dur:2.6,level:"Hard",focus:"Back, biceps, grip",
+  props:[["line",{x1:20,y1:12,x2:80,y2:12,"stroke-width":3}],["line",{x1:20,y1:2,x2:20,y2:12,"stroke-width":2}],["line",{x1:80,y1:2,x2:80,y2:12,"stroke-width":2}]],
+  frames:[{h:[50,27],n:[50,36],p:[50,64],le:[43,24],lh:[37,12],re:[57,24],rh:[63,12],lk:[48,79],lf:[47,93],rk:[52,79],rf:[53,93]},
+          {h:[50,7],n:[50,21],p:[50,49],le:[34,22],lh:[37,12],re:[66,22],rh:[63,12],lk:[48,66],lf:[47,82],rk:[52,66],rf:[53,82]}],
+  steps:["Hang from a bar with hands a bit wider than your shoulders.","Pull your chest toward the bar until your chin is over it.","Lower all the way down with control."],cue:"No bar? Do slow negatives or use a resistance band."},
+ {id:"dips",cat:"kin",name:"Bench Dips",dur:2.4,level:"Medium",focus:"Triceps, shoulders, chest",
+  props:[["rect",{x:12,y:70,width:30,height:4,rx:1,"stroke-width":2}],["line",{x1:16,y1:74,x2:16,y2:96,"stroke-width":2}],["line",{x1:38,y1:74,x2:38,y2:96,"stroke-width":2}]],
+  frames:[{h:[45,37],n:[42,46],p:[46,73],le:[41,58],lh:[40,69],re:[40,58],rh:[39,69],lk:[66,81],lf:[85,94],rk:[65,81],rf:[84,94]},
+          {h:[46,49],n:[43,58],p:[47,85],le:[31,58],lh:[40,69],re:[30,58],rh:[39,69],lk:[66,89],lf:[85,94],rk:[65,89],rf:[84,94]}],
+  steps:["Sit on the edge of a bench or chair, hands next to your hips.","Slide your hips off and walk your feet out.","Bend your elbows to lower, then press back up."],cue:"Keep your back close to the bench."},
+ {id:"pike",cat:"kin",name:"Pike Push-ups",dur:2.4,level:"Hard",focus:"Shoulders, triceps",
+  frames:[{h:[65,80],n:[60,72],p:[40,48],le:[65,82],lh:[70,93],re:[64,82],rh:[69,93],lk:[30,70],lf:[20,93],rk:[29,70],rf:[19,93]},
+          {h:[69,88],n:[63,82],p:[42,52],le:[57,77],lh:[70,93],re:[56,77],rh:[69,93],lk:[31,72],lf:[20,93],rk:[30,72],rf:[19,93]}],
+  steps:["Start in an upside-down V, hips high.","Bend your elbows and lower the top of your head toward the floor.","Press back up."],cue:"The higher your hips, the harder it gets."},
+ {id:"superman",cat:"kin",name:"Superman",dur:2.6,level:"Easy",focus:"Lower back, glutes",
+  frames:[{h:[80,89],n:[70,90],p:[44,90],le:[82,91],lh:[94,91],re:[81,91],rh:[93,91],lk:[30,91],lf:[16,92],rk:[30,91],rf:[16,92]},
+          {h:[81,82],n:[70,86],p:[44,90],c:[57,91],le:[82,82],lh:[93,77],re:[81,82],rh:[92,77],lk:[30,87],lf:[16,82],rk:[30,87],rf:[16,82]}],
+  steps:["Lie face down with your arms stretched forward.","Lift your arms, chest and legs off the floor together.","Hold a moment, then lower."],cue:"Look at the floor to keep your neck long."},
+ // Strength
+ {id:"squat",cat:"str",name:"Squats",dur:2.4,level:"Easy",focus:"Quads, glutes",
+  frames:[S,{h:[55,33],n:[51,42],p:[35,68],le:[64,44],lh:[78,44],re:[63,45],rh:[77,45],lk:[54,76],lf:[51,94],rk:[53,77],rf:[50,94]}],
+  steps:["Stand with feet shoulder-width apart.","Push your hips back and bend your knees, arms reaching forward.","Go as low as feels good, then press up through your heels."],cue:"Chest up, knees track over your toes."},
+ {id:"pushup",cat:"str",name:"Push-ups",dur:2.0,level:"Medium",focus:"Chest, triceps, core",
+  frames:[PLANK,{h:[79,80],n:[70,85],p:[42,88],le:[61,80],lh:[70,93],re:[60,80],rh:[69,93],lk:[29,90],lf:[16,92],rk:[29,90],rf:[16,92]}],
+  steps:["Start in a high plank, hands a bit wider than shoulders.","Lower your chest toward the floor with elbows at about 45 degrees.","Press back up to straight arms."],cue:"Too hard? Drop your knees to the floor."},
+ {id:"lunge",cat:"str",name:"Forward Lunges",dur:2.6,level:"Medium",focus:"Quads, glutes, balance",
+  frames:[S,{h:[50,30],n:[50,39],p:[49,66],le:[51,52],lh:[52,64],re:[49,52],rh:[48,64],lk:[63,76],lf:[65,94],rk:[44,86],rf:[30,92]}],
+  steps:["Stand tall, then take a big step forward.","Lower until both knees bend to about 90 degrees.","Push off the front foot to stand. Switch legs each rep."],cue:"Keep your front knee over your ankle."},
+ {id:"bridge",cat:"str",name:"Glute Bridge",dur:2.4,level:"Easy",focus:"Glutes, hamstrings, lower back",
+  frames:[{h:[15,87],n:[24,89],p:[50,89],le:[34,92],lh:[44,93],re:[33,92],rh:[43,93],lk:[64,74],lf:[70,93],rk:[63,74],rf:[69,93]},
+          {h:[15,87],n:[24,89],p:[50,73],le:[34,92],lh:[44,93],re:[33,92],rh:[43,93],lk:[66,70],lf:[70,93],rk:[65,70],rf:[69,93]}],
+  steps:["Lie on your back with knees bent and feet flat.","Squeeze your glutes and lift your hips.","Pause at the top, then lower slowly."],cue:"Make a straight line from knees to shoulders."},
+ {id:"plank",cat:"str",name:"Forearm Plank",dur:3.0,level:"Medium",focus:"Core, shoulders",
+  frames:[{h:[79,74],n:[70,79],p:[42,85],le:[70,92],lh:[82,92],re:[69,92],rh:[81,92],lk:[29,89],lf:[16,92],rk:[29,89],rf:[16,92]},
+          {h:[79,73],n:[70,78],p:[42,83],le:[70,92],lh:[82,92],re:[69,92],rh:[81,92],lk:[29,88],lf:[16,92],rk:[29,88],rf:[16,92]}],
+  steps:["Rest on your forearms, elbows under shoulders.","Step your feet back and lift your hips.","Hold and breathe steadily."],cue:"Squeeze glutes and pull your belly button in."},
+ {id:"crunch",cat:"str",name:"Crunches",dur:2.0,level:"Easy",focus:"Abs",
+  frames:[{h:[16,86],n:[25,89],p:[50,90],le:[21,80],lh:[15,84],re:[22,80],rh:[16,84],lk:[63,74],lf:[72,93],rk:[62,74],rf:[71,93]},
+          {h:[33,66],n:[38,74],p:[50,90],c:[41,86],le:[44,67],lh:[33,64],re:[43,68],rh:[32,65],lk:[63,74],lf:[72,93],rk:[62,74],rf:[71,93]}],
+  steps:["Lie on your back, knees bent, hands lightly behind your head.","Curl your shoulders off the floor using your abs.","Lower slowly."],cue:"Don't pull on your neck. Look at the ceiling."},
+ // Stretch
+ {id:"neck",cat:"stretch",name:"Neck Tilts",dur:6,level:"Easy",focus:"Neck, upper traps",
+  frames:[P(F,{h:[43,19]}),P(F,{h:[43,19]}),P(F,{h:[57,19]}),P(F,{h:[57,19]})],
+  steps:["Stand or sit tall with shoulders relaxed.","Tilt your ear toward one shoulder and hold.","Slowly switch to the other side."],cue:"Let your shoulders drop away from your ears."},
+ {id:"sidebend",cat:"stretch",name:"Standing Side Bend",dur:7,level:"Easy",focus:"Obliques, lats",
+  frames:[SIDEL,SIDEL,mirror(SIDEL),mirror(SIDEL)],
+  steps:["Stand with feet hip-width apart.","Reach both arms overhead.","Lean to one side, hold, then lean to the other."],cue:"Reach long rather than collapsing sideways."},
+ {id:"fold",cat:"stretch",name:"Forward Fold",dur:6,level:"Easy",focus:"Hamstrings, lower back",
+  frames:[S,{h:[61,86],n:[60,77],p:[44,54],c:[56,62],le:[57,85],lh:[54,93],re:[56,85],rh:[53,93],lk:[47,74],lf:[50,94],rk:[46,74],rf:[49,94]},{h:[61,87],n:[60,78],p:[44,54],c:[56,63],le:[57,86],lh:[54,93],re:[56,86],rh:[53,93],lk:[47,74],lf:[50,94],rk:[46,74],rf:[49,94]}],
+  steps:["Stand tall, feet hip-width.","Hinge at the hips and fold forward.","Let your head and arms hang. Bend your knees if you need to."],cue:"Breathe out as you sink a little deeper."},
+ {id:"quad",cat:"stretch",name:"Standing Quad Stretch",dur:5,level:"Easy",focus:"Quads, hip flexors",
+  frames:[P(S,{rk:[48,75],rf:[36,60],re:[42,45],rh:[37,58],le:[61,33],lh:[73,27]}),P(S,{rk:[48,75],rf:[36,60],re:[42,45],rh:[37,58],le:[61,31],lh:[74,23]})],
+  steps:["Stand on one leg. Hold a wall if you need balance.","Bend the other knee and hold your foot behind you.","Hold, then switch legs halfway through."],cue:"Keep your knees side by side."},
+ {id:"armcross",cat:"stretch",name:"Cross-Body Shoulder",dur:7,level:"Easy",focus:"Shoulders, upper back",
+  frames:[ARMX,ARMX,mirror(ARMX),mirror(ARMX)],
+  steps:["Bring one arm straight across your chest.","Hug it closer with the other arm.","Hold, then switch arms."],cue:"Keep the stretched shoulder down, not hunched."},
+ {id:"butterfly",cat:"stretch",name:"Butterfly",dur:1.8,level:"Easy",focus:"Inner thighs, hips",
+  frames:[SIT,P(SIT,{lk:[31,88],rk:[69,88]})],
+  steps:["Sit with the soles of your feet together.","Hold your feet and sit up tall.","Gently flutter your knees, or hold them low."],cue:"Lengthen your spine before you lean forward."},
+ // Yoga
+ {id:"downdog",cat:"yoga",name:"Plank to Down Dog",dur:6,level:"Medium",focus:"Shoulders, hamstrings, calves",
+  frames:[YPLANK,{h:[61,85],n:[56,77],p:[36,58],le:[65,85],lh:[74,93],re:[64,85],rh:[73,93],lk:[26,76],lf:[16,93],rk:[25,76],rf:[15,93]},{h:[61,86],n:[56,78],p:[36,57],le:[65,86],lh:[74,93],re:[64,86],rh:[73,93],lk:[26,75],lf:[16,93],rk:[25,75],rf:[15,93]}],
+  steps:["Start in a high plank.","Push your hips up and back into an upside-down V.","Press your heels toward the floor, then flow back to plank."],cue:"Spread your fingers wide and push the floor away."},
+ {id:"warrior2",cat:"yoga",name:"Warrior II",dur:5,level:"Easy",focus:"Legs, hips, shoulders",
+  frames:[W1,P(W1,{p:[50,62],n:[50,33],h:[53,24],le:[36,33],lh:[22,33],re:[64,33],rh:[78,33],rk:[65,74],lk:[38,78]})],
+  steps:["Step your feet wide apart.","Turn your front foot out and bend that knee over the ankle.","Reach your arms out long and look past your front hand."],cue:"Sink your hips while your arms stay strong."},
+ {id:"tree",cat:"yoga",name:"Tree Pose",dur:7,level:"Medium",focus:"Balance, ankles, core",
+  frames:[TREE1,TREE1,P(TREE1,{le:[43,13],lh:[49,2],re:[57,13],rh:[51,2]}),P(TREE1,{le:[43,13],lh:[49,2],re:[57,13],rh:[51,2]})],
+  steps:["Stand on one leg.","Place the other foot on your inner calf or thigh, never the knee.","Bring your hands to your chest, then grow them overhead."],cue:"Fix your eyes on one still point."},
+ {id:"catcow",cat:"yoga",name:"Cat-Cow",dur:5,level:"Easy",focus:"Spine, back, neck",
+  frames:[P(ALL4,{c:[55,55],h:[74,80],n:[69,72]}),P(ALL4,{c:[55,82],h:[80,60],n:[70,68]})],
+  steps:["Come to hands and knees.","Breathe in: drop your belly and lift your head (cow).","Breathe out: round your back and tuck your chin (cat)."],cue:"Move slowly, one breath per movement."},
+ {id:"cobra",cat:"yoga",name:"Cobra",dur:6,level:"Easy",focus:"Lower back, chest",
+  frames:[{h:[78,88],n:[68,90],p:[44,90],c:[56,91],le:[62,83],lh:[70,92],re:[61,83],rh:[69,92],lk:[30,92],lf:[16,93],rk:[30,92],rf:[16,93]},
+          {h:[71,66],n:[64,72],p:[44,90],c:[56,86],le:[66,82],lh:[70,92],re:[65,82],rh:[69,92],lk:[30,92],lf:[16,93],rk:[30,92],rf:[16,93]},
+          {h:[71,65],n:[64,71],p:[44,90],c:[56,86],le:[66,81],lh:[70,92],re:[65,81],rh:[69,92],lk:[30,92],lf:[16,93],rk:[30,92],rf:[16,93]}],
+  steps:["Lie on your stomach, hands under your shoulders.","Press gently to lift your chest, hips stay down.","Hold a few breaths, then lower."],cue:"Keep elbows slightly bent and shoulders away from ears."},
+ {id:"chair",cat:"yoga",name:"Chair Pose",dur:5,level:"Medium",focus:"Thighs, glutes, shoulders",
+  frames:[P(S,{le:[52,13],lh:[54,1],re:[51,13],rh:[52,1]}),{h:[57,34],n:[53,42],p:[37,66],le:[60,29],lh:[66,16],re:[59,30],rh:[65,17],lk:[55,74],lf:[51,94],rk:[54,75],rf:[50,94]},{h:[57,35],n:[53,43],p:[37,67],le:[60,30],lh:[66,17],re:[59,31],rh:[65,18],lk:[55,75],lf:[51,94],rk:[54,76],rf:[50,94]}],
+  steps:["Stand with feet together and arms overhead.","Bend your knees and sit back as if into a chair.","Hold and breathe, then rise up."],cue:"Weight in your heels. You should see your toes."}
+];
+const byId = Object.fromEntries(EX.map(e=>[e.id,e]));
+const catOf = id => CATS.find(c=>c.id===id);
+const catColor = id => `var(--${id})`;
+const setC = (el,id)=>{el.style.setProperty("--c",`var(--${id})`);el.style.setProperty("--cc",`var(--${id}-c)`)};
+
+/* ---------- Figure renderer ---------- */
+const NS = "http://www.w3.org/2000/svg";
+const KEYS = ["h","n","p","le","lh","re","rh","lk","lf","rk","rf"];
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const figures = new Set();
+
+function mk(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+let figStyle = (()=>{ try{ const v=localStorage.getItem("pp:figStyle"); return v?JSON.parse(v):"char"; }catch(e){ return "char"; } })();
+/* Exercises drawn facing the viewer; all others are side views facing right. */
+const FRONT = new Set(["jacks","highknees","skaters","neck","sidebend","armcross","butterfly","warrior2","tree","pullup"]);
+const CH = {skin:"#F1C09B", skinFar:"#D69E7A", shirt:"#F6B93B", shirtFar:"#D6971F", shorts:"#33416E", shortsFar:"#27325A", hair:"#3A2A22", shoe:"#FFFFFF", line:"#2A1F1B", band:"#E4572E"};
+const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+class Figure{
+  constructor(ex,opts={}){
+    this.svg = mk("svg",{viewBox:"0 0 100 100","aria-hidden":"true"});
+    mk("line",{x1:6,y1:96.5,x2:94,y2:96.5,stroke:"var(--fig-far)","stroke-width":1,"stroke-linecap":"round",opacity:.6},this.svg);
+    this.props = mk("g",{fill:"none",stroke:"var(--fig-far)","stroke-linecap":"round","stroke-linejoin":"round"},this.svg);
+    this.shadow = mk("ellipse",{cx:50,cy:96.5,rx:14,ry:2,fill:"var(--fig)",opacity:.12},this.svg);
+    this.stick = mk("g",{},this.svg);
+    const g = mk("g",{fill:"none","stroke-linecap":"round","stroke-linejoin":"round"},this.stick);
+    const far = {stroke:"var(--fig-far)","stroke-width":5}, near={stroke:"var(--fig)","stroke-width":5};
+    this.farArm = mk("path",far,g); this.farLeg = mk("path",far,g);
+    this.torso = mk("path",{stroke:"var(--fig)","stroke-width":7},g);
+    this.nearLeg = mk("path",near,g); this.nearArm = mk("path",near,g);
+    this.head = mk("circle",{r:6.6,fill:"var(--fig)"},this.stick);
+    this.buildChar();
+    this.animate = opts.animate!==false; this.visible = true; this.speed = 1; this.t0 = performance.now();
+    this.setEx(ex);
+    figures.add(this);
+  }
+  setEx(ex){ if(this.ex===ex) return; this.ex=ex;
+    this.props.innerHTML=""; if(ex&&ex.props) ex.props.forEach(([tag,a])=>mk(tag,a,this.props)); this.t0=performance.now(); this.draw(ex? this.restT():0); }
+  restT(){ return this.ex.dur/this.ex.frames.length; }
+  buildChar(){
+    const g=this.ch=mk("g",{fill:"none","stroke-linecap":"round","stroke-linejoin":"round"},this.svg);
+    const P=(a)=>mk("path",a,g), C=(a)=>mk("circle",a,g), E=(a)=>mk("ellipse",a,g);
+    const limb=(far,leg)=>{
+      const W=leg?6:4.8, skin=far?CH.skinFar:CH.skin, cloth=leg?(far?CH.shortsFar:CH.shorts):(far?CH.shirtFar:CH.shirt);
+      const o={};
+      o.out=P({stroke:CH.line,"stroke-width":W+2.2});
+      o.end=leg? E({rx:3.8,ry:2.2,fill:CH.shoe,stroke:CH.line,"stroke-width":1.1}) : C({r:2.6,fill:skin,stroke:CH.line,"stroke-width":1.1});
+      o.skin=P({stroke:skin,"stroke-width":W});
+      o.cloth=P({stroke:cloth,"stroke-width":W+(leg?1.4:1)});
+      return o;
+    };
+    this.c={farArm:limb(true,false),farLeg:limb(true,true)};
+    this.c.torsoOut=P({stroke:CH.line,"stroke-width":13.5});
+    this.c.torso=P({stroke:CH.shirt,"stroke-width":11.3});
+    this.c.hip=C({r:6.4,fill:CH.shorts});
+    this.c.nearLeg=limb(false,true); this.c.nearArm=limb(false,false);
+    this.c.neck=P({stroke:CH.skin,"stroke-width":4.2});
+    this.c.hair=C({r:7.9,fill:CH.hair,stroke:CH.line,"stroke-width":1.1});
+    this.c.face=C({r:6.7,fill:CH.skin});
+    this.c.band=P({stroke:CH.band,"stroke-width":2});
+    this.c.eye1=C({r:.95,fill:CH.line}); this.c.eye2=C({r:.95,fill:CH.line});
+    this.c.smile=P({stroke:CH.line,"stroke-width":.9});
+  }
+  drawChar(q,c){
+    const f=v=>v[0].toFixed(1)+" "+v[1].toFixed(1), set=(el,d)=>el.setAttribute("d",d), C=this.c;
+    const front=FRONT.has(this.ex.id);
+    const limb=(o,a,b,e,leg)=>{
+      set(o.out,`M${f(a)}L${f(b)}L${f(e)}`); set(o.skin,`M${f(a)}L${f(b)}L${f(e)}`);
+      set(o.cloth,`M${f(a)}L${f(lerp(a,b,leg?.62:.42))}`);
+      const ex=leg&&!front?1.4:0;
+      if(leg){ o.end.setAttribute("cx",(e[0]+ex).toFixed(1)); o.end.setAttribute("cy",(e[1]+.4).toFixed(1)); }
+      else { o.end.setAttribute("cx",e[0].toFixed(1)); o.end.setAttribute("cy",e[1].toFixed(1)); }
+    };
+    limb(C.farArm,q.n,q.re,q.rh,false); limb(C.farLeg,q.p,q.rk,q.rf,true);
+    const td=`M${f(q.p)}Q${f(c)} ${f(q.n)}`; set(C.torsoOut,td); set(C.torso,td);
+    C.hip.setAttribute("cx",q.p[0].toFixed(1)); C.hip.setAttribute("cy",q.p[1].toFixed(1));
+    limb(C.nearLeg,q.p,q.lk,q.lf,true); limb(C.nearArm,q.n,q.le,q.lh,false);
+    // head: axis points from neck to head; face looks perpendicular (side view) or at the viewer (front)
+    let ax=[q.h[0]-q.n[0],q.h[1]-q.n[1]]; const L=Math.hypot(ax[0],ax[1])||1; ax=[ax[0]/L,ax[1]/L];
+    const fd=[-ax[1],ax[0]];
+    set(C.neck,`M${f(q.n)}L${f(lerp(q.n,q.h,.55))}`);
+    C.hair.setAttribute("cx",q.h[0].toFixed(1)); C.hair.setAttribute("cy",q.h[1].toFixed(1));
+    const off = front ? [-ax[0]*1.5,-ax[1]*1.5] : [fd[0]*1.6-ax[0]*.6, fd[1]*1.6-ax[1]*.6];
+    const fc=[q.h[0]+off[0],q.h[1]+off[1]];
+    C.face.setAttribute("cx",fc[0].toFixed(1)); C.face.setAttribute("cy",fc[1].toFixed(1));
+    const bandA=[q.h[0]+ax[0]*3.2-fd[0]*7.2,q.h[1]+ax[1]*3.2-fd[1]*7.2], bandB=[q.h[0]+ax[0]*3.2+fd[0]*7.2,q.h[1]+ax[1]*3.2+fd[1]*7.2];
+    set(C.band,`M${f(bandA)}L${f(bandB)}`);
+    if(front){
+      const e1=[fc[0]-2.4,fc[1]-.4], e2=[fc[0]+2.4,fc[1]-.4];
+      C.eye1.setAttribute("cx",e1[0].toFixed(1)); C.eye1.setAttribute("cy",e1[1].toFixed(1));
+      C.eye2.setAttribute("cx",e2[0].toFixed(1)); C.eye2.setAttribute("cy",e2[1].toFixed(1)); C.eye2.setAttribute("r",.95);
+      set(C.smile,`M${(fc[0]-2).toFixed(1)} ${(fc[1]+2.4).toFixed(1)}Q${fc[0].toFixed(1)} ${(fc[1]+4).toFixed(1)} ${(fc[0]+2).toFixed(1)} ${(fc[1]+2.4).toFixed(1)}`);
+    } else {
+      const e=[q.h[0]+fd[0]*4.6+ax[0]*.8, q.h[1]+fd[1]*4.6+ax[1]*.8];
+      C.eye1.setAttribute("cx",e[0].toFixed(1)); C.eye1.setAttribute("cy",e[1].toFixed(1)); C.eye2.setAttribute("r",0);
+      const m1=[q.h[0]+fd[0]*4.2-ax[0]*2.6, q.h[1]+fd[1]*4.2-ax[1]*2.6], m2=[q.h[0]+fd[0]*6-ax[0]*1.8, q.h[1]+fd[1]*6-ax[1]*1.8];
+      set(C.smile,`M${f(m1)}L${f(m2)}`);
+    }
+  }
+  pose(t){
+    const fr=this.ex.frames, n=fr.length;
+    if(n===1) return fr[0];
+    const u = ((t/this.ex.dur)%1+1)%1*n, i=Math.floor(u), f=u-i, e=(1-Math.cos(Math.PI*f))/2;
+    const A=fr[i], B=fr[(i+1)%n], o={};
+    for(const k of KEYS){o[k]=[A[k][0]+(B[k][0]-A[k][0])*e, A[k][1]+(B[k][1]-A[k][1])*e]}
+    const ca = A.c||[(A.n[0]+A.p[0])/2,(A.n[1]+A.p[1])/2], cb = B.c||[(B.n[0]+B.p[0])/2,(B.n[1]+B.p[1])/2];
+    o.c=[ca[0]+(cb[0]-ca[0])*e, ca[1]+(cb[1]-ca[1])*e];
+    return o;
+  }
+  draw(t){
+    if(!this.ex) return;
+    const q=this.pose(t), f=v=>v[0].toFixed(1)+" "+v[1].toFixed(1);
+    const c=q.c||[(q.n[0]+q.p[0])/2,(q.n[1]+q.p[1])/2];
+    this.farArm.setAttribute("d",`M${f(q.n)}L${f(q.re)}L${f(q.rh)}`);
+    this.farLeg.setAttribute("d",`M${f(q.p)}L${f(q.rk)}L${f(q.rf)}`);
+    this.torso.setAttribute("d",`M${f(q.p)}Q${f(c)} ${f(q.n)}`);
+    this.nearLeg.setAttribute("d",`M${f(q.p)}L${f(q.lk)}L${f(q.lf)}`);
+    this.nearArm.setAttribute("d",`M${f(q.n)}L${f(q.le)}L${f(q.lh)}`);
+    this.head.setAttribute("cx",q.h[0].toFixed(1)); this.head.setAttribute("cy",q.h[1].toFixed(1));
+    const isChar=figStyle==="char";
+    if(this.stick.style.display!==(isChar?"none":"")){ this.stick.style.display=isChar?"none":""; this.ch.style.display=isChar?"":"none"; }
+    if(isChar) this.drawChar(q,c);
+    const lowY = Math.max(q.lf[1],q.rf[1],q.lh[1],q.rh[1]);
+    const xs=[q.lf[0],q.rf[0]]; if(q.lh[1]>88) xs.push(q.lh[0]); if(q.p[1]>84) xs.push(q.p[0],q.n[0]);
+    const mn=Math.min(...xs), mx=Math.max(...xs);
+    this.shadow.setAttribute("cx",((mn+mx)/2).toFixed(1)); this.shadow.setAttribute("rx",Math.max(8,(mx-mn)/2+6).toFixed(1));
+    this.shadow.setAttribute("opacity", lowY>90 ? .12 : .06);
+  }
+  destroy(){figures.delete(this)}
+}
+function loop(now){
+  for(const fg of figures){
+    if(!fg.ex||!fg.visible||!fg.animate||!fg.svg.isConnected) continue;
+    fg.draw((now-fg.t0)/1000*fg.speed);
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+const io = "IntersectionObserver" in window ? new IntersectionObserver(es=>{for(const e of es){if(e.target._fig) e.target._fig.visible=e.isIntersecting}}) : null;
+
+/* ---------- Storage ---------- */
+const store = {
+  get(k,d){try{const v=localStorage.getItem("pp:"+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("pp:"+k,JSON.stringify(v))}catch(e){}}
+};
+
+/* ---------- State ---------- */
+const PRESETS = {
+  tabata:{name:"Tabata",cfg:{prep:10,work:20,rest:10,rounds:8,sets:1,setRest:60}},
+  stretch:{name:"Stretch hold",cfg:{prep:10,work:30,rest:10,rounds:6,sets:1,setRest:30}},
+  p4020:{name:"40 / 20",cfg:{prep:10,work:40,rest:20,rounds:8,sets:1,setRest:60}},
+  p4515:{name:"45 / 15",cfg:{prep:10,work:45,rest:15,rounds:8,sets:1,setRest:60}},
+  yoga:{name:"Yoga flow",cfg:{prep:10,work:40,rest:15,rounds:6,sets:1,setRest:30}},
+  double:{name:"Double Tabata",cfg:{prep:10,work:20,rest:10,rounds:8,sets:2,setRest:60}}
+};
+const FIELDS = [
+  {k:"roundLen",label:"Round",unit:"work + rest",min:10,max:600,step:5},
+  {k:"work",label:"Work",unit:"seconds",min:5,max:600,step:5},
+  {k:"rest",label:"Rest",unit:"seconds",min:0,max:600,step:5},
+  {k:"rounds",label:"Rounds",unit:"per set",min:1,max:50,step:1},
+  {k:"sets",label:"Sets",unit:"cycles",min:1,max:10,step:1},
+  {k:"setRest",label:"Set break",unit:"seconds",min:0,max:600,step:15},
+  {k:"prep",label:"Get ready",unit:"seconds",min:0,max:60,step:5}
+];
+let cfg = Object.assign({},PRESETS.p4515.cfg,{perSet:false,plan:[],lock:true}, store.get("cfg",{}));
+if(!Array.isArray(cfg.plan)) cfg.plan=[];
+if(!cfg.roundLen) cfg.roundLen=cfg.work+cfg.rest;
+/* Fixed round length: work + rest always add up to cfg.roundLen. Changing one moves the other. */
+function linkWR(o,key,v){
+  if(!cfg.lock){ o[key]=v; return; }
+  const R=cfg.roundLen;
+  if(key==="work"){ o.work=Math.min(v,R); o.rest=R-o.work; }
+  else { o.rest=Math.min(v,R-5); o.work=R-o.rest; }
+}
+function setRoundLen(v){
+  cfg.roundLen=v;
+  [cfg].concat(cfg.plan).forEach(o=>{ o.rest=Math.min(o.rest,v-5); o.work=v-o.rest; });
+}
+let liveInputs=[];
+function refreshInputs(){ liveInputs.forEach(x=>{ if(x.inp.isConnected && document.activeElement!==x.inp) x.inp.value=x.get(); }); }
+/* Timing for one set: its own work/rest/rounds when "different per set" is on, otherwise the shared values. */
+function setCfg(n){
+  if(cfg.perSet && cfg.sets>1){ const p=cfg.plan[n-1]; if(p) return p; }
+  return {work:cfg.work,rest:cfg.rest,rounds:cfg.rounds};
+}
+function syncPlan(){
+  for(let i=0;i<cfg.sets;i++){ if(!cfg.plan[i]) cfg.plan[i]=Object.assign({}, cfg.plan[i-1]||{work:cfg.work,rest:cfg.rest,rounds:cfg.rounds}); }
+  cfg.plan.length=Math.min(cfg.plan.length,10);
+}
+const QUICK_PAIRS=[[20,10],[30,15],[40,20],[45,15]];
+function quickPairs(){
+  if(!cfg.lock) return QUICK_PAIRS;
+  const R=cfg.roundLen, out=[];
+  [R-10,R-15,R-20,R/2].forEach(w=>{ if(w>=5&&Number.isInteger(w)&&!out.some(p=>p[0]===w)) out.push([w,R-w]); });
+  return out.sort((a,b)=>b[0]-a[0]);
+}
+let playlist = store.get("playlist",null);
+if(!Array.isArray(playlist)) playlist = EX.filter(e=>e.cat==="kin").map(e=>e.id);
+playlist = playlist.filter(id=>byId[id]);
+let filter = store.get("filter","all");
+let soundOn = store.get("sound",true), voiceOn = store.get("voice",true);
+
+/* ---------- Icons ---------- */
+const IC = {
+  plus:'<span class="ms">add</span>', check:'<span class="ms">check</span>',
+  x:'<span class="ms">close</span>', up:'<span class="ms">arrow_upward</span>'
+};
+const $ = id=>document.getElementById(id);
+
+/* ---------- Library ---------- */
+function renderFilters(){
+  const el=$("filters"); el.innerHTML="";
+  [{id:"all",name:"All"}].concat(CATS).forEach(c=>{
+    const b=document.createElement("button"); b.className="chip"; b.setAttribute("aria-pressed",filter===c.id);
+    if(c.id!=="all") setC(b,c.id);
+    b.className="chip sl"; b.innerHTML=(filter===c.id?'<span class="ms">check</span>':(c.id!=="all"?'<span class="dot"></span>':""))+c.name;
+    b.onclick=()=>{filter=c.id;store.set("filter",filter);renderFilters();renderLibrary()};
+    el.appendChild(b);
+  });
+}
+let libFigs=[];
+function renderLibrary(){
+  libFigs.forEach(f=>f.destroy()); libFigs=[];
+  const root=$("library"); root.innerHTML="";
+  CATS.filter(c=>filter==="all"||filter===c.id).forEach(c=>{
+    const block=document.createElement("section"); block.className="cat-block"; setC(block,c.id);
+    const items=EX.filter(e=>e.cat===c.id);
+    block.innerHTML=`<div class="cat-head"><h3><span class="ms fill">${c.icon}</span>${c.name}</h3><button class="text-btn fill sl" data-cat="${c.id}">Use all ${items.length}<span class="ms">arrow_forward</span></button><span class="sub">${c.blurb} · ${items.length} moves</span></div>`;
+    block.querySelector(".fill").onclick=()=>{useCategory(c.id);showView("timer")};
+    const grid=document.createElement("div"); grid.className="grid";
+    items.forEach(ex=>{
+      const card=document.createElement("article"); card.className="card"; setC(card,ex.cat);
+      const pic=document.createElement("div"); pic.className="pic";
+      const fig=new Figure(ex,{animate:!reduceMotion}); pic.appendChild(fig.svg); libFigs.push(fig);
+      pic._fig=fig; if(io) io.observe(pic);
+      card.appendChild(pic);
+      const meta=document.createElement("div"); meta.className="meta";
+      meta.innerHTML=`<span class="name">${ex.name}</span><span class="sub">${ex.level} · ${ex.focus.split(",")[0]}</span>`;
+      card.appendChild(meta);
+      const open=document.createElement("button"); open.className="open"; open.setAttribute("aria-label","How to do "+ex.name); open.onclick=()=>openSheet(ex);
+      card.appendChild(open);
+      const add=document.createElement("button"); add.className="add sl"; add.dataset.id=ex.id;
+      card.appendChild(add);
+      add.onclick=()=>{togglePlaylist(ex.id)};
+      grid.appendChild(card);
+    });
+    block.appendChild(grid); root.appendChild(block);
+  });
+  syncAddButtons();
+}
+function syncAddButtons(){
+  document.querySelectorAll(".add").forEach(b=>{
+    const on=playlist.includes(b.dataset.id);
+    b.setAttribute("aria-pressed",on); b.innerHTML=on?IC.check:IC.plus;
+    b.setAttribute("aria-label",(on?"Remove ":"Add ")+byId[b.dataset.id].name+(on?" from":" to")+" workout");
+  });
+  const n=playlist.length;
+  $("tray-txt").textContent = n ? "Start workout" : "Open timer";
+  $("tray-n").textContent = n; $("tray-n").hidden = !n;
+  $("tray-go").setAttribute("aria-label", n ? `Start workout with ${n} ${n===1?"move":"moves"}` : "Open timer");
+  if(currentEx) $("sh-add").innerHTML = playlist.includes(currentEx.id) ? '<span class="ms">check</span><span>In your workout</span>' : '<span class="ms">add</span><span>Add to workout</span>';
+}
+function togglePlaylist(id){
+  const i=playlist.indexOf(id);
+  if(i>=0) playlist.splice(i,1); else playlist.push(id);
+  savePlaylist();
+}
+function savePlaylist(){ store.set("playlist",playlist); syncAddButtons(); renderPlaylist(); if(!T.running&&!T.paused) idleStage(); }
+/* Ready-made workouts: each move once per set, 45s work / 15s rest (1-minute rounds), 2 sets. */
+const WORKOUTS = [
+  {id:"upper",name:"Upper Body",icon:"sports_mma",c:"str",blurb:"Chest, shoulders, arms and back",moves:["pushup","dips","pike","pullup","boxing","superman"]},
+  {id:"core",name:"Core",icon:"radio_button_checked",c:"yoga",blurb:"Abs, obliques and lower back",moves:["plank","crunch","climbers","superman","bridge","highknees"]},
+  {id:"legs",name:"Legs",icon:"directions_walk",c:"stretch",blurb:"Quads, glutes, hamstrings and calves",moves:["squat","lunge","squatjump","skaters","bridge","chair"]},
+  {id:"full",name:"Full Body",icon:"bolt",c:"kin",blurb:"A bit of everything, high energy",moves:["burpee","squat","pushup","climbers","lunge","jacks"]}
+];
+const woCfg = w => ({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60});
+function useWorkout(w){
+  playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist(); showView("timer");
+}
+let woFigs=[];
+function renderWorkouts(){
+  woFigs.forEach(f=>f.destroy()); woFigs=[];
+  const el=$("workouts"); el.innerHTML="";
+  WORKOUTS.forEach(w=>{
+    const c=woCfg(w), mins=Math.round((c.prep+c.sets*c.rounds*60-c.rest+c.setRest)/60);
+    const card=document.createElement("article"); card.className="wo"; setC(card,w.c);
+    card.innerHTML=`<div class="wo-head"><span class="ms fill">${w.icon}</span><div><h4>${w.name}</h4><p>${w.blurb}</p></div></div><div class="wo-figs"></div><div class="wo-foot"><span>${w.moves.length} moves · 2 sets · ${mins} min</span><button class="btn btn-filled with-icon sl"><span class="ms fill">play_arrow</span>Start</button></div>`;
+    const figs=card.querySelector(".wo-figs");
+    w.moves.forEach(id=>{ const d=document.createElement("div"); d.className="wo-fig"; d.title=byId[id].name; const fg=new Figure(byId[id],{animate:false}); d.appendChild(fg.svg); woFigs.push(fg); figs.appendChild(d); });
+    const names=document.createElement("p"); names.className="wo-names"; names.textContent=w.moves.map(id=>byId[id].name).join(" · "); card.insertBefore(names,card.querySelector(".wo-foot"));
+    card.querySelector("button").onclick=()=>useWorkout(w);
+    el.appendChild(card);
+  });
+}
+function useCategory(cat){
+  playlist = EX.filter(e=>e.cat===cat).map(e=>e.id);
+  applyPreset(catOf(cat).preset);
+  savePlaylist();
+}
+
+/* ---------- Sheet ---------- */
+let currentEx=null, sheetFig=null;
+function openSheet(ex){
+  currentEx=ex;
+  const sh=$("sheet"); setC(sh.querySelector(".sheet-in"),ex.cat);
+  setC(sh,ex.cat);
+  if(sheetFig){sheetFig.svg.remove();sheetFig.destroy()}
+  sheetFig=new Figure(ex); $("sh-pic").insertBefore(sheetFig.svg,$("sh-close"));
+  $("sh-cat").innerHTML=`<span class="ms fill">${catOf(ex.cat).icon}</span>${catOf(ex.cat).name}`;
+  $("sh-name").textContent=ex.name;
+  $("sh-tags").innerHTML=[ex.level].concat(ex.focus.split(", ")).map(t=>`<span class="tag">${t}</span>`).join("");
+  $("sh-steps").innerHTML=ex.steps.map(s=>`<li>${s}</li>`).join("");
+  $("sh-cue").innerHTML=`<span class="ms">lightbulb</span><span>${ex.cue}</span>`;
+  syncAddButtons();
+  sh.hidden=false; $("sh-close").focus();
+}
+function closeSheet(){ $("sheet").hidden=true; if(sheetFig){sheetFig.svg.remove();sheetFig.destroy();sheetFig=null} currentEx=null; }
+$("sh-close").onclick=closeSheet;
+$("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("sheet").hidden)closeSheet()});
+$("sh-add").onclick=()=>{ if(currentEx) togglePlaylist(currentEx.id) };
+$("sh-now").onclick=()=>{
+  if(!currentEx) return;
+  const ex=currentEx; closeSheet();
+  playlist=[ex.id]; applyPreset(catOf(ex.cat).preset); savePlaylist(); showView("timer");
+};
+
+/* ---------- Views ---------- */
+function showView(v){
+  $("view-lib").hidden = v!=="lib"; $("view-timer").hidden = v!=="timer";
+  $("tab-lib").setAttribute("aria-selected",v==="lib"); $("tab-timer").setAttribute("aria-selected",v==="timer");
+  $("tray").hidden = v!=="lib";
+  store.set("view",v); window.scrollTo(0,0);
+}
+document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+$("tray-go").onclick=()=>showView("timer");
+
+/* ---------- Setup panel ---------- */
+function renderPresets(){
+  const el=$("presets"); el.innerHTML="";
+  for(const k in PRESETS){
+    const p=PRESETS[k].cfg, on=!(cfg.perSet&&cfg.sets>1)&&FIELDS.every(f=>f.k==="roundLen"||cfg[f.k]===p[f.k]);
+    const b=document.createElement("button"); b.className="chip sl"; b.setAttribute("aria-pressed",on);
+    b.innerHTML=`${on?'<span class="ms">check</span>':''}${PRESETS[k].name} <small>${PRESETS[k].name.includes("/")?`${fmt(p.work+p.rest)} rounds × ${p.rounds}`:`${p.work}s / ${p.rest}s × ${p.rounds}`}${p.sets>1?" × "+p.sets:""}</small>`;
+    b.onclick=()=>{applyPreset(k)};
+    el.appendChild(b);
+  }
+}
+function applyPreset(k){ const lock=cfg.lock!==false; cfg=Object.assign({},PRESETS[k].cfg,{perSet:false,plan:[],lock}); cfg.roundLen=cfg.work+cfg.rest; saveCfg(); renderFields(); }
+function stepper(o){
+  const d=document.createElement("div"); d.className="field";
+  d.innerHTML=`<label for="${o.id}">${o.label}</label><div class="stepper"><button class="sl" aria-label="Less ${o.aria||o.label}"><span class="ms">remove</span></button><input id="${o.id}" type="number" inputmode="numeric" min="${o.min}" max="${o.max}" value="${o.get()}"><button class="sl" aria-label="More ${o.aria||o.label}"><span class="ms">add</span></button></div>${o.unit?`<div class="unit">${o.unit}</div>`:""}`;
+  const [minus,plus]=d.querySelectorAll("button"), inp=d.querySelector("input");
+  const set=v=>{v=Math.round(Number(v));if(!isFinite(v))v=o.get();v=Math.min(o.max,Math.max(o.min,v));inp.value=v;o.set(v)};
+  minus.onclick=()=>set(o.get()-o.step); plus.onclick=()=>set(o.get()+o.step);
+  inp.onchange=()=>set(inp.value);
+  liveInputs.push({inp,get:o.get});
+  return d;
+}
+function renderFields(){
+  const el=$("fields"); el.innerHTML=""; liveInputs=[];
+  const per=cfg.perSet&&cfg.sets>1;
+  $("t-lock").setAttribute("aria-checked",!!cfg.lock);
+  FIELDS.forEach(f=>{
+    if(per && (f.k==="work"||f.k==="rest"||f.k==="rounds")) return;
+    if(f.k==="roundLen" && !cfg.lock) return;
+    el.appendChild(stepper({id:"f-"+f.k,label:f.label,unit:f.unit,min:f.min,max:f.max,step:f.step,get:()=>cfg[f.k],
+      set:v=>{
+        const changedSets=f.k==="sets"&&v!==cfg.sets;
+        if(f.k==="work"||f.k==="rest") linkWR(cfg,f.k,v);
+        else if(f.k==="roundLen") setRoundLen(v);
+        else cfg[f.k]=v;
+        if(cfg.perSet) syncPlan();
+        saveCfg(); refreshInputs();
+        if(changedSets||f.k==="roundLen") renderFields();
+      }}));
+  });
+  renderPlan();
+}
+function renderPlan(){
+  const box=$("perset"); box.hidden = cfg.sets<2;
+  $("t-perset").setAttribute("aria-checked", !!(cfg.perSet&&cfg.sets>1));
+  const el=$("plan"); el.innerHTML="";
+  if(!(cfg.perSet&&cfg.sets>1)) return;
+  syncPlan();
+  for(let i=0;i<cfg.sets;i++){
+    const p=cfg.plan[i], row=document.createElement("div"); row.className="setrow";
+    row.innerHTML=`<div class="setrow-head"><b>Set ${i+1}</b><span>${fmt((p.work+p.rest)*p.rounds)}</span></div>`;
+    const g=document.createElement("div"); g.className="setrow-fields";
+    const upd=()=>{ row.querySelector(".setrow-head span").textContent=fmt((p.work+p.rest)*p.rounds); saveCfg(); refreshInputs(); };
+    [["work","Work",5,600,5],["rest","Rest",0,600,5],["rounds","Rounds",1,50,1]].forEach(([k,l,mn,mx,st])=>{
+      g.appendChild(stepper({id:`p${i}-${k}`,label:l,aria:`${l} in set ${i+1}`,min:mn,max:mx,step:st,get:()=>p[k],set:v=>{ if(k==="rounds") p[k]=v; else linkWR(p,k,v); upd();syncQuick()}}));
+    });
+    row.appendChild(g);
+    const q=document.createElement("div"); q.className="quick";
+    const syncQuick=()=>q.querySelectorAll("button").forEach(b=>{const [w,r]=b.dataset.p.split("/").map(Number);const on=p.work===w&&p.rest===r;b.setAttribute("aria-pressed",on);b.innerHTML=(on?'<span class="ms">check</span>':"")+`${w} / ${r}`});
+    quickPairs().forEach(([w,r])=>{
+      const b=document.createElement("button"); b.className="chip sl"; b.dataset.p=w+"/"+r;
+      b.setAttribute("aria-label",`Set ${i+1}: ${w} seconds work, ${r} seconds rest`);
+      b.onclick=()=>{p.work=w;p.rest=r;g.querySelector(`#p${i}-work`).value=w;g.querySelector(`#p${i}-rest`).value=r;upd();syncQuick()};
+      q.appendChild(b);
+    });
+    syncQuick(); row.appendChild(q); el.appendChild(row);
+  }
+}
+function saveCfg(){ store.set("cfg",cfg); renderPresets(); $("total").textContent=fmt(totalSeconds()); if(!T.running&&!T.paused) idleStage(); }
+let plFigs=[];
+function renderPlaylist(){
+  plFigs.forEach(f=>f.destroy()); plFigs=[];
+  const ul=$("plist"); ul.innerHTML="";
+  if(!playlist.length){ ul.innerHTML='<li class="empty">No moves yet. Pick a group below or add moves from Exercises.</li>'; }
+  playlist.forEach((id,i)=>{
+    const ex=byId[id], li=document.createElement("li"); setC(li,ex.cat);
+    const mini=document.createElement("div"); mini.className="mini"; const fg=new Figure(ex,{animate:false}); mini.appendChild(fg.svg); plFigs.push(fg);
+    li.appendChild(mini);
+    const nm=document.createElement("div"); nm.className="nm"; nm.innerHTML=`${ex.name}<small>${catOf(ex.cat).name}</small>`; li.appendChild(nm);
+    const up=document.createElement("button"); up.className="icon-btn sl"; up.innerHTML=IC.up; up.setAttribute("aria-label","Move "+ex.name+" up"); up.disabled=i===0;
+    up.onclick=()=>{[playlist[i-1],playlist[i]]=[playlist[i],playlist[i-1]];savePlaylist()};
+    const rm=document.createElement("button"); rm.className="icon-btn sl"; rm.innerHTML=IC.x; rm.setAttribute("aria-label","Remove "+ex.name);
+    rm.onclick=()=>{playlist.splice(i,1);savePlaylist()};
+    li.appendChild(up); li.appendChild(rm); ul.appendChild(li);
+  });
+  const q=$("quick"); q.innerHTML="";
+  CATS.forEach(c=>{
+    const b=document.createElement("button"); b.className="chip sl"; setC(b,c.id);
+    b.innerHTML=`<span class="dot"></span>All ${c.name}`; b.onclick=()=>useCategory(c.id); q.appendChild(b);
+  });
+  WORKOUTS.forEach(w=>{
+    const b=document.createElement("button"); b.className="chip sl"; b.innerHTML=`<span class="ms">${w.icon}</span>${w.name}`;
+    b.onclick=()=>{ playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist(); };
+    q.appendChild(b);
+  });
+  if(playlist.length){const cl=document.createElement("button");cl.className="chip sl";cl.textContent="Clear";cl.onclick=()=>{playlist=[];savePlaylist()};q.appendChild(cl)}
+}
+
+/* ---------- Audio ---------- */
+let actx=null;
+function audio(){ try{ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); }catch(e){} return actx; }
+function beep(freq,len,when=0,vol=.25,type="sine"){
+  if(!soundOn) return; const a=audio(); if(!a) return;
+  const t=a.currentTime+when, o=a.createOscillator(), g=a.createGain();
+  o.type=type; o.frequency.value=freq; o.connect(g); g.connect(a.destination);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.001,t+len);
+  o.start(t); o.stop(t+len+.05);
+}
+const SFX = {
+  tick:()=>beep(880,.12,0,.22),
+  work:()=>{beep(1320,.14,0,.3,"square");beep(1320,.3,.18,.3,"square")},
+  rest:()=>beep(520,.5,0,.3),
+  done:()=>{beep(660,.2,0,.3);beep(880,.2,.2,.3);beep(1320,.5,.4,.3)}
+};
+/* Voice coach: prefer the most natural-sounding voice the device offers. */
+let voiceName = store.get("voiceName","");
+function voiceScore(v){
+  const n=(v.name+" "+(v.voiceURI||"")).toLowerCase(); let s=0;
+  if(/natural|neural|premium|enhanced|wavenet|studio|journey/.test(n)) s+=20;
+  if(/siri/.test(n)) s+=15;
+  if(/(ava|zoe|evan|nathan|samantha|allison|susan|serena|daniel|karen|moira|aria|jenny|guy|sonia|libby|ryan|emma|brian|andrew)/.test(n)) s+=6;
+  if(/google/.test(n)) s+=5;
+  if(!v.localService) s+=3;
+  if(/compact|espeak|robot|whisper|zarvox|trinoids|albert|bad news|bells|boing|bubbles|cellos|jester|organ|superstar|wobble|fred|junior|ralph|kathy|grandma|grandpa|rocko|shelley|flo|eddy|reed|sandy/.test(n)) s-=30;
+  if(/^en[-_](us|gb|au|ie|ca|nz)/i.test(v.lang)) s+=4;
+  return s;
+}
+function voiceList(){
+  if(!("speechSynthesis" in window)) return [];
+  let vs=speechSynthesis.getVoices()||[];
+  const lang=(navigator.language||"en").slice(0,2).toLowerCase();
+  let mine=vs.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
+  if(lang!=="en") mine=mine.concat(vs.filter(v=>(v.lang||"").toLowerCase().startsWith("en")));
+  if(!mine.length) mine=vs;
+  return mine.slice().sort((a,b)=>voiceScore(b)-voiceScore(a));
+}
+function pickVoice(){ if(!voiceName) return null; return voiceList().find(v=>v.name===voiceName)||null; }
+function renderVoices(){
+  const sel=$("voice-sel"); if(!sel) return;
+  const vs=voiceList(), cur=pickVoice();
+  sel.innerHTML = '<option value="">Device default</option>';
+  if(!cur) sel.firstChild.selected=true;
+  vs.forEach((v,i)=>{ const o=document.createElement("option"); o.value=v.name; o.textContent=v.name.replace(/^Microsoft |^Google /,"")+` · ${v.lang}`; if(cur&&v.name===cur.name) o.selected=true; sel.appendChild(o); });
+}
+if("speechSynthesis" in window){ try{ speechSynthesis.addEventListener("voiceschanged",renderVoices); }catch(e){} }
+function speak(text,force){
+  if((!voiceOn&&!force)||!("speechSynthesis" in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text), v=pickVoice();
+    if(v){ u.voice=v; u.lang=v.lang; }
+    u.rate=1; u.pitch=1; u.volume=1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function buzz(p){ try{ navigator.vibrate&&navigator.vibrate(p) }catch(e){} }
+
+/* ---------- Timer ---------- */
+const T = {schedule:[],idx:0,phaseStart:0,elapsed:0,running:false,paused:false,lastSec:null,wake:null};
+function buildSchedule(){
+  const s=[], list=freeMode?[null]:(playlist.length?playlist:[EX[0].id]); let k=0;
+  if(cfg.prep>0) s.push({type:"prep",dur:cfg.prep,ex:list[0]});
+  for(let set=1;set<=cfg.sets;set++){
+    const sc=setCfg(set);
+    for(let r=1;r<=sc.rounds;r++){
+      const ex=list[k%list.length]; k++;
+      s.push({type:"work",dur:sc.work,ex,round:r,set,rounds:sc.rounds});
+      const last=r===sc.rounds;
+      if(!(last && set===cfg.sets) && sc.rest>0) s.push({type:"rest",dur:sc.rest,ex:list[k%list.length],round:r,set,rounds:sc.rounds});
+      if(last && set<cfg.sets && cfg.setRest>0) s.push({type:"setrest",dur:cfg.setRest,ex:list[k%list.length],round:r,set,rounds:sc.rounds});
+    }
+  }
+  return s;
+}
+function totalSeconds(){ return buildSchedule().reduce((a,b)=>a+b.dur,0); }
+function fmt(sec){ sec=Math.max(0,Math.ceil(sec)); const m=Math.floor(sec/60), s=sec%60; return m+":"+String(s).padStart(2,"0"); }
+const PHASE_ICO={idle:"timer",prep:"hourglass_top",work:"local_fire_department",rest:"self_improvement",setrest:"coffee",done:"emoji_events",paused:"pause"};
+const setPhaseIco=k=>{$("phase-ico").textContent=PHASE_ICO[k]||"timer"};
+const PHASE_LABEL={prep:"Get ready",work:"Work",rest:"Rest",setrest:"Set break",done:"Done",idle:"Ready"};
+const stageFig = new Figure(byId[playlist[0]]||EX[0]);
+$("stage-fig").appendChild(stageFig.svg);
+const RING=289.03;
+
+function renderDots(cur){
+  const el=$("dots"); el.innerHTML="";
+  const n=(cur&&cur.rounds)||setCfg(1).rounds;
+  for(let r=1;r<=n;r++){ const i=document.createElement("i"); if(cur&&r<cur.round) i.className="on"; if(cur&&r===cur.round) i.className=cur.type==="work"?"cur":"on"; el.appendChild(i); }
+}
+function idleStage(){
+  const list=playlist.length?playlist:[EX[0].id];
+  $("stage").dataset.phase="idle"; $("phase").textContent="Ready"; setPhaseIco("idle");
+  $("digits").textContent=fmt(totalSeconds()); $("digits").classList.remove("blink");
+  stageFig.setEx(byId[list[0]]); stageFig.speed=1; $("ring-ico-s").textContent="timer";
+  $("exname").textContent=freeMode?"Timer only":(playlist.length?byId[list[0]].name:"Add moves to start");
+  $("next").textContent = (cfg.perSet&&cfg.sets>1)
+    ? Array.from({length:cfg.sets},(_,i)=>{const p=setCfg(i+1);return `Set ${i+1}: ${p.work}s / ${p.rest}s × ${p.rounds}`}).join(" · ")
+    : `${cfg.rounds} rounds of ${cfg.work}s work + ${cfg.rest}s rest${cfg.lock?` (${fmt(cfg.roundLen)} each)`:""}${cfg.sets>1?` · ${cfg.sets} sets`:""}`;
+  $("c-round").textContent=`Round 0/${setCfg(1).rounds}`; $("c-set").textContent=`Set 1/${cfg.sets}`;
+  $("ring").setAttribute("stroke-dashoffset",RING);
+  renderDots(null); setPlayIcon(false); $("setup").hidden=false;
+}
+function setPlayIcon(playing){ $("ico-play").toggleAttribute("hidden",playing); $("ico-pause").toggleAttribute("hidden",!playing); $("btn-play").setAttribute("aria-label",playing?"Pause":(T.paused?"Resume":"Start")); }
+function enterPhase(i){
+  T.idx=i; T.lastSec=null;
+  const ph=T.schedule[i];
+  if(!ph){ finish(); return; }
+  $("stage").dataset.phase=ph.type; $("phase").textContent=PHASE_LABEL[ph.type]; setPhaseIco(ph.type);
+  $("c-round").textContent=`Round ${ph.round||0}/${ph.rounds||setCfg(1).rounds}`; $("c-set").textContent=`Set ${ph.set||1}/${cfg.sets}`;
+  renderDots(ph);
+  const nxt = T.schedule[i+1];
+  if(freeMode){
+    $("ring-ico-s").textContent=PHASE_ICO[ph.type]||"timer";
+    const rn = ph.type==="prep" ? 1 : (ph.type==="work" ? ph.round : ph.round+1);
+    $("exname").textContent = ph.type==="work" ? `Round ${ph.round} of ${ph.rounds}` : ph.type==="prep" ? "Starting soon" : ph.type==="setrest" ? `Set ${ph.set} done` : "Breathe";
+    $("next").textContent = nxt ? `Next: ${PHASE_LABEL[nxt.type].toLowerCase()} ${nxt.dur}s` : "Last interval. Give it everything.";
+    if(ph.type==="work"){ SFX.work(); buzz([120,60,120]); speak(ph.round===ph.rounds&&ph.set===cfg.sets?"Last round. Go!":"Go!"); }
+    else if(ph.type==="rest"){ SFX.rest(); buzz(250); speak("Rest."); }
+    else if(ph.type==="setrest"){ SFX.rest(); buzz(250); speak("Set done. Take a break."); }
+    else if(ph.type==="prep"){ speak("Get ready."); }
+    return;
+  }
+  const ex=byId[ph.ex];
+  stageFig.setEx(ex); stageFig.speed = ph.type==="work"?1:0.6;
+  $("exname").textContent = (ph.type==="work"?"":"Next: ")+ex.name;
+  const nxtW = T.schedule.slice(i+1).find(p=>p.type==="work");
+  $("next").textContent = ph.type==="work" ? (nxtW?`Then: ${byId[nxtW.ex].name}`:"Last interval. Give it everything.") : ex.cue;
+  if(ph.type==="work"){ SFX.work(); buzz([120,60,120]); speak(`${ex.name}. Go!`); }
+  else if(ph.type==="rest"){ SFX.rest(); buzz(250); speak(`Rest. Next up, ${ex.name}.`); }
+  else if(ph.type==="setrest"){ SFX.rest(); buzz(250); speak("Set done. Take a break."); }
+  else if(ph.type==="prep"){ speak(`Get ready. First up, ${ex.name}.`); }
+}
+function finish(){
+  T.running=false; T.paused=false; releaseWake();
+  $("stage").dataset.phase="done"; $("phase").textContent="Done"; setPhaseIco("done");
+  $("digits").textContent="0:00"; $("digits").classList.remove("blink");
+  $("exname").textContent="Workout complete"; $("ring-ico-s").textContent="emoji_events"; $("next").textContent=`${fmt(totalSeconds())} of work and rest. Nice job.`;
+  $("ring").setAttribute("stroke-dashoffset",0); renderDots({round:999,rounds:setCfg(cfg.sets).rounds});
+  setPlayIcon(false); $("btn-play").setAttribute("aria-label","Start again"); $("setup").hidden=false;
+  SFX.done(); buzz([200,100,200,100,400]); speak("Workout done. Great job!");
+  T.done=true;
+}
+function tick(){
+  if(!T.running) return;
+  const ph=T.schedule[T.idx]; if(!ph) return;
+  const now=performance.now();
+  let el=(now-T.phaseStart)/1000;
+  if(el>=ph.dur){ T.phaseStart+=ph.dur*1000; enterPhase(T.idx+1); if(T.running) tick(); return; }
+  const rem=ph.dur-el, sec=Math.ceil(rem);
+  $("digits").textContent=fmt(rem);
+  $("digits").classList.toggle("blink", sec<=3);
+  $("ring").setAttribute("stroke-dashoffset",(RING*(el/ph.dur)).toFixed(2));
+  if(sec!==T.lastSec){ if(sec<=3&&sec>0&&T.lastSec!==null) SFX.tick(); T.lastSec=sec; }
+}
+setInterval(tick,100);
+(function raf(){ tick(); requestAnimationFrame(raf); })();
+
+async function requestWake(){ try{ if("wakeLock" in navigator) T.wake=await navigator.wakeLock.request("screen"); }catch(e){} }
+function releaseWake(){ try{ T.wake&&T.wake.release(); }catch(e){} T.wake=null; }
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&T.running) requestWake(); });
+
+function start(){
+  audio();
+  if(T.paused){ T.paused=false; T.running=true; T.phaseStart=performance.now()-T.elapsed*1000; stageFig.t0=performance.now(); setPlayIcon(true); requestWake(); return; }
+  if(!freeMode && !playlist.length){ showView("timer"); $("plist").scrollIntoView({behavior:"smooth",block:"center"}); return; }
+  T.schedule=buildSchedule(); T.done=false; T.running=true; T.paused=false;
+  T.phaseStart=performance.now(); $("setup").hidden=true;
+  setPlayIcon(true); requestWake();
+  enterPhase(0); tick();
+  if(window.innerWidth<900) $("stage").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function pause(){
+  if(!T.running) return;
+  T.elapsed=(performance.now()-T.phaseStart)/1000; T.running=false; T.paused=true;
+  setPlayIcon(false); $("phase").textContent="Paused"; setPhaseIco("paused"); releaseWake();
+  try{speechSynthesis.cancel()}catch(e){}
+}
+function reset(){ T.running=false; T.paused=false; T.done=false; releaseWake(); try{speechSynthesis.cancel()}catch(e){} idleStage(); }
+$("btn-play").onclick=()=>{ if(T.running) pause(); else start(); };
+$("btn-reset").onclick=reset;
+$("btn-skip").onclick=()=>{
+  if(!T.running&&!T.paused) return;
+  const wasPaused=T.paused; T.phaseStart=performance.now(); T.elapsed=0; enterPhase(T.idx+1);
+  if(wasPaused&&T.schedule[T.idx]){ $("phase").textContent="Paused"; setPhaseIco("paused"); const ph=T.schedule[T.idx]; $("digits").textContent=fmt(ph.dur); $("ring").setAttribute("stroke-dashoffset",0); }
+};
+function syncToggles(){ $("t-sound").setAttribute("aria-checked",soundOn); $("t-voice").setAttribute("aria-checked",voiceOn); }
+$("t-sound").onclick=()=>{soundOn=!soundOn;store.set("sound",soundOn);syncToggles();if(soundOn){audio();SFX.tick()}};
+$("voice-sel").onchange=e=>{ voiceName=e.target.value; store.set("voiceName",voiceName); speak("Squats. Go!",true); };
+$("voice-test").onclick=()=>{ audio(); speak("Squats. Go!",true); };
+$("t-lock").onclick=()=>{ cfg.lock=!cfg.lock; if(cfg.lock){ cfg.roundLen=cfg.work+cfg.rest; cfg.plan.forEach(p=>{p.rest=Math.min(p.rest,cfg.roundLen-5);p.work=cfg.roundLen-p.rest}); } saveCfg(); renderFields(); };
+$("t-perset").onclick=()=>{cfg.perSet=!(cfg.perSet&&cfg.sets>1); if(cfg.perSet){cfg.plan=[];syncPlan();} saveCfg(); renderFields();};
+$("t-voice").onclick=()=>{voiceOn=!voiceOn;store.set("voice",voiceOn);syncToggles();if(!voiceOn)try{speechSynthesis.cancel()}catch(e){}};
+document.addEventListener("keydown",e=>{
+  if($("view-timer").hidden||e.target.tagName==="INPUT") return;
+  if(e.code==="Space"){ e.preventDefault(); $("btn-play").click(); }
+});
+
+/* Timer only: plain interval timer with no exercises attached. */
+let freeMode = store.get("freeMode", false);
+function syncMode(){
+  document.querySelectorAll(".mode-seg button").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.mode==="free")===freeMode));
+  $("wo-section").hidden=freeMode; $("stage-fig").hidden=freeMode; $("ring-ico").hidden=!freeMode;
+  $("total").previousElementSibling.lastChild.textContent = freeMode ? "Total time" : "Total workout";
+  if(!T.running&&!T.paused) idleStage();
+}
+document.querySelectorAll(".mode-seg button").forEach(b=>b.onclick=()=>{ freeMode=b.dataset.mode==="free"; store.set("freeMode",freeMode); syncMode(); });
+function syncStyle(){
+  document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.style===figStyle));
+  for(const fg of figures) if(fg.ex) fg.draw(fg.animate&&!reduceMotion?(performance.now()-fg.t0)/1000*fg.speed:fg.restT());
+}
+document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
+/* ---------- Boot ---------- */
+addEventListener("scroll",()=>{$("appbar").classList.toggle("scrolled",scrollY>4)},{passive:true});
+renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles();
+$("total").textContent=fmt(totalSeconds()); idleStage();
+showView(store.get("view","lib"));
+})();
+</script>
+</body>
+</html>
