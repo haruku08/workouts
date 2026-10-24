@@ -8,7 +8,7 @@ A workout app with a built-in interval timer. It's a single `index.html` file wi
 - **My workouts:** pick moves in the Catalog, save them as your own workout, and star up to four to pin them on Home.
 - **Log:** every workout you finish (or stop after at least a minute of work) is saved on the device, with weekly totals and a day streak.
 - **Exercises:** 34 moves in four groups (Calisthenics, Strength, Stretch, Yoga). Each one has an animated figure that shows the movement, in a cartoon, realistic or stick-figure style, plus steps and a tip.
-- **Workouts:** ready-made Upper Body, Core, Legs and Full Body sessions, plus a Stretch Routine (40s holds, both sides).
+- **Workouts:** ready-made Upper Body, Core, Legs and Full Body sessions, plus a Morning Routine of stretches (40s holds, both sides).
 - **Timer:**
   - Use **Timer only** for your own workouts, or **With exercises** to follow the moves.
   - Set your own work, rest, rounds, sets and set break, or keep every round a fixed length (for example 45/15 = 1 minute).
