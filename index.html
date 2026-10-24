@@ -603,6 +603,23 @@ const EX = [
  {id:"butterfly",cat:"stretch",name:"Butterfly",dur:1.8,level:"Easy",focus:"Inner thighs, hips",
   frames:[SIT,P(SIT,{lk:[31,88],rk:[69,88]})],
   steps:["Sit with the soles of your feet together.","Hold your feet and sit up tall.","Gently flutter your knees, or hold them low."],cue:"Lengthen your spine before you lean forward."},
+ {id:"hipflexor",cat:"stretch",name:"Hip Flexor Stretch",dur:6,level:"Easy",focus:"Hip flexors, quads",
+  frames:[{h:[48,36],n:[47,45],p:[45,71],le:[53,57],lh:[61,66],re:[52,58],rh:[60,67],lk:[64,72],lf:[65,94],rk:[33,92],rf:[17,94]},
+          {h:[52,33],n:[51,42],p:[50,73],le:[53,30],lh:[54,19],re:[52,30],rh:[53,19],lk:[66,72],lf:[65,94],rk:[34,92],rf:[18,94]}],
+  steps:["Kneel on one knee with the other foot flat in front of you.","Tuck your pelvis and gently push your hips forward.","Reach your arms up for a deeper stretch. Switch sides each round."],cue:"Keep your front knee over your ankle, not past your toes."},
+ {id:"chestopen",cat:"stretch",name:"Doorway Chest Opener",dur:6,level:"Easy",focus:"Chest, front of shoulders",
+  props:[["line",{x1:36,y1:4,x2:36,y2:96,"stroke-width":3}]],
+  frames:[{h:[52,17],n:[50,27],p:[49,55],le:[39,28],lh:[39,15],re:[40,29],rh:[40,16],lk:[56,75],lf:[60,94],rk:[45,75],rf:[42,94]},
+          {h:[58,19],n:[55,28],p:[51,55],le:[40,29],lh:[40,16],re:[41,30],rh:[41,17],lk:[59,75],lf:[61,94],rk:[46,75],rf:[42,94]}],
+  steps:["Stand in a doorway with your forearms on the frame, elbows at shoulder height.","Step one foot forward and lean gently through the door.","Hold and breathe, keeping your shoulders down."],cue:"No doorway? Use a wall corner, one arm at a time."},
+ {id:"frog",cat:"stretch",name:"Frog Stretch",dur:6,level:"Medium",focus:"Inner thighs, hips, groin",
+  frames:[{h:[75,80],n:[67,80],p:[45,74],c:[56,76],le:[65,92],lh:[78,93],re:[64,92],rh:[77,93],lk:[44,93],lf:[38,94],rk:[45,93],rf:[39,94]},
+          {h:[71,83],n:[63,82],p:[37,77],c:[50,79],le:[63,92],lh:[76,93],re:[62,92],rh:[75,93],lk:[44,93],lf:[38,94],rk:[45,93],rf:[39,94]}],
+  steps:["Start on your forearms and knees.","Slide your knees wide apart, ankles in line with your knees.","Slowly rock your hips back and hold where you feel the stretch."],cue:"Go easy. Pad your knees with a towel."},
+ {id:"twist",cat:"stretch",name:"Spinal Twist",dur:6,level:"Easy",focus:"Spine, lower back, glutes",
+  frames:[{h:[43,55],n:[42,64],p:[40,90],le:[50,74],lh:[57,77],re:[49,75],rh:[56,79],lk:[55,73],lf:[57,92],rk:[58,91],rf:[77,92]},
+          {h:[40,55],n:[41,64],p:[40,90],le:[52,71],lh:[60,67],re:[33,76],rh:[25,90],lk:[55,73],lf:[57,92],rk:[58,91],rf:[77,92]}],
+  steps:["Sit tall with one leg straight and the other knee bent, foot outside the straight leg.","Hug the bent knee with the opposite arm and place your other hand behind you.","Twist toward the bent knee as you breathe out. Switch sides each round."],cue:"Grow tall on every breath in, twist a little more on every breath out."},
  // Yoga
  {id:"downdog",cat:"yoga",name:"Plank to Down Dog",dur:6,level:"Medium",focus:"Shoulders, hamstrings, calves",
   frames:[YPLANK,{h:[61,85],n:[56,77],p:[36,58],le:[65,85],lh:[74,93],re:[64,85],rh:[73,93],lk:[26,76],lf:[16,93],rk:[25,76],rf:[15,93]},{h:[61,86],n:[56,78],p:[36,57],le:[65,86],lh:[74,93],re:[64,86],rh:[73,93],lk:[26,75],lf:[16,93],rk:[25,75],rf:[15,93]}],
@@ -1012,9 +1029,11 @@ const WORKOUTS = [
   {id:"upper",name:"Upper Body",icon:"sports_mma",c:"str",blurb:"Chest, shoulders, arms and back",moves:["pushup","dips","pike","pullup","boxing","superman"]},
   {id:"core",name:"Core",icon:"radio_button_checked",c:"yoga",blurb:"Abs, obliques and lower back",moves:["plank","crunch","climbers","superman","bridge","highknees"]},
   {id:"legs",name:"Legs",icon:"directions_walk",c:"stretch",blurb:"Quads, glutes, hamstrings and calves",moves:["squat","lunge","squatjump","skaters","bridge","chair"]},
-  {id:"full",name:"Full Body",icon:"bolt",c:"kin",blurb:"A bit of everything, high energy",moves:["burpee","squat","pushup","climbers","lunge","jacks"]}
+  {id:"full",name:"Full Body",icon:"bolt",c:"kin",blurb:"A bit of everything, high energy",moves:["burpee","squat","pushup","climbers","lunge","jacks"]},
+  {id:"stretchr",name:"Stretch Routine",icon:"self_improvement",c:"stretch",blurb:"40s holds with 20s to switch. Two rounds each, both sides",
+   moves:["catcow","catcow","hipflexor","hipflexor","hipflexor","hipflexor","chestopen","chestopen","frog","frog","twist","twist"],cfg:{work:40,rest:20,sets:1}}
 ];
-const woCfg = w => ({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60});
+const woCfg = w => Object.assign({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60},w.cfg||{});
 function useWorkout(w){
   playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer");
@@ -1024,12 +1043,12 @@ function renderWorkouts(){
   woFigs.forEach(f=>f.destroy()); woFigs=[];
   const el=$("workouts"); el.innerHTML="";
   WORKOUTS.forEach(w=>{
-    const c=woCfg(w), mins=Math.round((c.prep+c.sets*c.rounds*60-c.rest+c.setRest)/60);
+    const c=woCfg(w), uniq=[...new Set(w.moves)], mins=Math.round((c.prep+c.sets*c.rounds*(c.work+c.rest)-c.rest+(c.sets-1)*c.setRest)/60);
     const card=document.createElement("article"); card.className="wo"; setC(card,w.c);
-    card.innerHTML=`<div class="wo-head"><span class="ms fill">${w.icon}</span><div><h4>${w.name}</h4><p>${w.blurb}</p></div></div><div class="wo-figs"></div><div class="wo-foot"><span>${w.moves.length} moves · 2 sets · ${mins} min</span><button class="btn btn-filled with-icon sl"><span class="ms fill">play_arrow</span>Start</button></div>`;
+    card.innerHTML=`<div class="wo-head"><span class="ms fill">${w.icon}</span><div><h4>${w.name}</h4><p>${w.blurb}</p></div></div><div class="wo-figs"></div><div class="wo-foot"><span>${uniq.length} moves · ${c.sets>1?c.sets+" sets":c.rounds+" rounds"} · ${mins} min</span><button class="btn btn-filled with-icon sl"><span class="ms fill">play_arrow</span>Start</button></div>`;
     const figs=card.querySelector(".wo-figs");
-    w.moves.forEach(id=>{ const d=document.createElement("div"); d.className="wo-fig"; d.title=byId[id].name; const fg=new Figure(byId[id],{animate:false}); d.appendChild(fg.svg); woFigs.push(fg); figs.appendChild(d); });
-    const names=document.createElement("p"); names.className="wo-names"; names.textContent=w.moves.map(id=>byId[id].name).join(" · "); card.insertBefore(names,card.querySelector(".wo-foot"));
+    uniq.forEach(id=>{ const d=document.createElement("div"); d.className="wo-fig"; d.title=byId[id].name; const fg=new Figure(byId[id],{animate:false}); d.appendChild(fg.svg); woFigs.push(fg); figs.appendChild(d); });
+    const names=document.createElement("p"); names.className="wo-names"; names.textContent=uniq.map(id=>byId[id].name).join(" · "); card.insertBefore(names,card.querySelector(".wo-foot"));
     card.querySelector("button").onclick=()=>useWorkout(w);
     el.appendChild(card);
   });
@@ -1513,7 +1532,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.6.1";
+const APP_VERSION = "1.7.0";
 let snackTimer=null, newVersion=null;
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;
