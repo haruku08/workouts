@@ -17,27 +17,27 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,0..1,0&display=block">
 <style>
 /* Layout: Material 3. Small top app bar, navigation bar at the bottom (rail on wide screens), extended FAB to start the workout.
    Color roles follow an M3 tonal scheme from a coral seed; category colors are harmonized custom colors. */
 :root{
-  --primary:#002244; --on-primary:#FFFFFF; --primary-container:#69BE28; --on-primary-container:#002244;
-  --secondary:#3E5A78; --secondary-container:#D4E4F7; --on-secondary-container:#001D36;
+  --primary:#1F63B5; --on-primary:#FFFFFF; --primary-container:#DDF4CB; --on-primary-container:#23520A;
+  --secondary:#46648A; --secondary-container:#DDEBFB; --on-secondary-container:#0D2F57;
   --tertiary:#C8102E; --on-tertiary:#FFFFFF; --tertiary-container:#FFDADA; --on-tertiary-container:#410008;
-  --surface:#F7F9FC; --on-surface:#0E1A26; --on-surface-variant:#44505E; --outline:#74808E; --outline-variant:#C3CBD5;
+  --surface:#F8FAFD; --on-surface:#0E1A26; --on-surface-variant:#44505E; --outline:#74808E; --outline-variant:#C3CBD5;
   --sc-lowest:#FFFFFF; --sc-low:#F0F4F8; --sc:#EAEFF4; --sc-high:#E4E9EF; --sc-highest:#DDE3EA;
   --inverse-surface:#26313D; --inverse-on-surface:#EDF1F6; --scrim:rgb(0 0 0 / .32);
   --kin:#3B7D12; --kin-c:#D6F2BF; --str:#1F4E8C; --str-c:#D4E4F7; --stretch:#4D6B78; --stretch-c:#DCE6EB; --yoga:#B3263A; --yoga-c:#FBE4E6;
   --work:#3B7D12; --rest:#1F4E8C; --prep:#5A6570; --setrest:#002244; --alert:#C8102E;
   --fig:#0E1A26; --fig-far:#8A96A3;
-  --font:"Roboto Flex","Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --e1:0 1px 2px rgb(0 0 0 / .3),0 1px 3px 1px rgb(0 0 0 / .15);
   --e3:0 1px 3px rgb(0 0 0 / .3),0 4px 8px 3px rgb(0 0 0 / .15);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --primary:#69BE28; --on-primary:#002244; --primary-container:#69BE28; --on-primary-container:#002244;
+  --primary:#8ED65A; --on-primary:#10300A; --primary-container:#2E5A16; --on-primary-container:#D5F3BE;
   --secondary:#A9C7EA; --secondary-container:#1E3A5C; --on-secondary-container:#D4E4F7;
   --tertiary:#FF8A8F; --on-tertiary:#410008; --tertiary-container:#6B0F1C; --on-tertiary-container:#FFDADA;
   --surface:#07131F; --on-surface:#E2E8F0; --on-surface-variant:#B4C0CD; --outline:#8692A0; --outline-variant:#34424F;
@@ -47,7 +47,7 @@
   --work:#8BD45A; --rest:#9DC2F2; --prep:#A5ACAF; --setrest:#9DC2F2; --alert:#FF6B72;
   --fig:#E2E8F0; --fig-far:#5E6B79; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --primary:#69BE28; --on-primary:#002244; --primary-container:#69BE28; --on-primary-container:#002244;
+  --primary:#8ED65A; --on-primary:#10300A; --primary-container:#2E5A16; --on-primary-container:#D5F3BE;
   --secondary:#A9C7EA; --secondary-container:#1E3A5C; --on-secondary-container:#D4E4F7;
   --tertiary:#FF8A8F; --on-tertiary:#410008; --tertiary-container:#6B0F1C; --on-tertiary-container:#FFDADA;
   --surface:#07131F; --on-surface:#E2E8F0; --on-surface-variant:#B4C0CD; --outline:#8692A0; --outline-variant:#34424F;
@@ -63,7 +63,7 @@ html,body{background:var(--surface)}
 body{color:var(--on-surface);font-family:var(--font);font-size:14px;line-height:20px;letter-spacing:.25px;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;cursor:pointer;letter-spacing:inherit}
 :focus-visible{outline:3px solid var(--secondary);outline-offset:2px}
-h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
 .ms{font-family:"Material Symbols Rounded";font-weight:500;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:"liga";font-feature-settings:"liga";-webkit-font-smoothing:antialiased;font-variation-settings:"FILL" 0;overflow:hidden;width:1em;flex:none}
 .ms.fill{font-variation-settings:"FILL" 1}
 
@@ -78,7 +78,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .appbar.scrolled{background:var(--sc)}
 .appbar-in{height:64px;display:flex;align-items:center;gap:12px;max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .appbar .logo{width:40px;height:40px;border-radius:12px;background:var(--primary-container);color:var(--on-primary-container);display:grid;place-items:center}
-.appbar h1{font-size:22px;line-height:28px;font-weight:500}
+.appbar h1{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.01em}
 
 .wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
@@ -101,7 +101,7 @@ main .wrap{padding-block:8px 32px}
 
 /* Headline + chips */
 .intro{padding:8px 0 16px}
-.intro h2{font-size:clamp(28px,5vw,36px);line-height:1.2}
+.intro h2{font-size:clamp(28px,5vw,36px);line-height:1.2;font-weight:700;letter-spacing:-.02em}
 .intro p{margin:8px 0 0;color:var(--on-surface-variant);max-width:56ch;font-size:16px;line-height:24px;letter-spacing:.5px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
 .chip{height:32px;border:1px solid var(--outline-variant);background:transparent;border-radius:8px;padding:0 16px;font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px;color:var(--on-surface-variant)}
@@ -176,7 +176,7 @@ main .wrap{padding-block:8px 32px}
 .ring-bg{stroke:var(--pcc);transition:stroke .3s} .ring-fg{stroke:var(--pc);transition:stroke .3s}
 .ring-fig{position:absolute;inset:15%;border-radius:50%}
 .ring-fig svg{width:100%;height:100%;display:block}
-.digits{font-weight:400;font-size:clamp(80px,22vw,128px);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-variation-settings:"opsz" 144;margin-top:8px}
+.digits{font-weight:600;font-size:clamp(80px,22vw,128px);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-variation-settings:"opsz" 144;margin-top:8px}
 .digits.blink{color:var(--alert);font-weight:600}
 .exname{font-weight:500;font-size:22px;line-height:28px;text-align:center}
 .next{color:var(--on-surface-variant);font-size:14px;text-align:center;min-height:20px;max-width:40ch}
@@ -277,13 +277,13 @@ main .wrap{padding-block:8px 32px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 .home-grid{display:grid;gap:12px;grid-template-columns:1fr;margin-bottom:28px}
 @media (min-width:720px){.home-grid{grid-template-columns:1.2fr 1fr}}
-.qcard{background:var(--primary);color:var(--on-primary);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.qcard{background:linear-gradient(135deg,#3D8EE0,#1F63B5);color:#fff;border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px}
 .qcard h3,.ccard h3{margin:0;font-size:22px;line-height:28px;font-weight:500;display:flex;align-items:center;gap:10px}
 .qcard p{margin:0;opacity:.8;font-size:14px;line-height:20px}
 .qchips{display:flex;gap:8px;flex-wrap:wrap}
 .qchips button{height:36px;border-radius:10px;padding:0 14px;border:1px solid rgb(255 255 255 / .4);background:none;color:inherit;font:500 14px var(--font)}
-.qchips button[aria-pressed="true"]{background:var(--primary-container);border-color:var(--primary-container);color:#002244}
-.qgo{height:56px;border:0;border-radius:16px;background:var(--primary-container);color:#002244;font:600 18px var(--font);display:flex;align-items:center;justify-content:center;gap:10px}
+.qchips button[aria-pressed="true"]{background:#fff;border-color:#fff;color:#1F63B5}
+.qgo{height:56px;border:0;border-radius:16px;background:#C9F0A8;color:#1E4A08;font:600 18px var(--font);display:flex;align-items:center;justify-content:center;gap:10px}
 .qgo .ms{font-size:28px}
 .ccard{background:var(--sc-low);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .ccard .mv{margin:0;color:var(--on-surface-variant);font-size:14px;line-height:20px;overflow-wrap:anywhere}
@@ -1434,7 +1434,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.4.1";
 let snackTimer=null, newVersion=null;
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;

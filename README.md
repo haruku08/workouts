@@ -14,7 +14,7 @@ A workout app with a built-in interval timer. It's a single `index.html` file wi
   - Set your own work, rest, rounds, sets and set break, or keep every round a fixed length (for example 45/15 = 1 minute).
   - Each set can have its own timing.
   - Beeps, an optional spoken coach, vibration, and the screen stays on while the timer runs.
-- **Design:** Material 3 in navy and action green with white and red accents, light and dark mode.
+- **Design:** Material 3 in a lighter blue and fresh green with white and red accents, using the Plus Jakarta Sans font, light and dark mode.
 - **Updates:** tap the sync button in the top bar to get the latest version. The app also checks when you open it.
 
 Settings are saved in your browser.
