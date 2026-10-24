@@ -133,7 +133,7 @@ main .wrap{padding-block:8px 32px}
 /* Extended FAB */
 .fab-wrap{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:7}
 .efab{height:56px;border:0;border-radius:16px;padding:0 20px 0 16px;background:var(--primary-container);color:var(--on-primary-container);box-shadow:var(--e3);display:flex;align-items:center;gap:12px;font-weight:500;font-size:14px;letter-spacing:.1px}
-.efab .badge{min-width:24px;height:24px;border-radius:12px;background:var(--tertiary);color:var(--on-tertiary);font-size:12px;display:grid;place-items:center;padding:0 6px}
+.efab .badge{min-width:24px;height:24px;border-radius:12px;background:#002244;color:#FFFFFF;font-weight:600;font-size:12px;display:grid;place-items:center;padding:0 6px}
 @media (min-width:840px){.fab-wrap{bottom:24px;right:max(24px,env(safe-area-inset-right,0px))}}
 
 /* Bottom sheet / dialog */
@@ -1192,7 +1192,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.2.1";
 let snackTimer=null, newVersion=null;
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;
