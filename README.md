@@ -1,4 +1,4 @@
-# Pulse & Pose
+# Haruku Fit
 
 A workout app with a built-in interval timer. It's a single `index.html` file with no build step and no install. Open it in any browser on your phone or computer.
 
@@ -17,4 +17,6 @@ Settings are saved in your browser.
 
 ## Run it
 
-Open `index.html` in a browser. To use it on your phone from a link, turn on GitHub Pages for this repository (Settings → Pages → Deploy from branch → `main`).
+Live app: https://haruku08.github.io/workouts/
+
+Or open `index.html` in any browser.
