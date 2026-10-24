@@ -317,6 +317,10 @@ main .wrap{padding-block:8px 32px}
 .rt-list .icon-btn{width:36px;height:36px}
 .rt-list .icon-btn .ms{font-size:20px}
 .rt-list .icon-btn:disabled{opacity:.3}
+.plist li.drop{box-shadow:0 -3px 0 var(--primary)}
+.plist li.drop-end{box-shadow:0 3px 0 var(--primary)}
+.plist li.dragging{opacity:.35}
+.plist .grip{flex:none;width:28px;margin-right:-10px;height:40px;display:grid;place-items:center;color:var(--on-surface-variant);touch-action:none;cursor:grab}
 .rt-list li.drop{border-color:var(--primary);box-shadow:0 -3px 0 var(--primary)}
 .rt-list li.drop-end{box-shadow:0 3px 0 var(--primary)}
 .rt-list li.dragging{opacity:.35}
@@ -1230,6 +1234,25 @@ function renderPlan(){
 }
 function saveCfg(){ store.set("cfg",cfg); renderPresets(); $("total").textContent=fmt(totalSeconds()); if(!T.running&&!T.paused) idleStage(); }
 let plFigs=[];
+/* Simple drag-to-reorder for any list: drag the grip, drop between items. */
+function sortDrag(e,list,li,from,done){
+  const g=document.createElement("div"); g.className="ghost"; g.textContent=li.querySelector(".nm").firstChild.textContent; document.body.appendChild(g);
+  const items=[...list.children]; li.classList.add("dragging");
+  let at=from, y=e.clientY, raf;
+  const place=(cx,cy)=>{ g.style.left=cx+"px"; g.style.top=cy+"px"; y=cy; at=items.length;
+    for(let i=0;i<items.length;i++){ const b=items[i].getBoundingClientRect(); if(cy<b.top+b.height/2){ at=i; break; } }
+    items.forEach(x=>x.classList.remove("drop","drop-end"));
+    if(at<items.length) items[at].classList.add("drop"); else items[items.length-1].classList.add("drop-end"); };
+  const scroll=()=>{ const h=innerHeight, edge=80; if(y<edge) scrollBy(0,-Math.ceil((edge-y)/5)); else if(y>h-edge-90) scrollBy(0,Math.ceil((y-(h-edge-90))/5)); raf=requestAnimationFrame(scroll); };
+  const move=ev=>{ if(ev.pointerId!==e.pointerId) return; ev.preventDefault(); place(ev.clientX,ev.clientY); };
+  const end=(ev,ok)=>{ cancelAnimationFrame(raf); g.remove(); li.classList.remove("dragging"); items.forEach(x=>x.classList.remove("drop","drop-end"));
+    li.removeEventListener("pointermove",move); li.removeEventListener("pointerup",up); li.removeEventListener("pointercancel",cancel);
+    if(!ok) return; const to=at>from?at-1:at; if(to!==from) done(from,to); };
+  const up=ev=>end(ev,true), cancel=ev=>end(ev,false);
+  try{ li.setPointerCapture(e.pointerId); }catch(_){}
+  li.addEventListener("pointermove",move); li.addEventListener("pointerup",up); li.addEventListener("pointercancel",cancel);
+  place(e.clientX,e.clientY); raf=requestAnimationFrame(scroll);
+}
 function renderPlaylist(){
   plFigs.forEach(f=>f.destroy()); plFigs=[];
   const ul=$("plist"); ul.innerHTML="";
@@ -1239,11 +1262,11 @@ function renderPlaylist(){
     const mini=document.createElement("div"); mini.className="mini"; const fg=new Figure(ex,{animate:false}); mini.appendChild(fg.svg); plFigs.push(fg);
     li.appendChild(mini);
     const nm=document.createElement("div"); nm.className="nm"; nm.innerHTML=`${ex.name}<small>${catOf(ex.cat).name}</small>`; li.appendChild(nm);
-    const up=document.createElement("button"); up.className="icon-btn sl"; up.innerHTML=IC.up; up.setAttribute("aria-label","Move "+ex.name+" up"); up.disabled=i===0;
-    up.onclick=()=>{[playlist[i-1],playlist[i]]=[playlist[i],playlist[i-1]];savePlaylist()};
+    const up=document.createElement("span"); up.className="grip"; up.innerHTML='<span class="ms">drag_indicator</span>'; up.setAttribute("aria-label","Drag to reorder "+ex.name);
+    up.addEventListener("pointerdown",e=>{ e.preventDefault(); sortDrag(e,ul,li,i,(from,to)=>{ const [m]=playlist.splice(from,1); playlist.splice(to,0,m); savePlaylist(); }); });
     const rm=document.createElement("button"); rm.className="icon-btn sl"; rm.innerHTML=IC.x; rm.setAttribute("aria-label","Remove "+ex.name);
     rm.onclick=()=>{playlist.splice(i,1);savePlaylist()};
-    li.appendChild(up); li.appendChild(rm); ul.appendChild(li);
+    li.insertBefore(up,li.firstChild); li.appendChild(rm); ul.appendChild(li);
   });
   const q=$("quick"); q.innerHTML="";
   CATS.forEach(c=>{
@@ -1710,7 +1733,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.9.1";
+const APP_VERSION = "1.9.2";
 let snackTimer=null, newVersion=null;
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;
