@@ -297,9 +297,13 @@ main .wrap{padding-block:8px 32px}
 .mw .row .btn{margin-right:auto}
 .star[aria-pressed="true"] .ms{color:#E0A800;font-variation-settings:"FILL" 1}
 .fav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:28px}
-.fav{border:0;text-align:left;background:var(--kin-c);color:var(--on-surface);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:6px;min-height:112px;font:inherit}
+.fav{position:relative;cursor:pointer;border:0;text-align:left;background:var(--kin-c);color:var(--on-surface);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:6px;min-height:112px;font:inherit}
 .fav b{font-size:17px;line-height:22px;font-weight:600;overflow-wrap:anywhere}
 .fav span{font-size:12px;line-height:16px;color:var(--on-surface-variant)}
+.fav .unpin{position:absolute;top:6px;right:6px;width:36px;height:36px;border-radius:18px;border:0;background:none;display:grid;place-items:center;color:#B88600}
+.fav .unpin .ms{margin:0;width:auto;height:auto;background:none;color:inherit;font-size:22px;font-variation-settings:"FILL" 1}
+.fav b{padding-right:28px}
+.wo-hidden{margin:8px 0 0}
 .fav .ms{margin-top:auto;align-self:flex-end;width:40px;height:40px;border-radius:20px;display:grid;place-items:center;background:var(--primary);color:var(--on-primary);font-size:24px}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:16px}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
@@ -402,6 +406,7 @@ main .wrap{padding-block:8px 32px}
     <section class="wo-block">
       <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Workouts</h3><span class="sub">Ready to go: 1-minute rounds, 45s work and 15s rest</span></div>
       <div class="wo-grid" id="workouts"></div>
+      <button class="text-btn sl wo-hidden" id="wo-more" hidden></button>
     </section>
   </section>
 
@@ -1102,11 +1107,13 @@ function useWorkout(w){
   playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer");
 }
-let woFigs=[];
+let woFigs=[]; let hiddenWos=store.get("hiddenWos",[]); if(!Array.isArray(hiddenWos)) hiddenWos=[];
 function renderWorkouts(){
   woFigs.forEach(f=>f.destroy()); woFigs=[];
   const el=$("workouts"); el.innerHTML="";
-  WORKOUTS.forEach(w=>{
+  const hid=hiddenWos.filter(id=>WORKOUTS.some(w=>w.id===id));
+  const more=$("wo-more"); more.hidden=!hid.length; more.textContent=`Show ${hid.length} hidden workout${hid.length===1?"":"s"}`;
+  WORKOUTS.filter(w=>!hid.includes(w.id)).forEach(w=>{
     const c=woCfg(w), uniq=[...new Set(w.moves)], mins=Math.round((c.prep+c.sets*c.rounds*(c.work+c.rest)-c.rest+(c.sets-1)*c.setRest)/60);
     const card=document.createElement("article"); card.className="wo"; setC(card,w.c);
     card.innerHTML=`<div class="wo-head"><span class="ms fill">${w.icon}</span><div><h4>${w.name}</h4><p>${w.blurb}</p></div></div><div class="wo-figs"></div><div class="wo-foot"><span>${uniq.length} moves · ${c.sets>1?c.sets+" sets":c.rounds+" rounds"} · ${mins} min</span><button class="btn btn-filled with-icon sl"><span class="ms fill">play_arrow</span>Start</button></div>`;
@@ -1118,9 +1125,15 @@ function renderWorkouts(){
     cp.innerHTML=`<span class="ms">edit</span>`; cp.style.marginLeft="auto";
     cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w)},null);
     card.querySelector(".wo-foot").insertBefore(cp,card.querySelector(".wo-foot button"));
+    const hd=document.createElement("button"); hd.className="icon-btn sl"; hd.setAttribute("aria-label","Remove from Home"); hd.title="Remove from Home";
+    hd.innerHTML=`<span class="ms">close</span>`; hd.style.marginLeft="auto"; cp.style.marginLeft="0";
+    hd.onclick=()=>{ hiddenWos.push(w.id); store.set("hiddenWos",hiddenWos); renderWorkouts();
+      undoSnack(`Removed ${w.name} from Home.`,()=>{ hiddenWos=hiddenWos.filter(x=>x!==w.id); store.set("hiddenWos",hiddenWos); renderWorkouts(); }); };
+    card.querySelector(".wo-foot").insertBefore(hd,cp);
     el.appendChild(card);
   });
 }
+$("wo-more").onclick=()=>{ hiddenWos=[]; store.set("hiddenWos",hiddenWos); renderWorkouts(); };
 function useCategory(cat){
   playlist = EX.filter(e=>e.cat===cat).map(e=>e.id);
   applyPreset(catOf(cat).preset);
@@ -1670,10 +1683,14 @@ $("rt-save").onclick=()=>{
 function renderFavs(){
   const favs=myWos.filter(w=>w.fav).slice(0,MAX_FAV), el=$("favs"); el.innerHTML="";
   $("fav-hint").hidden=!!favs.length; el.hidden=!favs.length;
-  favs.forEach(w=>{ const b=document.createElement("button"); b.className="fav sl";
-    b.innerHTML=`<b></b><span></span><span class="ms fill" aria-hidden="true">play_arrow</span>`;
+  favs.forEach(w=>{ const b=document.createElement("div"); b.className="fav sl"; b.setAttribute("role","button"); b.tabIndex=0;
+    b.innerHTML=`<b></b><span></span><span class="ms fill" aria-hidden="true">play_arrow</span><button class="unpin" aria-label="Remove from Home" title="Remove from Home"><span class="ms">star</span></button>`;
     b.querySelector("b").textContent=w.name; b.querySelector("span").textContent=myMeta(w);
-    b.setAttribute("aria-label","Start "+w.name); b.onclick=()=>runMy(w,true); el.appendChild(b); });
+    b.setAttribute("aria-label","Start "+w.name); b.onclick=()=>runMy(w,true);
+    b.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); runMy(w,true); } };
+    b.querySelector(".unpin").onclick=e=>{ e.stopPropagation(); w.fav=false; saveMy(); renderFavs();
+      undoSnack(`Removed ${w.name} from Home.`,()=>{ w.fav=true; saveMy(); renderFavs(); }); };
+    el.appendChild(b); });
 }
 /* Home dashboard */
 const QUICK=["p4515","p4020","tabata","stretch"];
@@ -1733,8 +1750,9 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.9.2";
+const APP_VERSION = "1.9.3";
 let snackTimer=null, newVersion=null;
+function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;
   const a=$("snack-act"); a.hidden=!action; if(action){ a.textContent=action.label; a.onclick=action.run; }
