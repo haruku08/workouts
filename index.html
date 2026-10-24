@@ -630,6 +630,12 @@ const EX = [
   frames:[{h:[15,87],n:[24,89],p:[50,89],le:[34,92],lh:[44,93],re:[33,92],rh:[43,93],lk:[64,74],lf:[70,93],rk:[63,74],rf:[69,93]},
           {h:[15,87],n:[24,89],p:[50,73],le:[34,92],lh:[44,93],re:[33,92],rh:[43,93],lk:[66,70],lf:[70,93],rk:[65,70],rf:[69,93]}],
   steps:["Lie on your back with knees bent and feet flat.","Squeeze your glutes and lift your hips.","Pause at the top, then lower slowly."],cue:"Make a straight line from knees to shoulders."},
+ {id:"nordic",cat:"str",name:"Nordic Curls",dur:4.5,level:"Hard",focus:"Hamstrings, glutes",
+  props:[["rect",{x:5,y:84,width:15,height:5,rx:2.5,"stroke-width":2.5}]],
+  frames:[{h:[30,31],n:[29,40],p:[28,66],le:[35,50],lh:[33,44],re:[34,51],rh:[32,45],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]},
+          {h:[71,49],n:[65,55],p:[46,74],le:[68,64],lh:[73,72],re:[67,65],rh:[72,73],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]},
+          {h:[83,66],n:[75,70],p:[52,81],le:[77,81],lh:[80,93],re:[76,82],rh:[79,93],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]}],
+  steps:["Kneel on a mat and anchor your heels under a couch, bar or a partner's hands.","Keep a straight line from knees to head and lower forward as slowly as you can.","Catch yourself with your hands, then push off lightly and pull back up with your hamstrings."],cue:"Too hard? Lower only partway, or use a band around your chest."},
  {id:"plank",cat:"str",name:"Forearm Plank",dur:3.0,level:"Medium",focus:"Core, shoulders",
   frames:[{h:[79,74],n:[70,79],p:[42,85],le:[70,92],lh:[82,92],re:[69,92],rh:[81,92],lk:[29,89],lf:[16,92],rk:[29,89],rf:[16,92]},
           {h:[79,73],n:[70,78],p:[42,83],le:[70,92],lh:[82,92],re:[69,92],rh:[81,92],lk:[29,88],lf:[16,92],rk:[29,88],rf:[16,92]}],
@@ -1084,7 +1090,7 @@ const WORKOUTS = [
    moves:["catcow","catcow","hipflexor","hipflexor","hipflexor","hipflexor","chestopen","chestopen","frog","frog","twist","twist"],cfg:{work:40,rest:20,sets:1}},
   {id:"upper",name:"Upper Body",icon:"sports_mma",c:"str",blurb:"Chest, shoulders, arms and back",moves:["pushup","dips","pike","pullup","boxing","superman"]},
   {id:"core",name:"Core",icon:"radio_button_checked",c:"yoga",blurb:"Abs, obliques and lower back",moves:["plank","crunch","climbers","superman","bridge","highknees"]},
-  {id:"legs",name:"Legs",icon:"directions_walk",c:"stretch",blurb:"Quads, glutes, hamstrings and calves",moves:["squat","lunge","squatjump","skaters","bridge","chair"]},
+  {id:"legs",name:"Legs",icon:"directions_walk",c:"stretch",blurb:"Quads, glutes, hamstrings and calves",moves:["squat","lunge","nordic","squatjump","skaters","bridge","chair"]},
   {id:"full",name:"Full Body",icon:"bolt",c:"kin",blurb:"A bit of everything, high energy",moves:["burpee","squat","pushup","climbers","lunge","jacks"]}
 ];
 const woCfg = w => Object.assign({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60},w.cfg||{});
@@ -1704,7 +1710,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.9.0";
+const APP_VERSION = "1.9.1";
 let snackTimer=null, newVersion=null;
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;
