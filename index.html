@@ -12,8 +12,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Haruku Fit">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#FFF8F6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1A110F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F7F9FC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#07131F" media="(prefers-color-scheme: dark)">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,37 +23,39 @@
 /* Layout: Material 3. Small top app bar, navigation bar at the bottom (rail on wide screens), extended FAB to start the workout.
    Color roles follow an M3 tonal scheme from a coral seed; category colors are harmonized custom colors. */
 :root{
-  --primary:#A43D17; --on-primary:#FFFFFF; --primary-container:#FFDBD0; --on-primary-container:#3A0A00;
-  --secondary:#77574C; --secondary-container:#FFDBD0; --on-secondary-container:#2C160E;
-  --tertiary:#6B5E2F; --tertiary-container:#F4E2A7; --on-tertiary-container:#221B00;
-  --surface:#FFF8F6; --on-surface:#231917; --on-surface-variant:#53433F; --outline:#85736E; --outline-variant:#D8C2BC;
-  --sc-lowest:#FFFFFF; --sc-low:#FFF1ED; --sc:#FCEAE5; --sc-high:#F7E4DF; --sc-highest:#F1DFDA;
-  --inverse-surface:#392E2B; --inverse-on-surface:#FFEDE8; --scrim:rgb(0 0 0 / .32);
-  --kin:#A43D17; --kin-c:#FFDBD0; --str:#3F5AA9; --str-c:#DBE1FF; --stretch:#006A60; --stretch-c:#9EF2E4; --yoga:#8B4789; --yoga-c:#FFD7F5;
-  --work:var(--primary); --rest:var(--stretch); --prep:#7A5900; --setrest:var(--str);
-  --fig:#231917; --fig-far:#A8948E;
+  --primary:#002244; --on-primary:#FFFFFF; --primary-container:#69BE28; --on-primary-container:#002244;
+  --secondary:#3E5A78; --secondary-container:#D4E4F7; --on-secondary-container:#001D36;
+  --tertiary:#C8102E; --on-tertiary:#FFFFFF; --tertiary-container:#FFDADA; --on-tertiary-container:#410008;
+  --surface:#F7F9FC; --on-surface:#0E1A26; --on-surface-variant:#44505E; --outline:#74808E; --outline-variant:#C3CBD5;
+  --sc-lowest:#FFFFFF; --sc-low:#F0F4F8; --sc:#EAEFF4; --sc-high:#E4E9EF; --sc-highest:#DDE3EA;
+  --inverse-surface:#26313D; --inverse-on-surface:#EDF1F6; --scrim:rgb(0 0 0 / .32);
+  --kin:#3B7D12; --kin-c:#D6F2BF; --str:#1F4E8C; --str-c:#D4E4F7; --stretch:#4D6B78; --stretch-c:#DCE6EB; --yoga:#B3263A; --yoga-c:#FBE4E6;
+  --work:#3B7D12; --rest:#1F4E8C; --prep:#5A6570; --setrest:#002244; --alert:#C8102E;
+  --fig:#0E1A26; --fig-far:#8A96A3;
   --font:"Roboto Flex","Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
   --e1:0 1px 2px rgb(0 0 0 / .3),0 1px 3px 1px rgb(0 0 0 / .15);
   --e3:0 1px 3px rgb(0 0 0 / .3),0 4px 8px 3px rgb(0 0 0 / .15);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --primary:#FFB59E; --on-primary:#5E1700; --primary-container:#842A04; --on-primary-container:#FFDBD0;
-  --secondary:#E7BDB1; --secondary-container:#5D4037; --on-secondary-container:#FFDBD0;
-  --tertiary:#D7C68D; --tertiary-container:#524619; --on-tertiary-container:#F4E2A7;
-  --surface:#1A110F; --on-surface:#F1DFDA; --on-surface-variant:#D8C2BC; --outline:#A08C87; --outline-variant:#53433F;
-  --sc-lowest:#140C0A; --sc-low:#231917; --sc:#271D1B; --sc-high:#322825; --sc-highest:#3D3230;
-  --inverse-surface:#F1DFDA; --inverse-on-surface:#392E2B;
-  --kin:#FFB59E; --kin-c:#55291C; --str:#B4C5FF; --str-c:#283458; --stretch:#53DBC9; --stretch-c:#123F39; --yoga:#FFA9F6; --yoga-c:#4C2A4A;
-  --prep:#F6BE48; --fig:#F1DFDA; --fig-far:#7D6B66; color-scheme:dark }}
+  --primary:#69BE28; --on-primary:#002244; --primary-container:#69BE28; --on-primary-container:#002244;
+  --secondary:#A9C7EA; --secondary-container:#1E3A5C; --on-secondary-container:#D4E4F7;
+  --tertiary:#FF8A8F; --on-tertiary:#410008; --tertiary-container:#6B0F1C; --on-tertiary-container:#FFDADA;
+  --surface:#07131F; --on-surface:#E2E8F0; --on-surface-variant:#B4C0CD; --outline:#8692A0; --outline-variant:#34424F;
+  --sc-lowest:#040C15; --sc-low:#0D1A28; --sc:#112030; --sc-high:#19293B; --sc-highest:#223346;
+  --inverse-surface:#E2E8F0; --inverse-on-surface:#1C2733;
+  --kin:#8BD45A; --kin-c:#1F3B10; --str:#9DC2F2; --str-c:#163252; --stretch:#A5ACAF; --stretch-c:#28363F; --yoga:#FF8A8F; --yoga-c:#33191F;
+  --work:#8BD45A; --rest:#9DC2F2; --prep:#A5ACAF; --setrest:#9DC2F2; --alert:#FF6B72;
+  --fig:#E2E8F0; --fig-far:#5E6B79; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --primary:#FFB59E; --on-primary:#5E1700; --primary-container:#842A04; --on-primary-container:#FFDBD0;
-  --secondary:#E7BDB1; --secondary-container:#5D4037; --on-secondary-container:#FFDBD0;
-  --tertiary:#D7C68D; --tertiary-container:#524619; --on-tertiary-container:#F4E2A7;
-  --surface:#1A110F; --on-surface:#F1DFDA; --on-surface-variant:#D8C2BC; --outline:#A08C87; --outline-variant:#53433F;
-  --sc-lowest:#140C0A; --sc-low:#231917; --sc:#271D1B; --sc-high:#322825; --sc-highest:#3D3230;
-  --inverse-surface:#F1DFDA; --inverse-on-surface:#392E2B;
-  --kin:#FFB59E; --kin-c:#55291C; --str:#B4C5FF; --str-c:#283458; --stretch:#53DBC9; --stretch-c:#123F39; --yoga:#FFA9F6; --yoga-c:#4C2A4A;
-  --prep:#F6BE48; --fig:#F1DFDA; --fig-far:#7D6B66; color-scheme:dark }
+  --primary:#69BE28; --on-primary:#002244; --primary-container:#69BE28; --on-primary-container:#002244;
+  --secondary:#A9C7EA; --secondary-container:#1E3A5C; --on-secondary-container:#D4E4F7;
+  --tertiary:#FF8A8F; --on-tertiary:#410008; --tertiary-container:#6B0F1C; --on-tertiary-container:#FFDADA;
+  --surface:#07131F; --on-surface:#E2E8F0; --on-surface-variant:#B4C0CD; --outline:#8692A0; --outline-variant:#34424F;
+  --sc-lowest:#040C15; --sc-low:#0D1A28; --sc:#112030; --sc-high:#19293B; --sc-highest:#223346;
+  --inverse-surface:#E2E8F0; --inverse-on-surface:#1C2733;
+  --kin:#8BD45A; --kin-c:#1F3B10; --str:#9DC2F2; --str-c:#163252; --stretch:#A5ACAF; --stretch-c:#28363F; --yoga:#FF8A8F; --yoga-c:#33191F;
+  --work:#8BD45A; --rest:#9DC2F2; --prep:#A5ACAF; --setrest:#9DC2F2; --alert:#FF6B72;
+  --fig:#E2E8F0; --fig-far:#5E6B79; color-scheme:dark }
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -131,7 +133,7 @@ main .wrap{padding-block:8px 32px}
 /* Extended FAB */
 .fab-wrap{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:7}
 .efab{height:56px;border:0;border-radius:16px;padding:0 20px 0 16px;background:var(--primary-container);color:var(--on-primary-container);box-shadow:var(--e3);display:flex;align-items:center;gap:12px;font-weight:500;font-size:14px;letter-spacing:.1px}
-.efab .badge{min-width:24px;height:24px;border-radius:12px;background:var(--primary);color:var(--on-primary);font-size:12px;display:grid;place-items:center;padding:0 6px}
+.efab .badge{min-width:24px;height:24px;border-radius:12px;background:var(--tertiary);color:var(--on-tertiary);font-size:12px;display:grid;place-items:center;padding:0 6px}
 @media (min-width:840px){.fab-wrap{bottom:24px;right:max(24px,env(safe-area-inset-right,0px))}}
 
 /* Bottom sheet / dialog */
@@ -148,7 +150,7 @@ main .wrap{padding-block:8px 32px}
 .overline .ms{font-size:18px}
 .sheet h2{font-size:28px;line-height:36px;margin-top:-10px}
 .sheet ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:24px;letter-spacing:.5px}
-.cue{background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
+.cue{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
 .tags{display:flex;flex-wrap:wrap;gap:8px}
 .tag{height:32px;display:inline-flex;align-items:center;border:1px solid var(--outline-variant);border-radius:8px;padding:0 12px;font-size:14px;font-weight:500;color:var(--on-surface-variant)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
@@ -163,7 +165,7 @@ main .wrap{padding-block:8px 32px}
 @media (min-width:1000px){.timer-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start}.timer-grid:has(> #setup[hidden]){grid-template-columns:minmax(0,640px);justify-content:center}}
 .stage{--pc:var(--on-surface-variant);--pcc:var(--sc-highest);background:var(--sc);border-radius:28px;padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:background .3s}
 .stage[data-phase="work"]{--pc:var(--work);--pcc:var(--kin-c)} .stage[data-phase="rest"]{--pc:var(--rest);--pcc:var(--stretch-c)}
-.stage[data-phase="prep"]{--pc:var(--prep);--pcc:var(--tertiary-container)} .stage[data-phase="setrest"]{--pc:var(--setrest);--pcc:var(--str-c)} .stage[data-phase="done"]{--pc:var(--rest);--pcc:var(--stretch-c)}
+.stage[data-phase="prep"]{--pc:var(--prep);--pcc:var(--stretch-c)} .stage[data-phase="setrest"]{--pc:var(--setrest);--pcc:var(--str-c)} .stage[data-phase="done"]{--pc:var(--rest);--pcc:var(--stretch-c)}
 .stage-top{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
 .phase{height:32px;border-radius:8px;padding:0 12px 0 8px;background:var(--pcc);color:var(--pc);display:inline-flex;align-items:center;gap:6px;font-weight:500;font-size:14px;letter-spacing:.1px;transition:background .3s}
 .phase .ms{font-size:18px}
@@ -175,7 +177,7 @@ main .wrap{padding-block:8px 32px}
 .ring-fig{position:absolute;inset:15%;border-radius:50%}
 .ring-fig svg{width:100%;height:100%;display:block}
 .digits{font-weight:400;font-size:clamp(80px,22vw,128px);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-variation-settings:"opsz" 144;margin-top:8px}
-.digits.blink{color:var(--pc);font-weight:600}
+.digits.blink{color:var(--alert);font-weight:600}
 .exname{font-weight:500;font-size:22px;line-height:28px;text-align:center}
 .next{color:var(--on-surface-variant);font-size:14px;text-align:center;min-height:20px;max-width:40ch}
 .dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:12px 0 4px;width:min(280px,100%)}
@@ -224,8 +226,13 @@ main .wrap{padding-block:8px 32px}
 .quick{display:flex;flex-wrap:wrap;gap:8px}
 .perset{display:flex;flex-direction:column;gap:12px}
 .sw-row{text-align:left}
+.upd-btn{margin-left:auto;position:relative;color:var(--on-surface-variant)}
+.upd-dot{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--tertiary)}
+.snackbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--inverse-surface);color:var(--inverse-on-surface);border-radius:4px;min-height:48px;padding:4px 8px 4px 16px;display:flex;align-items:center;gap:8px;box-shadow:var(--e3);max-width:min(560px,calc(100% - 32px));font-size:14px}
+.snackbar .text-btn{color:var(--primary-container)}
+@media (min-width:840px){.snackbar{bottom:24px}}
 .wo-block{margin-bottom:28px}
-.wo-block .cat-head h3 .ms{background:var(--primary-container);color:var(--primary)}
+.wo-block .cat-head h3 .ms{background:var(--primary-container);color:var(--on-primary-container)}
 .wo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .wo{background:var(--cc);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .wo-head{display:flex;gap:12px;align-items:center}
@@ -276,8 +283,10 @@ main .wrap{padding-block:8px 32px}
   <div class="appbar-in">
     <div class="logo"><span class="ms fill">sports_gymnastics</span></div>
     <h1>Haruku Fit</h1>
+    <button class="icon-btn sl upd-btn" id="btn-update" aria-label="Check for updates" title="Check for updates"><span class="ms">sync</span><span class="upd-dot" id="upd-dot" hidden></span></button>
   </div>
 </header>
+<div class="snackbar" id="snack" hidden><span id="snack-txt"></span><button class="text-btn" id="snack-act" hidden>Update</button></div>
 
 <nav class="navbar" role="tablist" aria-label="Sections">
   <button class="nav-item" role="tab" id="tab-lib" aria-selected="true" data-view="lib"><span class="pill sl"><span class="ms">fitness_center</span></span>Exercises</button>
@@ -550,7 +559,7 @@ function mk(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const
 let figStyle = (()=>{ try{ const v=localStorage.getItem("pp:figStyle"); return v?JSON.parse(v):"char"; }catch(e){ return "char"; } })();
 /* Exercises drawn facing the viewer; all others are side views facing right. */
 const FRONT = new Set(["jacks","highknees","skaters","neck","sidebend","armcross","butterfly","warrior2","tree","pullup"]);
-const CH = {skin:"#F1C09B", skinFar:"#D69E7A", shirt:"#F6B93B", shirtFar:"#D6971F", shorts:"#33416E", shortsFar:"#27325A", hair:"#3A2A22", shoe:"#FFFFFF", line:"#2A1F1B", band:"#E4572E"};
+const CH = {skin:"#F1C09B", skinFar:"#D69E7A", shirt:"#69BE28", shirtFar:"#4F9A1A", shorts:"#002244", shortsFar:"#0F2F55", hair:"#3A2A22", shoe:"#FFFFFF", line:"#2A1F1B", band:"#C8102E"};
 const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
 class Figure{
   constructor(ex,opts={}){
@@ -1181,6 +1190,28 @@ function syncStyle(){
   for(const fg of figures) if(fg.ex) fg.draw(fg.animate&&!reduceMotion?(performance.now()-fg.t0)/1000*fg.speed:fg.restT());
 }
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
+/* ---------- Updates ----------
+   The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
+const APP_VERSION = "1.2.0";
+let snackTimer=null, newVersion=null;
+function snack(msg, action){
+  $("snack-txt").textContent=msg; $("snack").hidden=false;
+  const a=$("snack-act"); a.hidden=!action; if(action){ a.textContent=action.label; a.onclick=action.run; }
+  clearTimeout(snackTimer); if(!action) snackTimer=setTimeout(()=>{$("snack").hidden=true},3500);
+}
+function applyUpdate(){ $("snack-txt").textContent="Updating…"; const u=new URL(location.href); u.searchParams.set("v",newVersion||Date.now()); location.replace(u.toString()); }
+async function checkUpdate(manual){
+  try{
+    const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok) throw 0;
+    const v=(await r.json()).version;
+    if(v && v!==APP_VERSION){ newVersion=v; $("upd-dot").hidden=false; snack(`Version ${v} is ready`,{label:"Update",run:applyUpdate}); }
+    else if(manual) snack(`You're up to date (version ${APP_VERSION})`);
+  }catch(e){ if(manual) snack("Couldn't check for updates. Open the app from its GitHub link and try again."); }
+}
+$("btn-update").onclick=()=>{ if(newVersion) applyUpdate(); else checkUpdate(true); };
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") checkUpdate(false); });
+setTimeout(()=>checkUpdate(false),1500);
 /* ---------- Boot ---------- */
 addEventListener("scroll",()=>{$("appbar").classList.toggle("scrolled",scrollY>4)},{passive:true});
 renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles();
