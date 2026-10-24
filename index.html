@@ -86,7 +86,7 @@ main .wrap{padding-block:8px 32px}
 
 /* Navigation bar / rail */
 .navbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--sc);display:flex;justify-content:center;gap:8px;padding:12px max(8px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
-.nav-item{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;width:min(160px,45%);padding:0;color:var(--on-surface-variant);font-size:12px;line-height:16px;font-weight:500;letter-spacing:.5px}
+.nav-item{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;width:min(120px,24%);padding:0;color:var(--on-surface-variant);font-size:12px;line-height:16px;font-weight:500;letter-spacing:.5px}
 .nav-item .pill{width:64px;height:32px;border-radius:16px;display:grid;place-items:center;transition:background .2s}
 .nav-item[aria-selected="true"]{color:var(--on-surface)}
 .nav-item[aria-selected="true"] .pill{background:var(--secondary-container);color:var(--on-secondary-container)}
@@ -275,6 +275,47 @@ main .wrap{padding-block:8px 32px}
 .setrow .chip[aria-pressed="true"]{padding-left:6px}
 
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+.home-grid{display:grid;gap:12px;grid-template-columns:1fr;margin-bottom:28px}
+@media (min-width:720px){.home-grid{grid-template-columns:1.2fr 1fr}}
+.qcard{background:var(--primary);color:var(--on-primary);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.qcard h3,.ccard h3{margin:0;font-size:22px;line-height:28px;font-weight:500;display:flex;align-items:center;gap:10px}
+.qcard p{margin:0;opacity:.8;font-size:14px;line-height:20px}
+.qchips{display:flex;gap:8px;flex-wrap:wrap}
+.qchips button{height:36px;border-radius:10px;padding:0 14px;border:1px solid rgb(255 255 255 / .4);background:none;color:inherit;font:500 14px var(--font)}
+.qchips button[aria-pressed="true"]{background:var(--primary-container);border-color:var(--primary-container);color:#002244}
+.qgo{height:56px;border:0;border-radius:16px;background:var(--primary-container);color:#002244;font:600 18px var(--font);display:flex;align-items:center;justify-content:center;gap:10px}
+.qgo .ms{font-size:28px}
+.ccard{background:var(--sc-low);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.ccard .mv{margin:0;color:var(--on-surface-variant);font-size:14px;line-height:20px;overflow-wrap:anywhere}
+.ccard .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.mw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:28px}
+.mw{background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:20px;padding:14px 14px 10px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.mw-top{display:flex;align-items:center;gap:4px}
+.mw h4{margin:0;flex:1;min-width:0;font-size:18px;line-height:24px;font-weight:500;overflow-wrap:anywhere}
+.mw p{margin:0;font-size:13px;line-height:18px;color:var(--on-surface-variant);overflow-wrap:anywhere}
+.mw .row{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:4px}
+.mw .row .btn{margin-right:auto}
+.star[aria-pressed="true"] .ms{color:#E0A800;font-variation-settings:"FILL" 1}
+.fav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:28px}
+.fav{border:0;text-align:left;background:var(--kin-c);color:var(--on-surface);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:6px;min-height:112px;font:inherit}
+.fav b{font-size:17px;line-height:22px;font-weight:600;overflow-wrap:anywhere}
+.fav span{font-size:12px;line-height:16px;color:var(--on-surface-variant)}
+.fav .ms{margin-top:auto;align-self:flex-end;width:40px;height:40px;border-radius:20px;display:grid;place-items:center;background:var(--primary);color:var(--on-primary);font-size:24px}
+.hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:16px}
+.log-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.stat{background:var(--sc-low);border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat b{font-size:28px;line-height:34px;font-weight:600;color:var(--primary)}
+.stat span{font-size:12px;line-height:16px;color:var(--on-surface-variant);letter-spacing:.4px}
+.log-day{margin:20px 0 8px;font-size:14px;font-weight:500;color:var(--on-surface-variant);letter-spacing:.1px}
+.log-item{display:flex;gap:12px;align-items:flex-start;background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:16px;padding:12px 8px 12px 12px;margin-bottom:8px}
+.log-item>.ms{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--kin-c);color:var(--kin)}
+.log-item.partial>.ms{background:var(--sc-high);color:var(--on-surface-variant)}
+.log-main{flex:1;min-width:0}
+.log-main h4{margin:0;font-size:16px;line-height:22px;font-weight:500;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.log-main p{margin:2px 0 0;font-size:13px;line-height:18px;color:var(--on-surface-variant);overflow-wrap:anywhere}
+.tag{font-size:11px;line-height:16px;font-weight:500;padding:0 8px;border-radius:8px;background:var(--sc-high);color:var(--on-surface-variant)}
+.log-empty{text-align:center;color:var(--on-surface-variant);padding:40px 16px}
+.log-empty .ms{font-size:48px;display:block;margin-bottom:8px;color:var(--outline)}
 </style>
 </head>
 <body>
@@ -289,20 +330,49 @@ main .wrap{padding-block:8px 32px}
 <div class="snackbar" id="snack" hidden><span id="snack-txt"></span><button class="text-btn" id="snack-act" hidden>Update</button></div>
 
 <nav class="navbar" role="tablist" aria-label="Sections">
-  <button class="nav-item" role="tab" id="tab-lib" aria-selected="true" data-view="lib"><span class="pill sl"><span class="ms">fitness_center</span></span>Exercises</button>
+  <button class="nav-item" role="tab" id="tab-home" aria-selected="true" data-view="home"><span class="pill sl"><span class="ms">home</span></span>Home</button>
+  <button class="nav-item" role="tab" id="tab-lib" aria-selected="false" data-view="lib"><span class="pill sl"><span class="ms">fitness_center</span></span>Catalog</button>
   <button class="nav-item" role="tab" id="tab-timer" aria-selected="false" data-view="timer"><span class="pill sl"><span class="ms">timer</span></span>Timer</button>
+  <button class="nav-item" role="tab" id="tab-log" aria-selected="false" data-view="log"><span class="pill sl"><span class="ms">history</span></span>Log</button>
 </nav>
 
 <main>
-  <section id="view-lib" class="wrap">
-    <div class="intro">
-      <h2>Move, lift, stretch, flow</h2>
-      <p>Tap a move to see how it's done. Add moves to your workout, then run them on the Tabata timer.</p>
+  <section id="view-home" class="wrap">
+    <div class="intro"><h2 id="hello">Hi Kim</h2><p id="today"></p></div>
+    <div class="home-grid">
+      <div class="qcard">
+        <h3><span class="ms fill">timer</span>Quick timer</h3>
+        <p>Just the timer, for your own moves. Pick a split and go.</p>
+        <div class="qchips" id="qchips"></div>
+        <button class="qgo sl" id="q-go"><span class="ms fill">play_arrow</span>Start timer</button>
+      </div>
+      <div class="ccard">
+        <h3><span class="ms fill" style="color:var(--kin)">playlist_play</span>Your workout</h3>
+        <p class="mv" id="h-moves"></p>
+        <div class="row"><button class="btn btn-filled with-icon sl" id="h-go"><span class="ms fill">play_arrow</span>Start</button><button class="text-btn sl" id="h-edit"><span class="ms">tune</span>Edit</button><button class="text-btn sl" id="h-cat"><span class="ms">add</span>Add moves</button></div>
+      </div>
     </div>
+    <div class="log-stats">
+      <div class="stat"><b id="hs-week">0</b><span>Workouts this week</span></div>
+      <div class="stat"><b id="hs-min">0</b><span>Minutes this week</span></div>
+      <div class="stat"><b id="hs-streak">0</b><span>Day streak</span></div>
+    </div>
+    <div class="cat-head"><h3><span class="ms fill" style="--c:#B88600;--cc:#FFF1C2">star</span>Favorites</h3></div>
+    <div class="fav-grid" id="favs"></div>
+    <p class="hint" id="fav-hint" hidden>Build a workout in the Catalog, save it, and tap the star to pin it here.</p>
     <section class="wo-block">
       <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Workouts</h3><span class="sub">Ready to go: 1-minute rounds, 45s work and 15s rest</span></div>
       <div class="wo-grid" id="workouts"></div>
     </section>
+  </section>
+
+  <section id="view-lib" class="wrap" hidden>
+    <div class="intro">
+      <h2>Exercise catalog</h2>
+      <p>Tap a move to see how it's done. Add the ones you like, then save them as your own workout.</p>
+    </div>
+    <div class="cat-head"><h3><span class="ms fill" style="--c:var(--kin);--cc:var(--kin-c)">bookmarks</span>My workouts</h3><button class="btn btn-tonal with-icon sl" id="mw-save" style="margin-left:auto"><span class="ms">bookmark_add</span>Save selection</button></div>
+    <div class="mw-grid" id="mw-list"></div>
     <div class="lib-tools">
       <div class="chips" id="filters"></div>
       <div class="segmented" role="group" aria-label="Figure style">
@@ -311,6 +381,16 @@ main .wrap{padding-block:8px 32px}
       </div>
     </div>
     <div id="library"></div>
+  </section>
+
+  <section id="view-log" class="wrap" hidden>
+    <div class="intro"><h2>Workout log</h2><p>Every workout you run is saved here on this device.</p></div>
+    <div class="log-stats">
+      <div class="stat"><b id="st-week">0</b><span>Workouts this week</span></div>
+      <div class="stat"><b id="st-min">0</b><span>Minutes this week</span></div>
+      <div class="stat"><b id="st-streak">0</b><span>Day streak</span></div>
+    </div>
+    <div id="log-list"></div>
   </section>
 
   <section id="view-timer" class="wrap" hidden>
@@ -559,7 +639,7 @@ function mk(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const
 let figStyle = (()=>{ try{ const v=localStorage.getItem("pp:figStyle"); return v?JSON.parse(v):"char"; }catch(e){ return "char"; } })();
 /* Exercises drawn facing the viewer; all others are side views facing right. */
 const FRONT = new Set(["jacks","highknees","skaters","neck","sidebend","armcross","butterfly","warrior2","tree","pullup"]);
-const CH = {skin:"#E9B48E", skinFar:"#D9A27F", skinLine:"#9C6A4C", shirt:"#69BE28", shirtFar:"#4E9A1C", shirtLine:"#2F6A0E", shorts:"#0B2A4F", shortsFar:"#081F3B", shortsLine:"#020F1F", hair:"#3B2A21", hairLine:"#22170F", shoe:"#F4F6F8", shoeLine:"#5C6670", sole:"#C8102E", feat:"#3A2418"};
+const CH = {skin:"#B07A50", skinFar:"#9C6942", skinLine:"#6B4126", skinHi:"#C48D62", shirt:"#69BE28", shirtFar:"#4E9A1C", shirtLine:"#2F6A0E", shorts:"#0B2A4F", shortsFar:"#081F3B", shortsLine:"#020F1F", hair:"#1C1714", hairLine:"#0B0807", shoe:"#F4F6F8", shoeLine:"#5C6670", sole:"#C8102E", feat:"#1E130C", lip:"#7A3F2C"};
 const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
 class Figure{
   constructor(ex,opts={}){
@@ -589,16 +669,16 @@ class Figure{
     const limb=(far,leg)=>{
       const sk=far?CH.skinFar:CH.skin, o={leg};
       o.w1=leg?7.4:5.4; o.w2=leg?5.4:4.3;
-      o.lowOut=P({stroke:CH.skinLine,"stroke-width":o.w2+1.1}); o.upOut=P({stroke:CH.skinLine,"stroke-width":o.w1+1.1});
-      o.low=P({stroke:sk,"stroke-width":o.w2}); o.up=P({stroke:sk,"stroke-width":o.w1});
-      o.clothOut=P({stroke:leg?CH.shortsLine:CH.shirtLine,"stroke-width":o.w1+1.7,"stroke-linecap":"butt"});
-      o.cloth=P({stroke:leg?(far?CH.shortsFar:CH.shorts):(far?CH.shirtFar:CH.shirt),"stroke-width":o.w1+.6,"stroke-linecap":"butt"});
+      o.low=F({fill:sk,stroke:CH.skinLine,"stroke-width":.7});
+      o.up=F({fill:sk,stroke:CH.skinLine,"stroke-width":.7});
+      o.hi=P({stroke:CH.skinHi,"stroke-width":.9,opacity:far?0:.8});
+      o.cloth=F({fill:leg?(far?CH.shortsFar:CH.shorts):(far?CH.shirtFar:CH.shirt),stroke:leg?CH.shortsLine:CH.shirtLine,"stroke-width":.8});
       if(leg){ o.shoeOut=P({stroke:CH.shoeLine,"stroke-width":5}); o.shoe=P({stroke:CH.shoe,"stroke-width":3.9}); o.sole=P({stroke:CH.sole,"stroke-width":1.1}); }
       else o.hand=E({rx:2.3,ry:2.6,fill:sk,stroke:CH.skinLine,"stroke-width":.8});
       return o;
     };
     this.c={farArm:limb(true,false),farLeg:limb(true,true)};
-    this.c.neck=P({stroke:CH.skin,"stroke-width":4.6});
+    this.c.neck=P({stroke:CH.skin,"stroke-width":4.4});
     this.c.torso=F({fill:CH.shirt,stroke:CH.shirtLine,"stroke-width":.9});
     this.c.shorts=F({fill:CH.shorts,stroke:CH.shortsLine,"stroke-width":.9});
     this.c.nearLeg=limb(false,true); this.c.nearArm=limb(false,false);
@@ -608,7 +688,7 @@ class Figure{
     this.c.nose=P({stroke:CH.skinLine,"stroke-width":.9});
     this.c.brow1=P({stroke:CH.hairLine,"stroke-width":.8}); this.c.brow2=P({stroke:CH.hairLine,"stroke-width":.8});
     this.c.eye1=C({r:.75,fill:CH.feat}); this.c.eye2=C({r:.75,fill:CH.feat});
-    this.c.mouth=P({stroke:"#A0523D","stroke-width":.8});
+    this.c.mouth=P({stroke:CH.lip,"stroke-width":.8});
   }
   drawChar(q,c){
     const f=v=>v[0].toFixed(1)+" "+v[1].toFixed(1), set=(el,d)=>el.setAttribute("d",d), C=this.c;
@@ -616,10 +696,23 @@ class Figure{
     const add=(a,b,k=1)=>[a[0]+b[0]*k,a[1]+b[1]*k], sub=(a,b)=>[a[0]-b[0],a[1]-b[1]];
     const unit=v=>{const L=Math.hypot(v[0],v[1])||1;return [v[0]/L,v[1]/L]}, perp=v=>[-v[1],v[0]];
     const qb=(t)=>{const u=1-t;return [u*u*q.p[0]+2*u*t*c[0]+t*t*q.n[0], u*u*q.p[1]+2*u*t*c[1]+t*t*q.n[1]]};
+    // tapered segment with a muscle bulge: half-widths at start, bulge (at tm) and end, rounded ends
+    const seg=(A,B,wa,wm,wb,tm,side)=>{
+      const d=unit(sub(B,A)), n=perp(d), M=lerp(A,B,tm), s2=side||1;
+      return `M${f(add(A,n,wa))}Q${f(add(M,n,wm*s2>0?wm*1.15:wm))} ${f(add(B,n,wb))}Q${f(add(B,d,wb*1.3))} ${f(add(B,n,-wb))}Q${f(add(M,n,-wm*1.15))} ${f(add(A,n,-wa))}Q${f(add(A,d,-wa*1.3))} ${f(add(A,n,wa))}Z`;
+    };
+    // flat-ended cloth tube (sleeve / shorts leg)
+    const tube=(A,B,wa,wb)=>{const n=perp(unit(sub(B,A)));return `M${f(add(A,n,wa))}L${f(add(B,n,wb))}L${f(add(B,n,-wb))}L${f(add(A,n,-wa))}Z`;};
     const limb=(o,a,b,e)=>{
-      set(o.upOut,`M${f(a)}L${f(b)}`); set(o.up,`M${f(a)}L${f(b)}`);
-      set(o.lowOut,`M${f(b)}L${f(e)}`); set(o.low,`M${f(b)}L${f(e)}`);
-      const cl=`M${f(lerp(a,b,o.leg?-.2:-.12))}L${f(lerp(a,b,o.leg?.42:.3))}`; set(o.clothOut,cl); set(o.cloth,cl);
+      if(o.leg){
+        set(o.up,seg(a,b,4.1,4.3,2.8,.35)); set(o.low,seg(b,e,2.7,3.1,1.7,.3));
+        set(o.cloth,tube(lerp(a,b,-.14),lerp(a,b,.42),4.7,4.5));
+        const dn=perp(unit(sub(e,b))); set(o.hi,`M${f(add(lerp(b,e,.12),dn,1.6))}L${f(add(lerp(b,e,.45),dn,1.9))}`);
+      } else {
+        set(o.up,seg(a,b,2.8,3.0,2.1,.4)); set(o.low,seg(b,e,2.1,2.4,1.5,.3));
+        set(o.cloth,tube(lerp(a,b,.05),lerp(a,b,.3),3.3,3.2));
+        const dn=perp(unit(sub(b,a))); set(o.hi,`M${f(add(lerp(a,b,.3),dn,1.4))}L${f(add(lerp(a,b,.75),dn,1.3))}`);
+      }
       if(o.leg){
         const d=unit(sub(e,b)); let toe=front?[0,0]:[d[1],-d[0]];
         if(!front && toe[0]<0) toe=[-toe[0],-toe[1]];
@@ -645,9 +738,9 @@ class Figure{
     const H=q.h, rot=`rotate(${ang.toFixed(1)} ${H[0].toFixed(1)} ${H[1].toFixed(1)})`;
     const ell=(el,cx,cy,rx,ry,tr)=>{el.setAttribute("cx",cx.toFixed(1));el.setAttribute("cy",cy.toFixed(1));el.setAttribute("rx",rx);el.setAttribute("ry",ry);el.setAttribute("transform",tr)};
     if(front){
-      ell(C.hair,H[0],H[1]-.9,6.5,7.4,rot);
+      ell(C.hair,H[0],H[1]-.9,6.1,6.9,rot);
       const fc=add(H,ax,-.7);
-      ell(C.face,fc[0],fc[1],5.7,6.7,rot);
+      ell(C.face,fc[0],fc[1],5.3,6.3,rot);
       C.ear.setAttribute("rx",0);
       const e1=add(add(fc,fd,-2.1),ax,.6), e2=add(add(fc,fd,2.1),ax,.6);
       C.eye1.setAttribute("cx",e1[0].toFixed(1)); C.eye1.setAttribute("cy",e1[1].toFixed(1));
@@ -656,8 +749,8 @@ class Figure{
       set(C.nose,`M${f(add(fc,ax,-.2))}l.4 1.5l-.9 .1`);
       const m=add(fc,ax,-3.2); set(C.mouth,`M${f(add(m,fd,-1.3))}Q${f(add(m,ax,-.6))} ${f(add(m,fd,1.3))}`);
     } else {
-      const hb=add(H,fd,-.8); ell(C.hair,hb[0],hb[1],6.1,7.2,rot);
-      const fc=add(add(H,fd,.9),ax,-.5); ell(C.face,fc[0],fc[1],5.4,6.6,rot);
+      const hb=add(H,fd,-.8); ell(C.hair,hb[0],hb[1],5.8,6.8,rot);
+      const fc=add(add(H,fd,.9),ax,-.5); ell(C.face,fc[0],fc[1],5.1,6.2,rot);
       const er=add(add(H,fd,-1),ax,-.4); C.ear.setAttribute("rx",1.3); ell(C.ear,er[0],er[1],1.3,1.9,rot);
       const e=add(add(H,fd,4),ax,.6);
       C.eye1.setAttribute("cx",e[0].toFixed(1)); C.eye1.setAttribute("cy",e[1].toFixed(1)); C.eye2.setAttribute("r",0);
@@ -844,7 +937,8 @@ const WORKOUTS = [
 ];
 const woCfg = w => ({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60});
 function useWorkout(w){
-  playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist(); showView("timer");
+  playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist();
+  freeMode=false; store.set("freeMode",false); syncMode(); showView("timer");
 }
 let woFigs=[];
 function renderWorkouts(){
@@ -896,8 +990,8 @@ $("sh-now").onclick=()=>{
 
 /* ---------- Views ---------- */
 function showView(v){
-  $("view-lib").hidden = v!=="lib"; $("view-timer").hidden = v!=="timer";
-  $("tab-lib").setAttribute("aria-selected",v==="lib"); $("tab-timer").setAttribute("aria-selected",v==="timer");
+  ["home","lib","timer","log"].forEach(k=>{ $("view-"+k).hidden = v!==k; $("tab-"+k).setAttribute("aria-selected",v===k); });
+  if(v==="log") renderLog(); if(v==="home") renderHome();
   $("tray").hidden = v!=="lib";
   store.set("view",v); window.scrollTo(0,0);
 }
@@ -1143,6 +1237,7 @@ function finish(){
   $("ring").setAttribute("stroke-dashoffset",0); renderDots({round:999,rounds:setCfg(cfg.sets).rounds});
   setPlayIcon(false); $("btn-play").setAttribute("aria-label","Start again"); $("setup").hidden=false;
   SFX.done(); buzz([200,100,200,100,400]); speak("Workout done. Great job!");
+  logWorkout(true);
   T.done=true;
 }
 function tick(){
@@ -1180,7 +1275,7 @@ function pause(){
   setPlayIcon(false); $("phase").textContent="Paused"; setPhaseIco("paused"); releaseWake();
   try{speechSynthesis.cancel()}catch(e){}
 }
-function reset(){ T.running=false; T.paused=false; T.done=false; releaseWake(); try{speechSynthesis.cancel()}catch(e){} idleStage(); }
+function reset(){ if(T.running||T.paused) logWorkout(false); T.running=false; T.paused=false; T.done=false; releaseWake(); try{speechSynthesis.cancel()}catch(e){} idleStage(); }
 $("btn-play").onclick=()=>{ if(T.running) pause(); else start(); };
 $("btn-reset").onclick=reset;
 $("btn-skip").onclick=()=>{
@@ -1200,6 +1295,129 @@ document.addEventListener("keydown",e=>{
   if(e.code==="Space"){ e.preventDefault(); $("btn-play").click(); }
 });
 
+/* Workout log: one entry per finished (or stopped after a minute of work) session. */
+let workLog = store.get("log", []); if(!Array.isArray(workLog)) workLog=[];
+function workedSoFar(){
+  const sch=T.schedule||[]; let w=0, all=0;
+  for(let i=0;i<Math.min(T.idx,sch.length);i++){ all+=sch[i].dur; if(sch[i].type==="work") w+=sch[i].dur; }
+  const cur=sch[T.idx];
+  if(cur){ const el=T.running?(performance.now()-T.phaseStart)/1000:(T.elapsed||0); all+=el; if(cur.type==="work") w+=el; }
+  return {w:Math.round(w), all:Math.round(all)};
+}
+function logWorkout(done){
+  const sch=T.schedule||[]; if(!sch.length) return;
+  const t=done?{w:sch.filter(p=>p.type==="work").reduce((a,p)=>a+p.dur,0),all:sch.reduce((a,p)=>a+p.dur,0)}:workedSoFar();
+  if(!done && t.w<60) return;
+  const ids=[...new Set(sch.filter(p=>p.type==="work"&&p.ex).map(p=>p.ex))];
+  const wo=WORKOUTS.find(w=>w.moves.length===playlist.length&&w.moves.every((m,i)=>m===playlist[i]));
+  const rounds=sch.slice(0,done?sch.length:T.idx+1).filter(p=>p.type==="work").length;
+  workLog.unshift({at:Date.now(), name:freeMode?"Timer only":(wo?wo.name:"Custom workout"), moves:freeMode?[]:ids.map(id=>byId[id]?byId[id].name:id),
+    work:t.w, total:t.all, rounds, done});
+  if(workLog.length>1000) workLog.length=1000;
+  store.set("log",workLog);
+}
+const dayKey=d=>{const x=new Date(d);return x.getFullYear()+"-"+x.getMonth()+"-"+x.getDate()};
+const mins=s=>Math.max(1,Math.round(s/60));
+function fillStats(p){
+  const now=new Date(), wk=new Date(now); wk.setHours(0,0,0,0); wk.setDate(wk.getDate()-((wk.getDay()+6)%7));
+  const thisWeek=workLog.filter(e=>e.at>=wk.getTime());
+  $(p+"-week").textContent=thisWeek.length;
+  $(p+"-min").textContent=Math.round(thisWeek.reduce((a,e)=>a+e.total,0)/60);
+  const days=new Set(workLog.map(e=>dayKey(e.at))); let streak=0; const d=new Date(now);
+  if(!days.has(dayKey(d))) d.setDate(d.getDate()-1);
+  while(days.has(dayKey(d))){ streak++; d.setDate(d.getDate()-1); }
+  $(p+"-streak").textContent=streak;
+}
+/* My workouts: saved move lists with their own timing; starred ones show on Home. */
+let myWos = store.get("myWorkouts", []); if(!Array.isArray(myWos)) myWos=[];
+myWos = myWos.filter(w=>w&&Array.isArray(w.moves)).map(w=>Object.assign(w,{moves:w.moves.filter(id=>byId[id])}));
+const MAX_FAV=4;
+function saveMy(){ store.set("myWorkouts",myWos); renderMy(); }
+function runMy(w,go){
+  playlist=w.moves.slice(); cfg=Object.assign({},w.cfg||cfg); saveCfg(); renderFields(); savePlaylist();
+  freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); if(go) start();
+}
+function myMeta(w){ const c=w.cfg||cfg; return `${w.moves.length} move${w.moves.length===1?"":"s"} · ${c.work}s / ${c.rest}s · ${c.sets} set${c.sets===1?"":"s"}`; }
+function renderMy(){
+  const el=$("mw-list"); el.innerHTML="";
+  if(!myWos.length){ el.innerHTML=`<p class="hint" style="margin:0;grid-column:1/-1">Nothing saved yet. Tap + on the moves you want below, set your times on the Timer if you like, then tap Save selection.</p>`; }
+  myWos.forEach((w,i)=>{
+    const c=document.createElement("article"); c.className="mw";
+    c.innerHTML=`<div class="mw-top"><h4></h4><button class="icon-btn sl star" aria-label="Favorite" title="Show on Home"><span class="ms">star</span></button></div><p class="meta"></p><p class="mv"></p>
+      <div class="row"><button class="btn btn-filled with-icon sl go"><span class="ms fill">play_arrow</span>Start</button>
+      <button class="icon-btn sl ed" aria-label="Load to edit" title="Load into Timer to edit"><span class="ms">tune</span></button>
+      <button class="icon-btn sl rn" aria-label="Rename" title="Rename"><span class="ms">drive_file_rename_outline</span></button>
+      <button class="icon-btn sl del" aria-label="Delete" title="Delete"><span class="ms">delete</span></button></div>`;
+    c.querySelector("h4").textContent=w.name; c.querySelector(".meta").textContent=myMeta(w);
+    c.querySelector(".mv").textContent=w.moves.map(id=>byId[id].name).join(" · ");
+    const st=c.querySelector(".star"); st.setAttribute("aria-pressed",!!w.fav);
+    st.onclick=()=>{ if(!w.fav&&myWos.filter(x=>x.fav).length>=MAX_FAV){ snack(`You can pin ${MAX_FAV} favorites. Unstar one first.`); return; } w.fav=!w.fav; saveMy(); if(w.fav) snack(`${w.name} is on your Home screen.`); };
+    c.querySelector(".go").onclick=()=>runMy(w,true);
+    c.querySelector(".ed").onclick=()=>{ runMy(w,false); snack(`Loaded ${w.name}. Change it, then save again from the Catalog.`); };
+    c.querySelector(".rn").onclick=()=>{ const n=(prompt("Workout name",w.name)||"").trim(); if(n){ w.name=n; saveMy(); } };
+    c.querySelector(".del").onclick=()=>{ if(confirm(`Delete ${w.name}?`)){ myWos.splice(i,1); saveMy(); } };
+    el.appendChild(c);
+  });
+}
+$("mw-save").onclick=()=>{
+  if(!playlist.length){ snack("Add some moves first with the + buttons below."); return; }
+  const n=(prompt("Name this workout","My workout "+(myWos.length+1))||"").trim(); if(!n) return;
+  const same=myWos.find(w=>w.name.toLowerCase()===n.toLowerCase());
+  const data={name:n, moves:playlist.slice(), cfg:Object.assign({},cfg)};
+  if(same){ if(!confirm(`Replace your saved "${same.name}"?`)) return; Object.assign(same,data); }
+  else myWos.unshift(Object.assign(data,{id:"m"+Date.now(), fav:myWos.filter(x=>x.fav).length<MAX_FAV}));
+  saveMy(); snack(`Saved ${n}.`);
+};
+function renderFavs(){
+  const favs=myWos.filter(w=>w.fav).slice(0,MAX_FAV), el=$("favs"); el.innerHTML="";
+  $("fav-hint").hidden=!!favs.length; el.hidden=!favs.length;
+  favs.forEach(w=>{ const b=document.createElement("button"); b.className="fav sl";
+    b.innerHTML=`<b></b><span></span><span class="ms fill" aria-hidden="true">play_arrow</span>`;
+    b.querySelector("b").textContent=w.name; b.querySelector("span").textContent=myMeta(w);
+    b.setAttribute("aria-label","Start "+w.name); b.onclick=()=>runMy(w,true); el.appendChild(b); });
+}
+/* Home dashboard */
+const QUICK=["p4515","p4020","tabata","stretch"];
+let quickKey=store.get("quick","p4515"); if(!QUICK.includes(quickKey)) quickKey="p4515";
+function renderHome(){
+  const h=new Date().getHours();
+  $("hello").textContent=h<12?"Good morning":h<18?"Good afternoon":"Good evening";
+  $("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+". Ready to move?";
+  const q=$("qchips"); q.innerHTML="";
+  QUICK.forEach(k=>{ const b=document.createElement("button"); b.className="sl"; b.textContent=PRESETS[k].name; b.setAttribute("aria-pressed",k===quickKey);
+    b.onclick=()=>{ quickKey=k; store.set("quick",k); renderHome(); }; q.appendChild(b); });
+  const names=playlist.map(id=>byId[id].name);
+  $("h-moves").textContent=names.length?`${names.length} move${names.length===1?"":"s"}: ${names.join(" · ")}`:"No moves picked yet. Add some from the catalog or pick a workout below.";
+  $("h-go").disabled=!names.length;
+  renderFavs(); fillStats("hs");
+}
+$("q-go").onclick=()=>{ freeMode=true; store.set("freeMode",true); applyPreset(quickKey); syncMode(); showView("timer"); start(); };
+$("h-go").onclick=()=>{ if(!playlist.length) return; freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); start(); };
+$("h-edit").onclick=()=>{ freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); };
+$("h-cat").onclick=()=>showView("lib");
+function renderLog(){
+  const now=new Date(); fillStats("st");
+  const el=$("log-list"); el.innerHTML="";
+  if(!workLog.length){ el.innerHTML=`<div class="log-empty"><span class="ms">history</span>No workouts yet. Finish a workout on the Timer and it shows up here.</div>`; return; }
+  const today=dayKey(now), yd=new Date(now); yd.setDate(yd.getDate()-1);
+  let last="";
+  workLog.forEach((e,i)=>{
+    const k=dayKey(e.at);
+    if(k!==last){ last=k; const h=document.createElement("div"); h.className="log-day";
+      h.textContent=k===today?"Today":k===dayKey(yd)?"Yesterday":new Date(e.at).toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric",year:new Date(e.at).getFullYear()===now.getFullYear()?undefined:"numeric"});
+      el.appendChild(h); }
+    const it=document.createElement("div"); it.className="log-item"+(e.done?"":" partial");
+    const time=new Date(e.at).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+    it.innerHTML=`<span class="ms fill">${e.done?"emoji_events":"timelapse"}</span><div class="log-main"><h4></h4><p class="meta"></p><p class="mv"></p></div><button class="icon-btn sl" aria-label="Delete entry" title="Delete"><span class="ms">delete</span></button>`;
+    const h4=it.querySelector("h4"); h4.textContent=e.name;
+    if(!e.done){ const t=document.createElement("span"); t.className="tag"; t.textContent="Stopped early"; h4.appendChild(t); }
+    it.querySelector(".meta").textContent=`${time} · ${mins(e.total)} min · ${e.rounds} round${e.rounds===1?"":"s"} · ${mins(e.work)} min of work`;
+    const mv=it.querySelector(".mv"); if(e.moves&&e.moves.length) mv.textContent=e.moves.join(" · "); else mv.remove();
+    it.querySelector("button").onclick=()=>{ if(confirm("Delete this workout from your log?")){ workLog.splice(i,1); store.set("log",workLog); renderLog(); } };
+    el.appendChild(it);
+  });
+}
+
 /* Timer only: plain interval timer with no exercises attached. */
 let freeMode = store.get("freeMode", false);
 function syncMode(){
@@ -1216,7 +1434,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.4.0";
 let snackTimer=null, newVersion=null;
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;
@@ -1238,9 +1456,9 @@ document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==
 setTimeout(()=>checkUpdate(false),1500);
 /* ---------- Boot ---------- */
 addEventListener("scroll",()=>{$("appbar").classList.toggle("scrolled",scrollY>4)},{passive:true});
-renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles();
+renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderMy(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles();
 $("total").textContent=fmt(totalSeconds()); idleStage();
-showView(store.get("view","lib"));
+showView("home");
 })();
 </script>
 </body>
