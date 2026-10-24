@@ -376,7 +376,6 @@ main .wrap{padding-block:8px 32px}
     <div class="lib-tools">
       <div class="chips" id="filters"></div>
       <div class="segmented" role="group" aria-label="Figure style">
-        <button class="sl" data-style="photo"><span class="ms">check</span>Photo</button>
         <button class="sl" data-style="toon"><span class="ms">check</span>Cartoon</button>
         <button class="sl" data-style="char"><span class="ms">check</span>Realistic</button>
         <button class="sl" data-style="stick"><span class="ms">check</span>Stick</button>
@@ -638,20 +637,16 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const figures = new Set();
 
 function mk(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
-let figStyle = (()=>{ try{ const v=localStorage.getItem("pp:figStyle"); return v?JSON.parse(v):"char"; }catch(e){ return "char"; } })();
+let figStyle = (()=>{ try{ const v=JSON.parse(localStorage.getItem("pp:figStyle")); return ["char","toon","stick"].includes(v)?v:"toon"; }catch(e){ return "toon"; } })();
 /* Exercises drawn facing the viewer; all others are side views facing right. */
 const FRONT = new Set(["jacks","highknees","skaters","neck","sidebend","armcross","butterfly","warrior2","tree","pullup"]);
 const CH = {skin:"#B07A50", skinFar:"#9C6942", skinLine:"#6B4126", skinHi:"#C48D62", shirt:"#69BE28", shirtFar:"#4E9A1C", shirtLine:"#2F6A0E", shorts:"#0B2A4F", shortsFar:"#081F3B", shortsLine:"#020F1F", hair:"#1C1714", hairLine:"#0B0807", shoe:"#F4F6F8", shoeLine:"#5C6670", sole:"#C8102E", feat:"#1E130C", lip:"#7A3F2C"};
-/* Real photos (public domain, free-exercise-db): a start and an end position per move. */
-const PHOTO = new Set(["jacks","climbers","squatjump","pullup","dips","superman","squat","pushup","lunge","bridge","plank","crunch","neck","sidebend","fold","armcross","butterfly","catcow"]);
-const PHOTO_ONE = new Set(["plank"]); // second photo only: the first is a kneeling setup
-let photoSeq = 0;
 const TO = {skin:"#B57A4E", skinFar:"#A06A42", line:"#3A2418", shirt:"#7CCB45", shirtFar:"#5FAE30", shorts:"#1F4F8F", shortsFar:"#173D70", hair:"#1C1512", shoe:"#FFFFFF", eye:"#1C1512", cheek:"#E58A7A", mouth:"#5A2618"};
 const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
 class Figure{
   constructor(ex,opts={}){
     this.svg = mk("svg",{viewBox:"0 0 100 100","aria-hidden":"true"});
-    this.ground=mk("line",{x1:6,y1:96.5,x2:94,y2:96.5,stroke:"var(--fig-far)","stroke-width":1,"stroke-linecap":"round",opacity:.6},this.svg);
+    mk("line",{x1:6,y1:96.5,x2:94,y2:96.5,stroke:"var(--fig-far)","stroke-width":1,"stroke-linecap":"round",opacity:.6},this.svg);
     this.props = mk("g",{fill:"none",stroke:"var(--fig-far)","stroke-linecap":"round","stroke-linejoin":"round"},this.svg);
     this.shadow = mk("ellipse",{cx:50,cy:96.5,rx:14,ry:2,fill:"var(--fig)",opacity:.12},this.svg);
     this.stick = mk("g",{},this.svg);
@@ -661,7 +656,7 @@ class Figure{
     this.torso = mk("path",{stroke:"var(--fig)","stroke-width":7},g);
     this.nearLeg = mk("path",near,g); this.nearArm = mk("path",near,g);
     this.head = mk("circle",{r:6.6,fill:"var(--fig)"},this.stick);
-    this.buildChar(); this.buildToon(); this.buildPhoto();
+    this.buildChar(); this.buildToon();
     this.animate = opts.animate!==false; this.visible = true; this.speed = 1; this.t0 = performance.now();
     this.setEx(ex);
     figures.add(this);
@@ -696,18 +691,6 @@ class Figure{
     this.c.brow1=P({stroke:CH.hairLine,"stroke-width":.8}); this.c.brow2=P({stroke:CH.hairLine,"stroke-width":.8});
     this.c.eye1=C({r:.75,fill:CH.feat}); this.c.eye2=C({r:.75,fill:CH.feat});
     this.c.mouth=P({stroke:CH.lip,"stroke-width":.8});
-  }
-  buildPhoto(){
-    const id="ph"+(++photoSeq), g=this.photo=mk("g",{},this.svg); g.style.display="none";
-    const cp=mk("clipPath",{id},g); mk("rect",{x:0,y:0,width:100,height:100,rx:10},cp);
-    const a={x:0,y:0,width:100,height:100,preserveAspectRatio:"xMidYMid slice","clip-path":`url(#${id})`};
-    this.ph0=mk("image",a,g); this.ph1=mk("image",a,g);
-  }
-  setPhoto(ex){
-    if(this.phFor===ex.id) return; this.phFor=ex.id;
-    const one=PHOTO_ONE.has(ex.id);
-    this.ph0.setAttribute("href",`photos/${ex.id}-${one?1:0}.jpg`); this.ph1.setAttribute("href",`photos/${ex.id}-1.jpg`);
-    this.ph1.style.display=one?"none":"";
   }
   /* Cartoon style: flat colors, thick rounded limbs, big friendly head. */
   buildToon(){
@@ -875,14 +858,9 @@ class Figure{
     this.nearLeg.setAttribute("d",`M${f(q.p)}L${f(q.lk)}L${f(q.lf)}`);
     this.nearArm.setAttribute("d",`M${f(q.n)}L${f(q.le)}L${f(q.lh)}`);
     this.head.setAttribute("cx",q.h[0].toFixed(1)); this.head.setAttribute("cy",q.h[1].toFixed(1));
-    let st=["char","toon","photo"].includes(figStyle)?figStyle:"stick";
-    if(st==="photo"&&!PHOTO.has(this.ex.id)) st="toon";
-    if(this.shown!==st){ this.shown=st; this.stick.style.display=st==="stick"?"":"none"; this.ch.style.display=st==="char"?"":"none"; this.toon.style.display=st==="toon"?"":"none";
-      this.photo.style.display=st==="photo"?"":"none"; this.ground.style.display=this.shadow.style.display=this.props.style.display=st==="photo"?"none":""; }
+    const st=figStyle==="char"||figStyle==="stick"?figStyle:"toon";
+    if(this.shown!==st){ this.shown=st; this.stick.style.display=st==="stick"?"":"none"; this.ch.style.display=st==="char"?"":"none"; this.toon.style.display=st==="toon"?"":"none"; }
     if(st==="char") this.drawChar(q,c); else if(st==="toon") this.drawToon(q,c);
-    else if(st==="photo"){ this.setPhoto(this.ex);
-      const per=Math.max(this.ex.dur,2.6), u=((t/per)%1+1)%1, e=(1-Math.cos(2*Math.PI*u))/2;
-      this.ph1.setAttribute("opacity",Math.min(1,Math.max(0,(e-.42)/.16)).toFixed(2)); return; }
     const lowY = Math.max(q.lf[1],q.rf[1],q.lh[1],q.rh[1]);
     const xs=[q.lf[0],q.rf[0]]; if(q.lh[1]>88) xs.push(q.lh[0]); if(q.p[1]>84) xs.push(q.p[0],q.n[0]);
     const mn=Math.min(...xs), mx=Math.max(...xs);
@@ -1535,7 +1513,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.6.0";
+const APP_VERSION = "1.6.1";
 let snackTimer=null, newVersion=null;
 function snack(msg, action){
   $("snack-txt").textContent=msg; $("snack").hidden=false;
