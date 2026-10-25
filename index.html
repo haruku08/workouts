@@ -285,6 +285,18 @@ main .wrap{padding-block:8px 32px}
 .qcard{background:linear-gradient(135deg,#3D8EE0,#1F63B5);color:#fff;border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px}
 .qcard h3,.ccard h3{margin:0;font-size:22px;line-height:28px;font-weight:500;display:flex;align-items:center;gap:10px}
 .qcard p{margin:0;opacity:.8;font-size:14px;line-height:20px}
+.qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.qf{background:rgb(255 255 255 / .14);border-radius:14px;padding:6px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
+.qf label{font-size:11px;font-weight:600;letter-spacing:.4px;opacity:.85;text-transform:uppercase}
+.qf .row{display:flex;align-items:center;justify-content:space-between;width:100%}
+.qf button{width:30px;height:30px;border-radius:15px;border:0;background:none;color:#fff;display:grid;place-items:center;flex:none}
+.qf button .ms{font-size:18px}
+.qf input{width:100%;min-width:0;border:0;background:none;color:#fff;text-align:center;font:600 22px var(--font);font-variant-numeric:tabular-nums;padding:0;-moz-appearance:textfield;outline:none}
+.qf input::-webkit-inner-spin-button,.qf input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.qf small{font-size:11px;opacity:.75}
+.qf.off{opacity:.45}
+.qtotal{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;opacity:.9}
+.qtotal b{font-size:20px;font-variant-numeric:tabular-nums}
 .qchips{display:flex;gap:8px;flex-wrap:wrap}
 .qchips button{height:36px;border-radius:10px;padding:0 14px;border:1px solid rgb(255 255 255 / .4);background:none;color:inherit;font:500 14px var(--font)}
 .qchips button[aria-pressed="true"]{background:#fff;border-color:#fff;color:#1F63B5}
@@ -390,8 +402,10 @@ main .wrap{padding-block:8px 32px}
     <div class="home-grid">
       <div class="qcard">
         <h3><span class="ms fill">timer</span>Quick timer</h3>
-        <p>Just the timer, for your own moves. Pick a split and go.</p>
+        <p>Just the timer, for your own moves. Pick a preset or set your own.</p>
         <div class="qchips" id="qchips"></div>
+        <div class="qgrid" id="qgrid"></div>
+        <div class="qtotal"><span id="q-shape"></span><b id="q-total"></b></div>
         <button class="qgo sl" id="q-go"><span class="ms fill">play_arrow</span>Start timer</button>
       </div>
       <div class="ccard">
@@ -1759,20 +1773,43 @@ function renderFavs(){
 }
 /* Home dashboard */
 const QUICK=["p4515","p4020","tabata","stretch"];
-let quickKey=store.get("quick","p4515"); if(!QUICK.includes(quickKey)) quickKey="p4515";
+const QF=[{k:"work",l:"Work",u:"sec",min:5,max:600,st:5},{k:"rest",l:"Rest",u:"sec",min:0,max:300,st:5},{k:"rounds",l:"Rounds",u:"per set",min:1,max:50,st:1},
+          {k:"sets",l:"Sets",u:"",min:1,max:20,st:1},{k:"setRest",l:"Set break",u:"sec",min:0,max:600,st:15},{k:"prep",l:"Get ready",u:"sec",min:0,max:60,st:5}];
+let quick=(()=>{ const q=store.get("quickCfg",null); const base=PRESETS[store.get("quick","p4515")]||PRESETS.p4515;
+  return Object.assign({},base.cfg,q&&typeof q==="object"?q:{}); })();
+const saveQuick=()=>store.set("quickCfg",quick);
+function renderQuickFields(){
+  const g=$("qgrid"); if(!g.children.length){
+    QF.forEach(o=>{ const d=document.createElement("div"); d.className="qf"; d.dataset.k=o.k;
+      d.innerHTML=`<label for="qf-${o.k}">${o.l}</label><div class="row"><button class="sl" aria-label="Less ${o.l}"><span class="ms">remove</span></button><input id="qf-${o.k}" type="number" inputmode="numeric" min="${o.min}" max="${o.max}"><button class="sl" aria-label="More ${o.l}"><span class="ms">add</span></button></div><small>${o.u||"&nbsp;"}</small>`;
+      const [mi,pl]=d.querySelectorAll("button"), inp=d.querySelector("input");
+      const set=v=>{ v=Math.round(Number(v)); if(!isFinite(v)) v=quick[o.k]; quick[o.k]=Math.min(o.max,Math.max(o.min,v)); saveQuick(); renderQuickFields(); };
+      mi.onclick=()=>set(quick[o.k]-o.st); pl.onclick=()=>set(quick[o.k]+o.st); inp.onchange=()=>set(inp.value);
+      g.appendChild(d); });
+  }
+  QF.forEach(o=>{ const inp=$("qf-"+o.k); if(document.activeElement!==inp) inp.value=quick[o.k]; });
+  g.querySelector('[data-k="setRest"]').classList.toggle("off",quick.sets<2);
+  $("q-shape").textContent=`${quick.rounds} round${quick.rounds===1?"":"s"}${quick.sets>1?` × ${quick.sets} sets`:""} · ${quick.work}s / ${quick.rest}s`;
+  const secs=quick.prep+quick.sets*quick.rounds*(quick.work+quick.rest)-quick.rest+(quick.sets-1)*quick.setRest;
+  $("q-total").textContent=fmt(secs);
+  document.querySelectorAll("#qchips button").forEach(b=>{ const p=PRESETS[b.dataset.k].cfg; b.setAttribute("aria-pressed",p.work===quick.work&&p.rest===quick.rest&&p.rounds===quick.rounds&&p.sets===quick.sets); });
+}
 function renderHome(){
   const h=new Date().getHours();
   $("hello").textContent=h<12?"Good morning":h<18?"Good afternoon":"Good evening";
   $("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+". Ready to move?";
   const q=$("qchips"); q.innerHTML="";
-  QUICK.forEach(k=>{ const b=document.createElement("button"); b.className="sl"; b.textContent=PRESETS[k].name; b.setAttribute("aria-pressed",k===quickKey);
-    b.onclick=()=>{ quickKey=k; store.set("quick",k); renderHome(); }; q.appendChild(b); });
+  QUICK.forEach(k=>{ const b=document.createElement("button"); b.className="sl"; b.textContent=PRESETS[k].name; b.dataset.k=k;
+    b.onclick=()=>{ quick=Object.assign({},quick,PRESETS[k].cfg); saveQuick(); renderQuickFields(); }; q.appendChild(b); });
+  renderQuickFields();
   const names=playlist.map(id=>byId[id].name);
   $("h-moves").textContent=names.length?`${names.length} move${names.length===1?"":"s"}: ${names.join(" · ")}`:"No moves picked yet. Add some from the catalog or pick a workout below.";
   $("h-go").disabled=!names.length;
   renderFavs(); fillStats("hs");
 }
-$("q-go").onclick=()=>{ freeMode=true; store.set("freeMode",true); applyPreset(quickKey); syncMode(); showView("timer"); start(); };
+$("q-go").onclick=()=>{ freeMode=true; store.set("freeMode",true);
+  cfg=Object.assign({},quick,{perSet:false,plan:[],lock:false,roundLen:quick.work+quick.rest}); saveCfg(); renderFields();
+  syncMode(); showView("timer"); start(); };
 $("h-go").onclick=()=>{ if(!playlist.length) return; freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); start(); };
 $("h-edit").onclick=()=>{ freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); };
 $("h-cat").onclick=()=>showView("lib");
@@ -1815,7 +1852,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.10.0";
+const APP_VERSION = "1.11.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){

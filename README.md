@@ -4,7 +4,7 @@ A workout app with a built-in interval timer. It's a single `index.html` file wi
 
 ## What it does
 
-- **Home:** a dashboard with a one-tap quick timer, your current workout, this week's stats and your favorite workouts.
+- **Home:** a dashboard with a quick timer with its own work, rest, rounds-per-set, sets and set-break settings, your current workout, this week's stats and your favorite workouts.
 - **My routines:** build, edit and save your own routines (name, work/rest times, repeats, and moves you tap or drag in, then drag to reorder), or copy a ready-made workout and change it. Star up to four to pin them on Home.
 - **Music:** pick Deezer, Spotify, Apple Music or YouTube Music (and optionally paste a playlist link) to have the app open it when you press Start. Playback itself starts in the music app.
 - **Log:** every workout you finish (or stop after at least a minute of work) is saved on the device, with weekly totals and a day streak.
