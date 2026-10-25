@@ -226,7 +226,8 @@ main .wrap{padding-block:8px 32px}
 .quick{display:flex;flex-wrap:wrap;gap:8px}
 .perset{display:flex;flex-direction:column;gap:12px}
 .sw-row{text-align:left}
-.upd-btn{margin-left:auto;position:relative;color:var(--on-surface-variant)}
+.upd-btn{position:relative;color:var(--on-surface-variant)}
+#btn-shareapp{margin-left:auto;color:var(--on-surface-variant)}
 .upd-dot{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--tertiary)}
 .snackbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--inverse-surface);color:var(--inverse-on-surface);border-radius:4px;min-height:48px;padding:4px 8px 4px 16px;display:flex;align-items:center;gap:8px;box-shadow:var(--e3);max-width:min(560px,calc(100% - 32px));font-size:14px}
 .snackbar .text-btn{color:var(--primary-container)}
@@ -333,6 +334,12 @@ main .wrap{padding-block:8px 32px}
 #lib-workouts .wo-foot>span{flex-basis:100%}
 #lib-workouts .wo-foot>.btn-filled{margin-left:auto}
 .wo-foot .on-home[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
+.install{display:flex;gap:12px;align-items:flex-start;background:var(--primary-container);color:var(--on-primary-container);border-radius:20px;padding:14px 8px 14px 16px;margin:0 0 20px}
+.install>.ms{font-size:28px;margin-top:2px}
+.install div{flex:1;min-width:0}
+.install div>b{display:block;font-size:15px;margin-bottom:4px}
+.install p{margin:0;font-size:14px;line-height:20px}
+.install .icon-btn{color:inherit}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:16px}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
@@ -395,6 +402,7 @@ main .wrap{padding-block:8px 32px}
   <div class="appbar-in">
     <div class="logo"><span class="ms fill">sports_gymnastics</span></div>
     <h1>Haruku Fit</h1>
+    <button class="icon-btn sl" id="btn-shareapp" aria-label="Share the app" title="Share the app"><span class="ms">ios_share</span></button>
     <button class="icon-btn sl upd-btn" id="btn-update" aria-label="Check for updates" title="Check for updates"><span class="ms">sync</span><span class="upd-dot" id="upd-dot" hidden></span></button>
   </div>
 </header>
@@ -410,6 +418,11 @@ main .wrap{padding-block:8px 32px}
 <main>
   <section id="view-home" class="wrap">
     <div class="intro"><h2 id="hello">Hi Kim</h2><p id="today"></p></div>
+    <div class="install" id="install" hidden>
+      <span class="ms fill">install_mobile</span>
+      <div><b>Put Haruku Fit on your home screen</b><p id="install-how"></p></div>
+      <button class="icon-btn sl" id="install-x" aria-label="Dismiss"><span class="ms">close</span></button>
+    </div>
     <div class="home-grid">
       <div class="qcard">
         <h3><span class="ms fill">timer</span>Quick timer</h3>
@@ -1840,6 +1853,24 @@ function checkShareHash(){
 }
 window.addEventListener("hashchange",checkShareHash);
 $("fav-cat").onclick=()=>showView("lib");
+/* Install hint: shown in a phone browser until the app runs from the home screen or is dismissed */
+(function(){
+  let framed=false; try{ framed=window.top!==window; }catch(e){ framed=true; }
+  const standalone=navigator.standalone||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
+  const ua=navigator.userAgent, ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1), android=/Android/.test(ua);
+  if(framed||standalone||!(ios||android)||store.get("installHintOff",false)) return;
+  $("install-how").innerHTML=ios
+    ? (/CriOS|FxiOS|EdgiOS/.test(ua)?"Open this page in <b>Safari</b>, then tap ":"Tap ")+`the <b>Share</b> button <span class="ms" style="font-size:18px;vertical-align:-4px">ios_share</span> at the bottom, scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>. Open it from the new icon.`
+    : `Tap the <b>⋮</b> menu at the top right and choose <b>Add to Home screen</b> (or <b>Install app</b>), then open it from the new icon.`;
+  $("install").hidden=false;
+  $("install-x").onclick=()=>{ $("install").hidden=true; store.set("installHintOff",true); };
+})();
+$("btn-shareapp").onclick=()=>{
+  const url=SHARE_BASE, text="Try Haruku Fit, my workout app with a timer. Open the link and follow the steps at the top to put it on your home screen.";
+  const copy=()=>{ try{ navigator.clipboard.writeText(url).then(()=>snack("App link copied. Send it to anyone."),()=>prompt("Copy this link:",url)); }catch(e){ prompt("Copy this link:",url); } };
+  if(navigator.share) navigator.share({title:"Haruku Fit",text,url}).catch(e=>{ if(e&&e.name!=="AbortError") copy(); });
+  else copy();
+};
 /* Home dashboard */
 const QUICK=["p4515","p4020","tabata","stretch"];
 const QF=[{k:"work",l:"Work",u:"sec",min:5,max:600,st:5},{k:"rest",l:"Rest",u:"sec",min:0,max:300,st:5},{k:"rounds",l:"Rounds",u:"per set",min:1,max:50,st:1},
@@ -1921,7 +1952,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.13.0";
+const APP_VERSION = "1.13.1";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
