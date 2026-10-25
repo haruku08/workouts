@@ -9,7 +9,7 @@ A workout app with a built-in interval timer. It's a single `index.html` file wi
 - **Share the app:** the share button in the top bar sends the app's link (by text message, WhatsApp or anything else). People who open it on a phone see short steps to put the app on their home screen.
 - **Sharing routines:** tap Share on a routine to send a link. Opening the link adds the routine; you can also paste a link or code into the Catalog (handy for the home-screen app on iPhone, which doesn't share storage with Safari).
 - **Music:** pick Deezer, Spotify, Apple Music or YouTube Music (and optionally paste a playlist link) to have the app open it the moment you press Start, with the timer already running. Beeps and voice mix over your music instead of pausing it (iOS 16.4+).
-- **History:** every workout you finish (or stop after at least a minute of work) is saved on the device, with weekly totals and a day streak.
+- **History:** every workout you finish (or stop after at least a minute of work) is saved on the device, with weekly totals and a day streak. **Backup** copies everything (history, routines, settings) as a code or file you can restore after reinstalling or on another device.
 - **Exercises:** 35 moves in four groups (Calisthenics, Strength, Stretch, Yoga). Each one has an animated figure that shows the movement, in a cartoon, realistic or stick-figure style, plus steps and a tip.
 - **Ready-made routines (Catalog):** Upper Body, Core, Legs and Full Body sessions, plus a Morning Routine of stretches (40s holds, both sides). Tap Add to Home to put one on your dashboard.
 - **Timer:**

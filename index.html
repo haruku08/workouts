@@ -343,6 +343,11 @@ main .wrap{padding-block:8px 32px}
 .install div>b{display:block;font-size:15px;margin-bottom:4px}
 .install p{margin:0;font-size:14px;line-height:20px}
 .install .icon-btn{color:inherit}
+.backup{margin-top:32px;padding-top:24px;border-top:1px solid var(--outline-variant);display:flex;flex-direction:column;gap:12px}
+.backup .supporting{margin:0;color:var(--on-surface-variant)}
+.backup .row{display:flex;gap:8px;flex-wrap:wrap}
+.backup .imp{margin:0}
+.bk-pick{align-self:flex-start;display:inline-flex;align-items:center}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:var(--r-md)}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
@@ -479,6 +484,13 @@ main .wrap{padding-block:8px 32px}
       <div class="stat"><b id="st-streak">0</b><span>Day streak</span></div>
     </div>
     <div id="log-list"></div>
+    <div class="backup">
+      <h3>Backup</h3>
+      <p class="supporting">Saves your history, routines and settings as a code. Restore it after reinstalling or on another device.</p>
+      <div class="row"><button class="btn btn-tonal with-icon sl" id="bk-copy"><span class="ms">content_copy</span>Copy backup</button><button class="btn btn-tonal with-icon sl" id="bk-file"><span class="ms">arrow_upward</span>Save as file</button></div>
+      <form class="imp" id="bk-form"><span class="ms">replay</span><input id="bk-in" placeholder="Paste a backup code to restore" autocomplete="off" aria-label="Backup code"><button class="btn btn-tonal sl" type="submit">Restore</button></form>
+      <label class="text-btn sl bk-pick"><input type="file" id="bk-pick" accept=".txt,text/plain" hidden>Restore from file</label>
+    </div>
   </section>
 
   <section id="view-timer" class="wrap" hidden>
@@ -1871,6 +1883,29 @@ function checkShareHash(){
 }
 window.addEventListener("hashchange",checkShareHash);
 $("fav-cat").onclick=()=>showView("lib");
+/* Backup: every saved key packed into one code (HFB1:...) that can be pasted back or saved as a file */
+function backupCode(){
+  const d={}; try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.startsWith("pp:")) d[k]=localStorage.getItem(k); } }catch(e){}
+  let b=""; new TextEncoder().encode(JSON.stringify(d)).forEach(x=>b+=String.fromCharCode(x));
+  return "HFB1:"+btoa(b);
+}
+function restoreBackup(text){
+  const m=String(text||"").match(/HFB1:([A-Za-z0-9+/=]+)/); let d=null;
+  try{ d=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(m[1]),c=>c.charCodeAt(0)))); }catch(e){}
+  if(!d||typeof d!=="object"){ snack("Invalid backup code"); return; }
+  const n=(()=>{ try{ return JSON.parse(d["pp:log"]||"[]").length; }catch(e){ return 0; } })();
+  if(!confirm(`Restore this backup (${n} workout${n===1?"":"s"})? It replaces what's on this device.`)) return;
+  try{ Object.keys(localStorage).filter(k=>k.startsWith("pp:")).forEach(k=>localStorage.removeItem(k));
+    Object.entries(d).forEach(([k,v])=>{ if(k.startsWith("pp:")&&typeof v==="string") localStorage.setItem(k,v); }); }catch(e){ snack("Restore failed"); return; }
+  location.reload();
+}
+$("bk-copy").onclick=()=>{ const c=backupCode();
+  try{ navigator.clipboard.writeText(c).then(()=>snack("Backup copied. Paste it somewhere safe, like Notes."),()=>prompt("Copy this backup code:",c)); }catch(e){ prompt("Copy this backup code:",c); } };
+$("bk-file").onclick=()=>{ const blob=new Blob([backupCode()],{type:"text/plain"}), f=new File([blob],`haruku-fit-backup-${new Date().toISOString().slice(0,10)}.txt`,{type:"text/plain"});
+  if(navigator.canShare&&navigator.canShare({files:[f]})) navigator.share({files:[f],title:"Haruku Fit backup"}).catch(()=>{});
+  else { const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=f.name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); } };
+$("bk-form").onsubmit=e=>{ e.preventDefault(); restoreBackup($("bk-in").value); };
+$("bk-pick").onchange=e=>{ const f=e.target.files[0]; if(f) f.text().then(restoreBackup); e.target.value=""; };
 /* Install hint: shown in a phone browser until the app runs from the home screen or is dismissed */
 (function(){
   let framed=false; try{ framed=window.top!==window; }catch(e){ framed=true; }
@@ -1970,7 +2005,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.14.2";
+const APP_VERSION = "1.15.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
