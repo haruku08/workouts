@@ -13,16 +13,13 @@
 <meta name="apple-mobile-web-app-title" content="Haruku Fit">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F7F9FC" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#07131F" media="(prefers-color-scheme: dark)">
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#151514" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&family=Eczar:wght@500..800&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,0..1,0&display=block">
 <style>
-/* Layout: Material 3. Small top app bar, navigation bar at the bottom (rail on wide screens), extended FAB to start the workout.
-   Color roles follow an M3 tonal scheme from a coral seed; category colors are harmonized custom colors. */
 :root{
+  --r-sm:12px; --r-md:18px; --r-lg:24px;
   --primary:#1F63B5; --on-primary:#FFFFFF; --primary-container:#DDF4CB; --on-primary-container:#23520A;
   --secondary:#46648A; --secondary-container:#DDEBFB; --on-secondary-container:#0D2F57;
   --tertiary:#C8102E; --on-tertiary:#FFFFFF; --tertiary-container:#FFDADA; --on-tertiary-container:#410008;
@@ -37,25 +34,27 @@
   --e3:0 1px 3px rgb(0 0 0 / .3),0 4px 8px 3px rgb(0 0 0 / .15);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --primary:#8ED65A; --on-primary:#10300A; --primary-container:#2E5A16; --on-primary-container:#D5F3BE;
-  --secondary:#A9C7EA; --secondary-container:#1E3A5C; --on-secondary-container:#D4E4F7;
-  --tertiary:#FF8A8F; --on-tertiary:#410008; --tertiary-container:#6B0F1C; --on-tertiary-container:#FFDADA;
-  --surface:#07131F; --on-surface:#E2E8F0; --on-surface-variant:#B4C0CD; --outline:#8692A0; --outline-variant:#34424F;
-  --sc-lowest:#040C15; --sc-low:#0D1A28; --sc:#112030; --sc-high:#19293B; --sc-highest:#223346;
-  --inverse-surface:#E2E8F0; --inverse-on-surface:#1C2733;
-  --kin:#8BD45A; --kin-c:#1F3B10; --str:#9DC2F2; --str-c:#163252; --stretch:#A5ACAF; --stretch-c:#28363F; --yoga:#FF8A8F; --yoga-c:#33191F;
-  --work:#8BD45A; --rest:#9DC2F2; --prep:#A5ACAF; --setrest:#9DC2F2; --alert:#FF6B72;
-  --fig:#E2E8F0; --fig-far:#5E6B79; color-scheme:dark }}
+  --primary:#A6D486; --on-primary:#15290A; --primary-container:#2C3A24; --on-primary-container:#D3EBC2;
+  --secondary:#AFC6E4; --secondary-container:#26303D; --on-secondary-container:#D6E3F3;
+  --tertiary:#F29C9C; --on-tertiary:#3D0D0D; --tertiary-container:#4A2224; --on-tertiary-container:#FBDADA;
+  --surface:#151514; --on-surface:#ECEAE5; --on-surface-variant:#A9A69E; --outline:#76736C; --outline-variant:#302F2C;
+  --sc-lowest:#1A1A18; --sc-low:#1D1D1B; --sc:#222220; --sc-high:#292926; --sc-highest:#31302D;
+  --inverse-surface:#ECEAE5; --inverse-on-surface:#1F1F1D;
+  --kin:#A6D486; --kin-c:#253020; --str:#A9C4EA; --str-c:#232B37; --stretch:#B8B5AD; --stretch-c:#2A2A27; --yoga:#F0A0A0; --yoga-c:#352325;
+  --work:#A6D486; --rest:#A9C4EA; --prep:#A9A69E; --setrest:#A9C4EA; --alert:#F08A8A;
+  --fig:#ECEAE5; --fig-far:#6A675F;
+  --qbg:linear-gradient(160deg,#22344C,#1A2533); --qgo:#A6D486; --qgo-on:#15290A; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --primary:#8ED65A; --on-primary:#10300A; --primary-container:#2E5A16; --on-primary-container:#D5F3BE;
-  --secondary:#A9C7EA; --secondary-container:#1E3A5C; --on-secondary-container:#D4E4F7;
-  --tertiary:#FF8A8F; --on-tertiary:#410008; --tertiary-container:#6B0F1C; --on-tertiary-container:#FFDADA;
-  --surface:#07131F; --on-surface:#E2E8F0; --on-surface-variant:#B4C0CD; --outline:#8692A0; --outline-variant:#34424F;
-  --sc-lowest:#040C15; --sc-low:#0D1A28; --sc:#112030; --sc-high:#19293B; --sc-highest:#223346;
-  --inverse-surface:#E2E8F0; --inverse-on-surface:#1C2733;
-  --kin:#8BD45A; --kin-c:#1F3B10; --str:#9DC2F2; --str-c:#163252; --stretch:#A5ACAF; --stretch-c:#28363F; --yoga:#FF8A8F; --yoga-c:#33191F;
-  --work:#8BD45A; --rest:#9DC2F2; --prep:#A5ACAF; --setrest:#9DC2F2; --alert:#FF6B72;
-  --fig:#E2E8F0; --fig-far:#5E6B79; color-scheme:dark }
+  --primary:#A6D486; --on-primary:#15290A; --primary-container:#2C3A24; --on-primary-container:#D3EBC2;
+  --secondary:#AFC6E4; --secondary-container:#26303D; --on-secondary-container:#D6E3F3;
+  --tertiary:#F29C9C; --on-tertiary:#3D0D0D; --tertiary-container:#4A2224; --on-tertiary-container:#FBDADA;
+  --surface:#151514; --on-surface:#ECEAE5; --on-surface-variant:#A9A69E; --outline:#76736C; --outline-variant:#302F2C;
+  --sc-lowest:#1A1A18; --sc-low:#1D1D1B; --sc:#222220; --sc-high:#292926; --sc-highest:#31302D;
+  --inverse-surface:#ECEAE5; --inverse-on-surface:#1F1F1D;
+  --kin:#A6D486; --kin-c:#253020; --str:#A9C4EA; --str-c:#232B37; --stretch:#B8B5AD; --stretch-c:#2A2A27; --yoga:#F0A0A0; --yoga-c:#352325;
+  --work:#A6D486; --rest:#A9C4EA; --prep:#A9A69E; --setrest:#A9C4EA; --alert:#F08A8A;
+  --fig:#ECEAE5; --fig-far:#6A675F;
+  --qbg:linear-gradient(160deg,#22344C,#1A2533); --qgo:#A6D486; --qgo-on:#15290A; color-scheme:dark }
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -64,10 +63,11 @@ body{color:var(--on-surface);font-family:var(--font);font-size:14px;line-height:
 button{font:inherit;color:inherit;cursor:pointer;letter-spacing:inherit}
 :focus-visible{outline:3px solid var(--secondary);outline-offset:2px}
 h1,h2,h3{margin:0;font-family:var(--title);font-weight:600;letter-spacing:0;text-wrap:balance}
-.ms{font-family:"Material Symbols Rounded";font-weight:500;font-style:normal;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:"liga";font-feature-settings:"liga";-webkit-font-smoothing:antialiased;font-variation-settings:"FILL" 0;overflow:hidden;width:1em;flex:none}
-.ms.fill{font-variation-settings:"FILL" 1}
+.ms{display:inline-grid;place-items:center;width:1em;height:1em;font-size:24px;line-height:1;flex:none;color:inherit}
+.ms:not([data-i]){visibility:hidden}
+.ms svg{width:1em;height:1em;display:block;stroke-width:1.9}
+.ms[data-i="play_arrow"] svg,.ms[data-i="pause"] svg,.ms[data-i="skip_next"] svg,.star[aria-pressed="true"] svg,.fav .unpin svg{fill:currentColor}
 
-/* state layer */
 .sl{position:relative;overflow:hidden}
 .sl::after{content:"";position:absolute;inset:0;background:currentColor;opacity:0;transition:opacity .15s;pointer-events:none;border-radius:inherit}
 .sl:hover::after{opacity:.08}.sl:active::after{opacity:.12}
@@ -77,7 +77,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);transition:background .2s}
 .appbar.scrolled{background:var(--sc)}
 .appbar-in{height:64px;display:flex;align-items:center;gap:12px;max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.appbar .logo{width:40px;height:40px;border-radius:12px;background:var(--primary-container);color:var(--on-primary-container);display:grid;place-items:center}
+.appbar .logo{width:40px;height:40px;border-radius:var(--r-sm);background:var(--primary-container);color:var(--on-primary-container);display:grid;place-items:center}
 .appbar h1{font-size:20px;line-height:28px;font-weight:700;letter-spacing:0}
 
 .wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -87,11 +87,11 @@ main .wrap{padding-block:8px 32px}
 /* Navigation bar / rail */
 .navbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--sc);display:flex;justify-content:center;gap:8px;padding:12px max(8px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
 .nav-item{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;width:min(120px,24%);padding:0;color:var(--on-surface-variant);font-size:12px;line-height:16px;font-weight:500;letter-spacing:.5px}
-.nav-item .pill{width:64px;height:32px;border-radius:16px;display:grid;place-items:center;transition:background .2s}
+.nav-item .pill{width:64px;height:32px;border-radius:999px;display:grid;place-items:center;transition:background .2s}
 .nav-item[aria-selected="true"]{color:var(--on-surface)}
 .nav-item[aria-selected="true"] .pill{background:var(--secondary-container);color:var(--on-secondary-container)}
-.nav-item[aria-selected="true"] .ms{font-variation-settings:"FILL" 1}
-.nav-item .pill.sl::after{border-radius:16px}
+.nav-item[aria-selected="true"] .ms{}
+.nav-item .pill.sl::after{border-radius:var(--r-md)}
 @media (min-width:840px){
   .navbar{top:0;right:auto;width:88px;flex-direction:column;justify-content:flex-start;padding:calc(88px + env(safe-area-inset-top,0px)) 0 0 env(safe-area-inset-left,0px);background:var(--surface);gap:12px}
   .nav-item{width:88px}
@@ -104,7 +104,7 @@ main .wrap{padding-block:8px 32px}
 .intro h2{font-size:clamp(30px,6vw,40px);line-height:1.15;font-weight:700;letter-spacing:-.01em}
 .intro p{margin:8px 0 0;color:var(--on-surface-variant);max-width:56ch;font-size:16px;line-height:24px;letter-spacing:.5px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
-.chip{height:32px;border:1px solid var(--outline-variant);background:transparent;border-radius:8px;padding:0 16px;font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px;color:var(--on-surface-variant)}
+.chip{height:32px;border:1px solid var(--outline-variant);background:transparent;border-radius:var(--r-sm);padding:0 16px;font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px;color:var(--on-surface-variant)}
 .chip .ms{font-size:18px}
 .chip .dot{width:10px;height:10px;border-radius:50%;background:var(--c,var(--outline))}
 .chip[aria-pressed="true"]{background:var(--secondary-container);border-color:transparent;color:var(--on-secondary-container);padding-left:8px}
@@ -113,48 +113,48 @@ main .wrap{padding-block:8px 32px}
 .cat-block{margin-bottom:32px}
 .cat-head{display:flex;align-items:center;gap:4px 12px;margin-bottom:12px;flex-wrap:wrap}
 .cat-head h3{font-size:22px;line-height:28px;font-weight:500;display:flex;align-items:center;gap:10px}
-.cat-head h3 .ms{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--cc);color:var(--c);font-size:22px}
+.cat-head h3 .ms{width:40px;height:40px;border-radius:var(--r-sm);display:grid;place-items:center;background:var(--cc);color:var(--c);font-size:22px}
 .cat-head span.sub{color:var(--on-surface-variant);flex-basis:100%;padding-left:50px;margin-top:-6px}
 .cat-head .fill{margin-left:auto}
-.text-btn{height:40px;border:0;background:none;border-radius:20px;padding:0 12px;color:var(--primary);font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px}
+.text-btn{height:40px;border:0;background:none;border-radius:999px;padding:0 12px;color:var(--primary);font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px}
 .text-btn .ms{font-size:18px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.card{position:relative;background:var(--sc-low);border-radius:12px;box-shadow:var(--e1);overflow:hidden;display:flex;flex-direction:column}
-.card .pic{background:var(--cc);aspect-ratio:1/1;max-width:100%;display:block;margin:8px 8px 0;border-radius:8px}
+.card{position:relative;background:var(--sc-low);border-radius:var(--r-sm);box-shadow:var(--e1);overflow:hidden;display:flex;flex-direction:column}
+.card .pic{background:var(--cc);aspect-ratio:1/1;max-width:100%;display:block;margin:8px 8px 0;border-radius:var(--r-sm)}
 .card .pic svg{width:100%;height:100%;display:block}
 .card .meta{padding:12px 16px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .card .name{font-weight:500;font-size:16px;line-height:24px;letter-spacing:.15px}
 .card .sub{font-size:12px;line-height:16px;color:var(--on-surface-variant);letter-spacing:.4px}
-.open{position:absolute;inset:0;border:0;background:none;padding:0;border-radius:12px}
-.add{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:20px;border:0;background:var(--sc-lowest);color:var(--on-surface-variant);display:grid;place-items:center;z-index:1}
+.open{position:absolute;inset:0;border:0;background:none;padding:0;border-radius:var(--r-sm)}
+.add{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:999px;border:0;background:var(--sc-lowest);color:var(--on-surface-variant);display:grid;place-items:center;z-index:1}
 .add[aria-pressed="true"]{background:var(--c);color:var(--sc-lowest)}
-.add[aria-pressed="true"] .ms{font-variation-settings:"FILL" 1}
+.add[aria-pressed="true"] .ms{}
 
 /* Extended FAB */
 .fab-wrap{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:7}
-.efab{height:56px;border:0;border-radius:16px;padding:0 20px 0 16px;background:var(--primary-container);color:var(--on-primary-container);box-shadow:var(--e3);display:flex;align-items:center;gap:12px;font-weight:500;font-size:14px;letter-spacing:.1px}
-.efab .badge{min-width:24px;height:24px;border-radius:12px;background:#002244;color:#FFFFFF;font-weight:600;font-size:12px;display:grid;place-items:center;padding:0 6px}
+.efab{height:56px;border:0;border-radius:var(--r-md);padding:0 20px 0 16px;background:var(--primary-container);color:var(--on-primary-container);box-shadow:var(--e3);display:flex;align-items:center;gap:12px;font-weight:500;font-size:14px;letter-spacing:.1px}
+.efab .badge{min-width:24px;height:24px;border-radius:999px;background:#002244;color:#FFFFFF;font-weight:600;font-size:12px;display:grid;place-items:center;padding:0 6px}
 @media (min-width:840px){.fab-wrap{bottom:24px;right:max(24px,env(safe-area-inset-right,0px))}}
 
 /* Bottom sheet / dialog */
 .sheet{position:fixed;inset:0;z-index:20;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center}
-.sheet-in{background:var(--sc-low);width:100%;max-width:640px;max-height:92%;overflow:auto;border-radius:28px 28px 0 0;padding:0 0 calc(24px + env(safe-area-inset-bottom,0px));box-shadow:var(--e1)}
-.handle{width:32px;height:4px;border-radius:2px;background:var(--on-surface-variant);opacity:.4;margin:16px auto 8px}
-@media (min-width:720px){.sheet{align-items:center}.sheet-in{border-radius:28px;background:var(--sc-high)}.handle{visibility:hidden;margin-top:8px}}
-.sheet .pic{position:relative;display:flex;justify-content:center;background:var(--cc);margin:0 16px;border-radius:16px}
+.sheet-in{background:var(--sc-low);width:100%;max-width:640px;max-height:92%;overflow:auto;border-radius:var(--r-lg) 28px 0 0;padding:0 0 calc(24px + env(safe-area-inset-bottom,0px));box-shadow:var(--e1)}
+.handle{width:32px;height:4px;border-radius:999px;background:var(--on-surface-variant);opacity:.4;margin:16px auto 8px}
+@media (min-width:720px){.sheet{align-items:center}.sheet-in{border-radius:var(--r-lg);background:var(--sc-high)}.handle{visibility:hidden;margin-top:8px}}
+.sheet .pic{position:relative;display:flex;justify-content:center;background:var(--cc);margin:0 16px;border-radius:var(--r-md)}
 .sheet .pic svg{width:min(300px,78%);height:auto;aspect-ratio:1/1;display:block}
-.icon-btn{width:40px;height:40px;border-radius:20px;border:0;background:none;display:grid;place-items:center;color:var(--on-surface-variant)}
+.icon-btn{width:40px;height:40px;border-radius:999px;border:0;background:none;display:grid;place-items:center;color:var(--on-surface-variant)}
 .sheet .close{position:absolute;top:8px;right:8px;background:var(--sc-lowest)}
 .sheet .body{padding:20px 24px 0;display:flex;flex-direction:column;gap:16px}
 .overline{font-size:12px;font-weight:500;letter-spacing:.5px;color:var(--c);display:flex;align-items:center;gap:6px}
 .overline .ms{font-size:18px}
 .sheet h2{font-size:28px;line-height:36px;margin-top:-10px}
 .sheet ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:24px;letter-spacing:.5px}
-.cue{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
+.cue{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:var(--r-sm);padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
 .tags{display:flex;flex-wrap:wrap;gap:8px}
-.tag{height:32px;display:inline-flex;align-items:center;border:1px solid var(--outline-variant);border-radius:8px;padding:0 12px;font-size:14px;font-weight:500;color:var(--on-surface-variant)}
+.tag{height:32px;display:inline-flex;align-items:center;border:1px solid var(--outline-variant);border-radius:var(--r-sm);padding:0 12px;font-size:14px;font-weight:500;color:var(--on-surface-variant)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
-.btn{height:40px;border:0;border-radius:20px;padding:0 24px;font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn{height:40px;border:0;border-radius:999px;padding:0 24px;font-weight:500;font-size:14px;letter-spacing:.1px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
 .btn .ms{font-size:18px}
 .btn.with-icon{padding-left:16px}
 .btn-filled{background:var(--primary);color:var(--on-primary)}
@@ -163,11 +163,11 @@ main .wrap{padding-block:8px 32px}
 /* Timer */
 .timer-grid{display:grid;grid-template-columns:1fr;gap:16px}
 @media (min-width:1000px){.timer-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start}.timer-grid:has(> #setup[hidden]){grid-template-columns:minmax(0,640px);justify-content:center}}
-.stage{--pc:var(--on-surface-variant);--pcc:var(--sc-highest);background:var(--sc);border-radius:28px;padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:background .3s}
+.stage{--pc:var(--on-surface-variant);--pcc:var(--sc-highest);background:var(--sc);border-radius:var(--r-lg);padding:16px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:background .3s}
 .stage[data-phase="work"]{--pc:var(--work);--pcc:var(--kin-c)} .stage[data-phase="rest"]{--pc:var(--rest);--pcc:var(--stretch-c)}
 .stage[data-phase="prep"]{--pc:var(--prep);--pcc:var(--stretch-c)} .stage[data-phase="setrest"]{--pc:var(--setrest);--pcc:var(--str-c)} .stage[data-phase="done"]{--pc:var(--rest);--pcc:var(--stretch-c)}
 .stage-top{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
-.phase{height:32px;border-radius:8px;padding:0 12px 0 8px;background:var(--pcc);color:var(--pc);display:inline-flex;align-items:center;gap:6px;font-weight:500;font-size:14px;letter-spacing:.1px;transition:background .3s}
+.phase{height:32px;border-radius:var(--r-sm);padding:0 12px 0 8px;background:var(--pcc);color:var(--pc);display:inline-flex;align-items:center;gap:6px;font-weight:500;font-size:14px;letter-spacing:.1px;transition:background .3s}
 .phase .ms{font-size:18px}
 .counts{display:flex;gap:8px}
 .count{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.5px;color:var(--on-surface-variant)}
@@ -181,20 +181,20 @@ main .wrap{padding-block:8px 32px}
 .exname{font-weight:500;font-size:22px;line-height:28px;text-align:center}
 .next{color:var(--on-surface-variant);font-size:14px;text-align:center;min-height:20px;max-width:40ch}
 .dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:12px 0 4px;width:min(280px,100%)}
-.dots i{flex:1;max-width:28px;height:4px;border-radius:2px;background:var(--pcc)}
+.dots i{flex:1;max-width:28px;height:4px;border-radius:999px;background:var(--pcc)}
 .dots i.on{background:var(--pc);opacity:.5} .dots i.cur{background:var(--pc)}
 .controls{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:12px}
-.tonal-icon{width:56px;height:56px;border-radius:28px;border:0;background:var(--secondary-container);color:var(--on-secondary-container);display:grid;place-items:center}
-.lfab{width:96px;height:96px;border-radius:28px;border:0;background:var(--primary-container);color:var(--on-primary-container);display:grid;place-items:center;box-shadow:var(--e3)}
+.tonal-icon{width:56px;height:56px;border-radius:999px;border:0;background:var(--secondary-container);color:var(--on-secondary-container);display:grid;place-items:center}
+.lfab{width:96px;height:96px;border-radius:var(--r-lg);border:0;background:var(--primary-container);color:var(--on-primary-container);display:grid;place-items:center;box-shadow:var(--e3)}
 .lfab .ms{font-size:36px}
 .switches{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;justify-content:center}
 .sw-row{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500;color:var(--on-surface);border:0;background:none;padding:0}
-.switch{width:52px;height:32px;border-radius:16px;border:2px solid var(--outline);background:var(--sc-highest);position:relative;transition:background .2s,border-color .2s;flex:none}
+.switch{width:52px;height:32px;border-radius:999px;border:2px solid var(--outline);background:var(--sc-highest);position:relative;transition:background .2s,border-color .2s;flex:none}
 .switch::after{content:"";position:absolute;top:50%;left:6px;width:16px;height:16px;border-radius:50%;background:var(--outline);transform:translateY(-50%);transition:all .2s}
 .sw-row[aria-checked="true"] .switch{background:var(--primary);border-color:var(--primary)}
 .sw-row[aria-checked="true"] .switch::after{left:22px;width:24px;height:24px;background:var(--on-primary)}
 
-.panel{background:var(--sc-low);border-radius:28px;padding:24px 20px;display:flex;flex-direction:column;gap:20px;min-width:0}
+.panel{background:var(--sc-low);border-radius:var(--r-lg);padding:24px 20px;display:flex;flex-direction:column;gap:20px;min-width:0}
 .panel h3{font-size:22px;line-height:28px;font-weight:500}
 .panel .supporting{color:var(--on-surface-variant);margin:4px 0 0}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
@@ -206,18 +206,18 @@ main .wrap{padding-block:8px 32px}
 .field label{position:absolute;top:-9px;left:10px;padding:0 4px;background:var(--sc-low);font-size:12px;line-height:16px;color:var(--on-surface-variant);letter-spacing:.4px}
 .field:focus-within label{color:var(--primary)}
 .stepper{display:flex;align-items:center;justify-content:space-between;gap:2px}
-.stepper button{width:36px;height:36px;border-radius:18px;border:0;background:none;color:var(--on-surface-variant);display:grid;place-items:center;flex:none}
+.stepper button{width:36px;height:36px;border-radius:999px;border:0;background:none;color:var(--on-surface-variant);display:grid;place-items:center;flex:none}
 .stepper button .ms{font-size:20px}
 .stepper input{width:100%;min-width:0;border:0;background:none;text-align:center;font-family:var(--font);font-size:22px;color:var(--on-surface);font-variant-numeric:tabular-nums;-moz-appearance:textfield;padding:0;outline:none}
 .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .unit{font-size:12px;line-height:16px;color:var(--on-surface-variant);text-align:center;padding-bottom:4px;letter-spacing:.4px}
-.total{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--sc-highest);border-radius:16px;padding:12px 16px}
+.total{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--sc-highest);border-radius:var(--r-md);padding:12px 16px}
 .total b{font-size:28px;line-height:36px;font-weight:400;font-variant-numeric:tabular-nums}
 .total span{color:var(--on-surface-variant);display:flex;align-items:center;gap:8px}
 .divider{height:1px;background:var(--outline-variant);margin:0 -20px}
 .plist{display:flex;flex-direction:column;margin:0 -8px;padding:0;list-style:none}
 .plist li{display:flex;align-items:center;gap:16px;padding:8px 8px;min-height:72px}
-.plist .mini{width:56px;height:56px;border-radius:12px;background:var(--cc);flex:none}
+.plist .mini{width:56px;height:56px;border-radius:var(--r-sm);background:var(--cc);flex:none}
 .plist .mini svg{width:100%;height:100%;display:block}
 .plist .nm{flex:1;min-width:0;font-size:16px;line-height:24px;letter-spacing:.5px}
 .plist .nm small{display:block;color:var(--on-surface-variant);font-size:14px;line-height:20px;letter-spacing:.25px}
@@ -235,19 +235,19 @@ main .wrap{padding-block:8px 32px}
 .wo-block{margin-bottom:28px}
 .wo-block .cat-head h3 .ms{background:var(--primary-container);color:var(--on-primary-container)}
 .wo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.wo{background:var(--cc);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.wo{background:var(--cc);border-radius:var(--r-md);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .wo-head{display:flex;gap:12px;align-items:center}
-.wo-head>.ms{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--sc-lowest);color:var(--c)}
+.wo-head>.ms{width:44px;height:44px;border-radius:var(--r-sm);display:grid;place-items:center;background:var(--sc-lowest);color:var(--c)}
 .wo-head h4{margin:0;font-size:20px;line-height:26px;font-weight:500}
 .wo-head p{margin:0;color:var(--on-surface-variant);font-size:13px;line-height:18px}
-.wo-figs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;background:var(--sc-lowest);border-radius:12px;padding:4px}
+.wo-figs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;background:var(--sc-lowest);border-radius:var(--r-sm);padding:4px}
 .wo-fig svg{width:100%;height:auto;aspect-ratio:1/1;display:block}
 .wo-names{margin:0;font-size:13px;line-height:18px;color:var(--on-surface-variant)}
 .wo-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .wo-foot span{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
 .lib-tools{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px 24px;margin-bottom:24px}
 .lib-tools .chips{margin-bottom:0}
-.segmented{display:inline-flex;border:1px solid var(--outline);border-radius:20px;overflow:hidden;height:40px}
+.segmented{display:inline-flex;border:1px solid var(--outline);border-radius:999px;overflow:hidden;height:40px}
 .segmented button{border:0;background:none;padding:0 16px;display:inline-flex;align-items:center;gap:6px;font-weight:500;font-size:14px;letter-spacing:.1px;color:var(--on-surface)}
 .segmented button+button{border-left:1px solid var(--outline)}
 .segmented button .ms{font-size:18px;display:none}
@@ -262,18 +262,18 @@ main .wrap{padding-block:8px 32px}
 .voice-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .musicbox{display:flex;flex-direction:column;gap:12px}
 .musicbox .field.sel{flex:none}
-.mhint{background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:12px;padding:12px 14px;font-size:14px;line-height:20px}
+.mhint{background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:var(--r-sm);padding:12px 14px;font-size:14px;line-height:20px}
 .mhint ol{margin:6px 0 0;padding-left:20px}
 .mhint a{color:inherit;font-weight:600}
 .mlink{height:52px;border:1px solid var(--outline);border-radius:4px;padding:0 12px;font:16px var(--font);background:transparent;color:var(--on-surface);width:100%;box-sizing:border-box}
 .mlink:focus{outline:2px solid var(--primary);border-color:transparent}
-.music-btn{height:36px;border-radius:18px;border:1px solid var(--outline-variant);background:none;color:var(--on-surface);display:inline-flex;align-items:center;gap:6px;padding:0 14px 0 10px;font:500 14px var(--font)}
+.music-btn{height:36px;border-radius:999px;border:1px solid var(--outline-variant);background:none;color:var(--on-surface);display:inline-flex;align-items:center;gap:6px;padding:0 14px 0 10px;font:500 14px var(--font)}
 .field.sel{flex:1 1 200px;padding:0}
 .field.sel select{width:100%;height:52px;border:0;background:transparent;color:var(--on-surface);font:inherit;font-size:16px;padding:0 12px;outline:none;border-radius:4px}
 .field.sel select option{background:var(--sc-high);color:var(--on-surface)}
 .field.sel:focus-within{padding:0}
 .plan{display:flex;flex-direction:column;gap:12px}
-.setrow{border:1px solid var(--outline-variant);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:14px}
+.setrow{border:1px solid var(--outline-variant);border-radius:var(--r-md);padding:12px;display:flex;flex-direction:column;gap:14px}
 .setrow-head{display:flex;justify-content:space-between;align-items:baseline;font-size:16px}
 .setrow-head b{font-weight:500}
 .setrow-head span{color:var(--on-surface-variant);font-variant-numeric:tabular-nums}
@@ -286,14 +286,14 @@ main .wrap{padding-block:8px 32px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 .home-grid{display:grid;gap:12px;grid-template-columns:1fr;margin-bottom:28px}
 @media (min-width:720px){.home-grid{grid-template-columns:1.2fr 1fr}}
-.qcard{background:linear-gradient(135deg,#3D8EE0,#1F63B5);color:#fff;border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.qcard{background:var(--qbg,linear-gradient(135deg,#3D8EE0,#1F63B5));color:#fff;border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;gap:14px}
 .qcard h3,.ccard h3{margin:0;font-size:22px;line-height:28px;font-weight:500;display:flex;align-items:center;gap:10px}
 .qcard p{margin:0;opacity:.8;font-size:14px;line-height:20px}
 .qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.qf{background:rgb(255 255 255 / .14);border-radius:14px;padding:6px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
+.qf{background:rgb(255 255 255 / .14);border-radius:var(--r-sm);padding:6px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
 .qf label{font-size:11px;font-weight:600;letter-spacing:.4px;opacity:.85;text-transform:uppercase}
 .qf .row{display:flex;align-items:center;justify-content:space-between;width:100%}
-.qf button{width:30px;height:30px;border-radius:15px;border:0;background:none;color:#fff;display:grid;place-items:center;flex:none}
+.qf button{width:30px;height:30px;border-radius:999px;border:0;background:none;color:#fff;display:grid;place-items:center;flex:none}
 .qf button .ms{font-size:18px}
 .qf input{width:100%;min-width:0;border:0;background:none;color:#fff;text-align:center;font:600 22px var(--font);font-variant-numeric:tabular-nums;padding:0;-moz-appearance:textfield;outline:none}
 .qf input::-webkit-inner-spin-button,.qf input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
@@ -302,55 +302,58 @@ main .wrap{padding-block:8px 32px}
 .qtotal{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;opacity:.9}
 .qtotal b{font-size:20px;font-variant-numeric:tabular-nums}
 .qchips{display:flex;gap:8px;flex-wrap:wrap}
-.qchips button{height:36px;border-radius:10px;padding:0 14px;border:1px solid rgb(255 255 255 / .4);background:none;color:inherit;font:500 14px var(--font)}
+.qchips button{height:36px;border-radius:var(--r-sm);padding:0 14px;border:1px solid rgb(255 255 255 / .4);background:none;color:inherit;font:500 14px var(--font)}
 .qchips button[aria-pressed="true"]{background:#fff;border-color:#fff;color:#1F63B5}
-.qgo{height:56px;border:0;border-radius:16px;background:#C9F0A8;color:#1E4A08;font:600 18px var(--font);display:flex;align-items:center;justify-content:center;gap:10px}
+.qgo{height:56px;border:0;border-radius:var(--r-md);background:var(--qgo,#C9F0A8);color:var(--qgo-on,#1E4A08);font:600 18px var(--font);display:flex;align-items:center;justify-content:center;gap:10px}
 .qgo .ms{font-size:28px}
-.ccard{background:var(--sc-low);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.ccard{background:var(--sc-low);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .ccard .mv{margin:0;color:var(--on-surface-variant);font-size:14px;line-height:20px;overflow-wrap:anywhere}
 .ccard .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
 .mw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:28px}
-.mw{background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:20px;padding:14px 14px 10px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.mw{background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:var(--r-md);padding:14px 14px 10px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .mw-top{display:flex;align-items:center;gap:4px}
 .mw h4{margin:0;flex:1;min-width:0;font-size:18px;line-height:24px;font-weight:500;overflow-wrap:anywhere}
 .mw p{margin:0;font-size:13px;line-height:18px;color:var(--on-surface-variant);overflow-wrap:anywhere}
 .mw .row{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:4px}
 .mw .row .btn{margin-right:auto}
-.star[aria-pressed="true"] .ms{color:#E0A800;font-variation-settings:"FILL" 1}
+.star[aria-pressed="true"] .ms{color:#E0A800;}
 .fav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:28px}
-.fav{position:relative;cursor:pointer;border:0;text-align:left;background:var(--kin-c);color:var(--on-surface);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:6px;min-height:112px;font:inherit}
+.fav{position:relative;cursor:pointer;border:0;text-align:left;background:var(--kin-c);color:var(--on-surface);border-radius:var(--r-md);padding:14px;display:flex;flex-direction:column;gap:6px;min-height:112px;font:inherit}
 .fav b{font-size:17px;line-height:22px;font-weight:600;overflow-wrap:anywhere}
 .fav span{font-size:12px;line-height:16px;color:var(--on-surface-variant)}
-.fav .unpin{position:absolute;top:6px;right:6px;width:36px;height:36px;border-radius:18px;border:0;background:none;display:grid;place-items:center;color:#B88600}
-.fav .unpin .ms{margin:0;width:auto;height:auto;background:none;color:inherit;font-size:22px;font-variation-settings:"FILL" 1}
+.fav .unpin{position:absolute;top:6px;right:6px;width:36px;height:36px;border-radius:999px;border:0;background:none;display:grid;place-items:center;color:#B88600}
+.fav .unpin .ms{margin:0;width:auto;height:auto;background:none;color:inherit;font-size:22px;}
 .fav b{padding-right:28px}
 .wo-hidden{margin:8px 0 0}
-.fav .ms{margin-top:auto;align-self:flex-end;width:40px;height:40px;border-radius:20px;display:grid;place-items:center;background:var(--primary);color:var(--on-primary);font-size:24px}
+.fav .ms{margin-top:auto;align-self:flex-end;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;background:var(--primary);color:var(--on-primary);font-size:24px}
 .imp{display:flex;align-items:center;gap:8px;margin:-14px 0 28px;padding:6px 6px 6px 14px;border:1px solid var(--outline-variant);border-radius:999px;background:var(--sc-lowest)}
 .imp>.ms{color:var(--on-surface-variant)}
 .imp input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:14px;color:var(--on-surface);outline:none;padding:8px 0}
-.empty-dash b{color:var(--on-surface)}
-.empty-dash .btn{margin-top:12px}
+.empty-dash{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.empty-dash b{color:var(--on-surface);font-size:15px}
+.empty-dash .btn{margin-top:10px}
 #lib-workouts .wo-foot>span{flex-basis:100%}
+#lib-workouts .wo-foot .btn{padding:0 16px;gap:6px}
+#lib-workouts .wo-foot{gap:4px}
 #lib-workouts .wo-foot>.btn-filled{margin-left:auto}
 .wo-foot .on-home[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
-.install{display:flex;gap:12px;align-items:flex-start;background:var(--primary-container);color:var(--on-primary-container);border-radius:20px;padding:14px 8px 14px 16px;margin:0 0 20px}
+.install{display:flex;gap:12px;align-items:flex-start;background:var(--primary-container);color:var(--on-primary-container);border-radius:var(--r-md);padding:14px 8px 14px 16px;margin:0 0 20px}
 .install>.ms{font-size:28px;margin-top:2px}
 .install div{flex:1;min-width:0}
 .install div>b{display:block;font-size:15px;margin-bottom:4px}
 .install p{margin:0;font-size:14px;line-height:20px}
 .install .icon-btn{color:inherit}
-.hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:16px}
+.hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:var(--r-md)}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
 .rt-head h2{flex:1;font-size:24px;line-height:32px}
 .rt-label{font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--on-surface-variant);margin-bottom:-8px}
-.rt-name{height:52px;border:1px solid var(--outline);border-radius:12px;padding:0 14px;font:500 17px var(--font);background:var(--sc-lowest);color:var(--on-surface);width:100%;box-sizing:border-box}
+.rt-name{height:52px;border:1px solid var(--outline);border-radius:var(--r-sm);padding:0 14px;font:500 17px var(--font);background:var(--sc-lowest);color:var(--on-surface);width:100%;box-sizing:border-box}
 .rt-name:focus{outline:2px solid var(--primary);border-color:transparent}
 .rt-times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .rt-sum{font-size:14px;color:var(--on-surface-variant)}
 .rt-list{list-style:none;margin:0!important;padding:0!important;display:flex;flex-direction:column;gap:6px}
-.rt-list li{display:flex;align-items:center;gap:2px;background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:14px;padding:4px 4px 4px 12px}
+.rt-list li{display:flex;align-items:center;gap:2px;background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:var(--r-sm);padding:4px 4px 4px 12px}
 .rt-list .num{width:22px;flex:none;font-size:13px;color:var(--on-surface-variant);font-variant-numeric:tabular-nums}
 .rt-list .nm{flex:1;min-width:0;font-size:15px;font-weight:500;overflow-wrap:anywhere}
 .rt-list .icon-btn{width:36px;height:36px}
@@ -364,34 +367,34 @@ main .wrap{padding-block:8px 32px}
 .rt-list li.drop-end{box-shadow:0 3px 0 var(--primary)}
 .rt-list li.dragging{opacity:.35}
 .rt-list .grip{flex:none;width:32px;height:40px;display:grid;place-items:center;color:var(--on-surface-variant);touch-action:none;cursor:grab;margin-left:-8px}
-.rt-empty{border:2px dashed var(--outline-variant);border-radius:14px;padding:18px;text-align:center;color:var(--on-surface-variant);font-size:14px}
+.rt-empty{border:2px dashed var(--outline-variant);border-radius:var(--r-sm);padding:18px;text-align:center;color:var(--on-surface-variant);font-size:14px}
 .rt-empty.drop{border-color:var(--primary);color:var(--primary)}
 .pal-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
 .pal-chips .chip{flex:none;height:30px;padding:0 12px;font-size:13px}
 .pal{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:2px 20px 6px;scrollbar-width:thin}
-.tile{flex:none;width:84px;border:1px solid var(--outline-variant);background:var(--sc-lowest);border-radius:14px;padding:4px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;touch-action:pan-x;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.tile .tf{width:64px;height:64px;border-radius:10px;background:var(--cc)}
+.tile{flex:none;width:84px;border:1px solid var(--outline-variant);background:var(--sc-lowest);border-radius:var(--r-sm);padding:4px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;touch-action:pan-x;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tile .tf{width:64px;height:64px;border-radius:var(--r-sm);background:var(--cc)}
 .tile .tf svg{width:100%;height:100%;display:block}
 .tile span{font-size:11px;line-height:14px;text-align:center;font-weight:500;color:var(--on-surface);overflow-wrap:anywhere}
-.ghost{position:fixed;z-index:50;pointer-events:none;background:var(--sc-lowest);border:1px solid var(--primary);border-radius:14px;padding:10px 14px;font:600 14px var(--font);color:var(--on-surface);box-shadow:var(--e3);transform:translate(-50%,-120%);white-space:nowrap}
+.ghost{position:fixed;z-index:50;pointer-events:none;background:var(--sc-lowest);border:1px solid var(--primary);border-radius:var(--r-sm);padding:10px 14px;font:600 14px var(--font);color:var(--on-surface);box-shadow:var(--e3);transform:translate(-50%,-120%);white-space:nowrap}
 .rt-add{display:flex;gap:8px}
-.rt-add select{flex:1;min-width:0;height:44px;border:1px solid var(--outline);border-radius:12px;padding:0 10px;font:15px var(--font);background:var(--sc-lowest);color:var(--on-surface)}
+.rt-add select{flex:1;min-width:0;height:44px;border:1px solid var(--outline);border-radius:var(--r-sm);padding:0 10px;font:15px var(--font);background:var(--sc-lowest);color:var(--on-surface)}
 .rt-fav{display:flex;align-items:center;gap:10px;font-size:15px}
 .rt-fav input{width:20px;height:20px;accent-color:var(--primary)}
 .rt-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .rt-actions .sp{flex:1}
 .log-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
-.stat{background:var(--sc-low);border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat{background:var(--sc-low);border-radius:var(--r-md);padding:14px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .stat b{font-size:28px;line-height:34px;font-weight:600;color:var(--primary)}
 .stat span{font-size:12px;line-height:16px;color:var(--on-surface-variant);letter-spacing:.4px}
 .log-day{margin:20px 0 8px;font-size:14px;font-weight:500;color:var(--on-surface-variant);letter-spacing:.1px}
-.log-item{display:flex;gap:12px;align-items:flex-start;background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:16px;padding:12px 8px 12px 12px;margin-bottom:8px}
-.log-item>.ms{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--kin-c);color:var(--kin)}
+.log-item{display:flex;gap:12px;align-items:flex-start;background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:var(--r-md);padding:12px 8px 12px 12px;margin-bottom:8px}
+.log-item>.ms{flex:none;width:40px;height:40px;border-radius:var(--r-sm);display:grid;place-items:center;background:var(--kin-c);color:var(--kin)}
 .log-item.partial>.ms{background:var(--sc-high);color:var(--on-surface-variant)}
 .log-main{flex:1;min-width:0}
 .log-main h4{margin:0;font-size:16px;line-height:22px;font-weight:500;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .log-main p{margin:2px 0 0;font-size:13px;line-height:18px;color:var(--on-surface-variant);overflow-wrap:anywhere}
-.tag{font-size:11px;line-height:16px;font-weight:500;padding:0 8px;border-radius:8px;background:var(--sc-high);color:var(--on-surface-variant)}
+.tag{font-size:11px;line-height:16px;font-weight:500;padding:0 8px;border-radius:var(--r-sm);background:var(--sc-high);color:var(--on-surface-variant)}
 .log-empty{text-align:center;color:var(--on-surface-variant);padding:40px 16px}
 .log-empty .ms{font-size:48px;display:block;margin-bottom:8px;color:var(--outline)}
 </style>
@@ -400,7 +403,7 @@ main .wrap{padding-block:8px 32px}
 
 <header class="appbar" id="appbar">
   <div class="appbar-in">
-    <div class="logo"><span class="ms fill">sports_gymnastics</span></div>
+    <div class="logo"><span class="ms">logo</span></div>
     <h1>Haruku Fit</h1>
     <button class="icon-btn sl" id="btn-shareapp" aria-label="Share the app" title="Share the app"><span class="ms">ios_share</span></button>
     <button class="icon-btn sl upd-btn" id="btn-update" aria-label="Check for updates" title="Check for updates"><span class="ms">sync</span><span class="upd-dot" id="upd-dot" hidden></span></button>
@@ -412,7 +415,7 @@ main .wrap{padding-block:8px 32px}
   <button class="nav-item" role="tab" id="tab-home" aria-selected="true" data-view="home"><span class="pill sl"><span class="ms">home</span></span>Home</button>
   <button class="nav-item" role="tab" id="tab-lib" aria-selected="false" data-view="lib"><span class="pill sl"><span class="ms">fitness_center</span></span>Catalog</button>
   <button class="nav-item" role="tab" id="tab-timer" aria-selected="false" data-view="timer"><span class="pill sl"><span class="ms">timer</span></span>Timer</button>
-  <button class="nav-item" role="tab" id="tab-log" aria-selected="false" data-view="log"><span class="pill sl"><span class="ms">history</span></span>Log</button>
+  <button class="nav-item" role="tab" id="tab-log" aria-selected="false" data-view="log"><span class="pill sl"><span class="ms">history</span></span>History</button>
 </nav>
 
 <main>
@@ -420,13 +423,12 @@ main .wrap{padding-block:8px 32px}
     <div class="intro"><h2 id="hello">Hi Kim</h2><p id="today"></p></div>
     <div class="install" id="install" hidden>
       <span class="ms fill">install_mobile</span>
-      <div><b>Put Haruku Fit on your home screen</b><p id="install-how"></p></div>
+      <div><b>Install Haruku Fit</b><p id="install-how"></p></div>
       <button class="icon-btn sl" id="install-x" aria-label="Dismiss"><span class="ms">close</span></button>
     </div>
     <div class="home-grid">
       <div class="qcard">
-        <h3><span class="ms fill">timer</span>Quick timer</h3>
-        <p>Just the timer, for your own moves. Pick a preset or set your own.</p>
+        <h3><span class="ms">timer</span>Quick timer</h3>
         <div class="qchips" id="qchips"></div>
         <div class="qgrid" id="qgrid"></div>
         <div class="qtotal"><span id="q-shape"></span><b id="q-total"></b></div>
@@ -438,30 +440,24 @@ main .wrap{padding-block:8px 32px}
         <div class="row"><button class="btn btn-filled with-icon sl" id="h-go"><span class="ms fill">play_arrow</span>Start</button><button class="text-btn sl" id="h-edit"><span class="ms">tune</span>Edit</button><button class="text-btn sl" id="h-cat"><span class="ms">add</span>Add moves</button></div>
       </div>
     </div>
-    <div class="log-stats">
-      <div class="stat"><b id="hs-week">0</b><span>Workouts this week</span></div>
-      <div class="stat"><b id="hs-min">0</b><span>Minutes this week</span></div>
-      <div class="stat"><b id="hs-streak">0</b><span>Day streak</span></div>
-    </div>
     <div class="cat-head" id="fav-head"><h3><span class="ms fill" style="--c:#B88600;--cc:#FFF1C2">star</span>Favorites</h3></div>
     <div class="fav-grid" id="favs"></div>
-    <div class="hint empty-dash" id="fav-hint" hidden><b>Your dashboard is empty.</b> Open the Catalog, pick a ready-made routine or build your own, and tap <i>Add to Home</i>.<br><button class="btn btn-tonal with-icon sl" id="fav-cat"><span class="ms">menu_book</span>Open the Catalog</button></div>
+    <div class="hint empty-dash" id="fav-hint" hidden><b>Nothing pinned yet</b><span>Add routines from the Catalog.</span><button class="btn btn-tonal with-icon sl" id="fav-cat"><span class="ms">menu_book</span>Browse catalog</button></div>
     <section class="wo-block" id="wo-block">
-      <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Workouts</h3></div>
+      <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Routines</h3></div>
       <div class="wo-grid" id="workouts"></div>
     </section>
   </section>
 
   <section id="view-lib" class="wrap" hidden>
     <div class="intro">
-      <h2>Exercise catalog</h2>
-      <p>Tap a move to see how it's done. Build your own routines from any of these moves.</p>
+      <h2>Catalog</h2>
     </div>
     <div class="cat-head"><h3><span class="ms fill" style="--c:var(--kin);--cc:var(--kin-c)">bookmarks</span>My routines</h3><button class="btn btn-tonal with-icon sl" id="mw-save" style="margin-left:auto"><span class="ms">add</span>New routine</button></div>
     <div class="mw-grid" id="mw-list"></div>
-    <form class="imp" id="imp"><span class="ms">link</span><input id="imp-in" placeholder="Got a shared routine? Paste the link or code" autocomplete="off" aria-label="Shared routine link or code"><button class="btn btn-tonal sl" type="submit">Add</button></form>
+    <form class="imp" id="imp"><span class="ms">link</span><input id="imp-in" placeholder="Paste a routine link or code" autocomplete="off" aria-label="Shared routine link or code"><button class="btn btn-tonal sl" type="submit">Add</button></form>
     <section class="wo-block">
-      <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Ready-made routines</h3><span class="sub">Tap Add to Home to put one on your dashboard</span></div>
+      <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Routines</h3></div>
       <div class="wo-grid" id="lib-workouts"></div>
     </section>
     <div class="lib-tools">
@@ -476,7 +472,7 @@ main .wrap{padding-block:8px 32px}
   </section>
 
   <section id="view-log" class="wrap" hidden>
-    <div class="intro"><h2>Workout log</h2><p>Every workout you run is saved here on this device.</p></div>
+    <div class="intro"><h2>History</h2></div>
     <div class="log-stats">
       <div class="stat"><b id="st-week">0</b><span>Workouts this week</span></div>
       <div class="stat"><b id="st-min">0</b><span>Minutes this week</span></div>
@@ -523,19 +519,17 @@ main .wrap{padding-block:8px 32px}
         </div>
         <div>
           <h3>Timing</h3>
-          <p class="supporting">Pick a preset or set your own intervals.</p>
         </div>
         <div class="seg" id="presets"></div>
-        <button class="sw-row" role="switch" id="t-lock" aria-checked="true"><span class="switch"></span>Keep every round the same length (work + rest)</button>
+        <button class="sw-row" role="switch" id="t-lock" aria-checked="true"><span class="switch"></span>Fixed round length</button>
         <div class="fields" id="fields"></div>
         <div id="perset" class="perset" hidden>
-          <button class="sw-row" role="switch" id="t-perset" aria-checked="false"><span class="switch"></span>Different work and rest for each set</button>
+          <button class="sw-row" role="switch" id="t-perset" aria-checked="false"><span class="switch"></span>Separate timing per set</button>
           <div id="plan" class="plan"></div>
         </div>
-        <div class="total"><span><span class="ms">schedule</span>Total workout</span><b id="total">0:00</b></div>
+        <div class="total"><span><span class="ms">schedule</span>Total</span><b id="total">0:00</b></div>
         <div class="voicebox">
           <h3>Voice coach</h3>
-          <p class="supporting">Uses your device's own voice. Try others here and tap Test to compare.</p>
           <div class="voice-row">
             <div class="field sel"><label for="voice-sel">Voice</label><select id="voice-sel"></select></div>
             <button class="btn btn-tonal with-icon sl" id="voice-test"><span class="ms">volume_up</span>Test</button>
@@ -543,21 +537,18 @@ main .wrap{padding-block:8px 32px}
         </div>
         <div class="musicbox">
           <h3>Music</h3>
-          <p class="supporting">Open your music app when you start. Pick your app, and paste a playlist link if you want a specific one. Your music app opens and the timer starts at the same time. Deezer is asked to start playing on its own; if it doesn't, tap play there once and come back. Beeps and the voice play over your music.</p>
-          <div class="field sel"><label for="m-svc">Music app</label><select id="m-svc">
+                    <div class="field sel"><label for="m-svc">Music app</label><select id="m-svc">
             <option value="none">None</option><option value="deezer">Deezer</option><option value="spotify">Spotify</option><option value="apple">Apple Music</option><option value="ytm">YouTube Music</option><option value="link">Other (any link)</option></select></div>
-          <input class="mlink" id="m-link" type="url" inputmode="url" autocomplete="off" placeholder="Playlist link (optional)">
-          <div class="mhint" id="m-hint" hidden><b>That's a short share link.</b> It opens Deezer's website instead of the app, so the playlist can't start by itself. To get the full link:
-            <ol><li><a id="m-hint-open" href="#" target="_blank" rel="noopener">Open your short link in Safari</a>.</li><li>Copy the address from the address bar. It looks like deezer.com/…/playlist/123456.</li><li>Paste it here instead.</li></ol>
-            You can also paste just the playlist number.</div>
-          <button class="sw-row" role="switch" id="t-music" aria-checked="true"><span class="switch"></span>Open music when I press Start</button>
-          <div><button class="btn btn-tonal with-icon sl" id="m-test"><span class="ms">open_in_new</span>Open now</button></div>
+          <input class="mlink" id="m-link" type="url" inputmode="url" autocomplete="off" placeholder="Playlist link (e.g. deezer.com/playlist/…)">
+          <div class="mhint" id="m-hint" hidden>Short links can't open the app. <a id="m-hint-open" href="#" target="_blank" rel="noopener">Open it</a>, then paste the full deezer.com/playlist/… address or the playlist number.</div>
+          <button class="sw-row" role="switch" id="t-music" aria-checked="true"><span class="switch"></span>Open on start</button>
+          <div><button class="btn btn-tonal with-icon sl" id="m-test"><span class="ms">open_in_new</span>Open</button></div>
         </div>
         <div id="wo-section" class="wo-section">
         <div class="divider"></div>
         <div>
           <h3>Your workout</h3>
-          <p class="supporting">Each round uses the next move in this list, then the list starts over.</p>
+          <p class="supporting">Rounds cycle through this list.</p>
         </div>
         <ul class="plist" id="plist"></ul>
         <div class="quick" id="quick"></div>
@@ -581,10 +572,10 @@ main .wrap{padding-block:8px 32px}
     <div class="rt-sum" id="rt-sum"></div>
     <div class="rt-label">Moves, in order</div>
     <ol class="rt-list" id="rt-list"></ol>
-    <div class="rt-label">Add moves: tap, or drag into the list</div>
+    <div class="rt-label">Add moves</div>
     <div class="pal-chips" id="pal-chips"></div>
     <div class="pal" id="pal"></div>
-    <label class="rt-fav"><input type="checkbox" id="rt-fav">Show on Home as a favorite</label>
+    <label class="rt-fav"><input type="checkbox" id="rt-fav">Pin to Home</label>
     <div class="rt-actions"><button class="text-btn sl" id="rt-del" style="color:var(--alert)"><span class="ms">delete</span>Delete</button><span class="sp"></span>
       <button class="text-btn sl" id="rt-cancel">Cancel</button><button class="btn btn-filled with-icon sl" id="rt-save"><span class="ms">check</span>Save</button></div>
   </div>
@@ -1030,6 +1021,18 @@ const store = {
   get(k,d){try{const v=localStorage.getItem("pp:"+k);return v?JSON.parse(v):d}catch(e){return d}},
   set(k,v){try{localStorage.setItem("pp:"+k,JSON.stringify(v))}catch(e){}}
 };
+/* Icons (Lucide, ISC license). Markup writes <span class="ms">name</span>; paintIcon swaps the name for its SVG. */
+const ICONS={"check":"<path d=\"M20 6 9 17l-5-5\"/>","add":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","play_arrow":"<polygon points=\"6 3 20 12 6 21 6 3\"/>","close":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","remove":"<path d=\"M5 12h14\"/>","delete":"<path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/><line x1=\"10\" x2=\"10\" y1=\"11\" y2=\"17\"/><line x1=\"14\" x2=\"14\" y1=\"11\" y2=\"17\"/>","ios_share":"<path d=\"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8\"/><polyline points=\"16 6 12 2 8 6\"/><line x1=\"12\" x2=\"12\" y1=\"2\" y2=\"15\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","event_note":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M8 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M16 14h.01\"/><path d=\"M8 18h.01\"/><path d=\"M12 18h.01\"/><path d=\"M16 18h.01\"/>","drag_indicator":"<circle cx=\"9\" cy=\"12\" r=\"1\"/><circle cx=\"9\" cy=\"5\" r=\"1\"/><circle cx=\"9\" cy=\"19\" r=\"1\"/><circle cx=\"15\" cy=\"12\" r=\"1\"/><circle cx=\"15\" cy=\"5\" r=\"1\"/><circle cx=\"15\" cy=\"19\" r=\"1\"/>","volume_up":"<path d=\"M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z\"/><path d=\"M16 9a5 5 0 0 1 0 6\"/><path d=\"M19.364 18.364a9 9 0 0 0 0-12.728\"/>","tune":"<line x1=\"21\" x2=\"14\" y1=\"4\" y2=\"4\"/><line x1=\"10\" x2=\"3\" y1=\"4\" y2=\"4\"/><line x1=\"21\" x2=\"12\" y1=\"12\" y2=\"12\"/><line x1=\"8\" x2=\"3\" y1=\"12\" y2=\"12\"/><line x1=\"21\" x2=\"16\" y1=\"20\" y2=\"20\"/><line x1=\"12\" x2=\"3\" y1=\"20\" y2=\"20\"/><line x1=\"14\" x2=\"14\" y1=\"2\" y2=\"6\"/><line x1=\"8\" x2=\"8\" y1=\"10\" y2=\"14\"/><line x1=\"16\" x2=\"16\" y1=\"18\" y2=\"22\"/>","sync":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","sports_gymnastics":"<circle cx=\"12\" cy=\"5\" r=\"1\"/><path d=\"m9 20 3-6 3 6\"/><path d=\"m6 8 6 2 6-2\"/><path d=\"M12 10v4\"/>","skip_next":"<polygon points=\"5 4 15 12 5 20 5 4\"/><line x1=\"19\" x2=\"19\" y1=\"5\" y2=\"19\"/>","share":"<circle cx=\"18\" cy=\"5\" r=\"3\"/><circle cx=\"6\" cy=\"12\" r=\"3\"/><circle cx=\"18\" cy=\"19\" r=\"3\"/><line x1=\"8.59\" x2=\"15.42\" y1=\"13.51\" y2=\"17.49\"/><line x1=\"15.41\" x2=\"8.59\" y1=\"6.51\" y2=\"10.49\"/>","schedule":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","replay":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/>","playlist_play":"<path d=\"M12 12H3\"/><path d=\"M16 6H3\"/><path d=\"M12 18H3\"/><path d=\"m16 12 5 3-5 3v-6Z\"/>","pause":"<rect x=\"14\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/><rect x=\"6\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/>","open_in_new":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","music_note":"<path d=\"M9 18V5l12-2v13\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><circle cx=\"18\" cy=\"16\" r=\"3\"/>","menu_book":"<path d=\"M12 7v14\"/><path d=\"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z\"/>","link":"<path d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/><path d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","install_mobile":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","home":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","fitness_center":"<path d=\"M14.4 14.4 9.6 9.6\"/><path d=\"M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z\"/><path d=\"m21.5 21.5-1.4-1.4\"/><path d=\"M3.9 3.9 2.5 2.5\"/><path d=\"M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z\"/>","edit":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","content_copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","bookmarks":"<path d=\"m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z\"/>","arrow_upward":"<path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/>","arrow_forward":"<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>","accessibility_new":"<circle cx=\"16\" cy=\"4\" r=\"1\"/><path d=\"m18 19 1-7-6 1\"/><path d=\"m5 8 3-3 5.5 3-2.36 3.5\"/><path d=\"M4.24 14.5a5 5 0 0 0 6.88 6\"/><path d=\"M13.76 17.5a5 5 0 0 0-6.88-6\"/>","self_improvement":"<path d=\"M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1\"/><circle cx=\"12\" cy=\"8\" r=\"2\"/><path d=\"M12 10v12\"/><path d=\"M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z\"/><path d=\"M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z\"/>","bolt":"<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"/>","directions_walk":"<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>","radio_button_checked":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","sports_mma":"<path d=\"M12.409 13.017A5 5 0 0 1 22 15c0 3.866-4 7-9 7-4.077 0-8.153-.82-10.371-2.462-.426-.316-.631-.832-.62-1.362C2.118 12.723 2.627 2 10 2a3 3 0 0 1 3 3 2 2 0 0 1-2 2c-1.105 0-1.64-.444-2-1\"/><path d=\"M15 14a5 5 0 0 0-7.584 2\"/><path d=\"M9.964 6.825C8.019 7.977 9.5 13 8 15\"/>","wb_sunny":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","emoji_events":"<path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/>","timelapse":"<path d=\"M10.1 2.182a10 10 0 0 1 3.8 0\"/><path d=\"M13.9 21.818a10 10 0 0 1-3.8 0\"/><path d=\"M17.609 3.721a10 10 0 0 1 2.69 2.7\"/><path d=\"M2.182 13.9a10 10 0 0 1 0-3.8\"/><path d=\"M20.279 17.609a10 10 0 0 1-2.7 2.69\"/><path d=\"M21.818 10.1a10 10 0 0 1 0 3.8\"/><path d=\"M3.721 6.391a10 10 0 0 1 2.7-2.69\"/><path d=\"M6.391 20.279a10 10 0 0 1-2.69-2.7\"/>","hourglass_top":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","local_fire_department":"<path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\"/>","coffee":"<path d=\"M10 2v2\"/><path d=\"M14 2v2\"/><path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\"/><path d=\"M6 2v2\"/>","logo":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>"};
+function paintIcon(el){
+  const n=el.textContent.trim(); if(!n) return;
+  el.dataset.i=n; el.setAttribute("aria-hidden","true");
+  el.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]||""}</svg>`;
+}
+document.querySelectorAll(".ms").forEach(paintIcon);
+new MutationObserver(list=>{ for(const m of list){
+  if(m.target.classList&&m.target.classList.contains("ms")) paintIcon(m.target);
+  m.addedNodes.forEach(n=>{ if(n.nodeType!==1) return; if(n.classList.contains("ms")) paintIcon(n); else if(n.firstElementChild) n.querySelectorAll(".ms").forEach(paintIcon); });
+}}).observe(document.body,{childList:true,subtree:true});
 /* Anyone who already has saved data is a returning user; new people start with an empty dashboard. */
 const RETURNING=(()=>{try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k&&k.startsWith("pp:")) return true}}catch(e){} return false})();
 
@@ -1157,12 +1160,12 @@ function togglePlaylist(id){
 function savePlaylist(){ store.set("playlist",playlist); syncAddButtons(); renderPlaylist(); if(!T.running&&!T.paused) idleStage(); }
 /* Ready-made workouts: each move once per set, 45s work / 15s rest (1-minute rounds), 2 sets. */
 const WORKOUTS = [
-  {id:"morning",name:"Morning Routine",icon:"wb_sunny",c:"stretch",blurb:"Your daily stretch: 40s holds with 20s to switch",
+  {id:"morning",name:"Morning Routine",icon:"wb_sunny",c:"stretch",blurb:"40s holds, 20s transitions",
    moves:["catcow","catcow","hipflexor","hipflexor","hipflexor","hipflexor","chestopen","chestopen","frog","frog","twist","twist"],cfg:{work:40,rest:20,sets:1}},
   {id:"upper",name:"Upper Body",icon:"sports_mma",c:"str",blurb:"Chest, shoulders, arms and back",moves:["pushup","dips","pike","pullup","boxing","superman"]},
   {id:"core",name:"Core",icon:"radio_button_checked",c:"yoga",blurb:"Abs, obliques and lower back",moves:["plank","crunch","climbers","superman","bridge","highknees"]},
   {id:"legs",name:"Legs",icon:"directions_walk",c:"stretch",blurb:"Quads, glutes, hamstrings and calves",moves:["squat","lunge","nordic","squatjump","skaters","bridge","chair"]},
-  {id:"full",name:"Full Body",icon:"bolt",c:"kin",blurb:"A bit of everything, high energy",moves:["burpee","squat","pushup","climbers","lunge","jacks"]}
+  {id:"full",name:"Full Body",icon:"bolt",c:"kin",blurb:"Full-body conditioning",moves:["burpee","squat","pushup","climbers","lunge","jacks"]}
 ];
 const woCfg = w => Object.assign({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60},w.cfg||{});
 function useWorkout(w){
@@ -1185,12 +1188,12 @@ function woCard(w,home){
   if(home){
     const hd=btn("icon-btn sl","Remove from Home","close"); hd.style.marginLeft="auto";
     hd.onclick=()=>{ homeWos=homeWos.filter(x=>x!==w.id); saveHome();
-      undoSnack(`Removed ${w.name} from Home.`,()=>{ if(!homeWos.includes(w.id)) homeWos.push(w.id); saveHome(); }); };
+      undoSnack(`Unpinned ${w.name}`,()=>{ if(!homeWos.includes(w.id)) homeWos.push(w.id); saveHome(); }); };
     foot.appendChild(hd);
   } else {
     const ah=document.createElement("button"); ah.className="btn btn-tonal with-icon sl on-home"; ah.setAttribute("aria-pressed",on);
     ah.innerHTML=on?`<span class="ms">check</span>On Home`:`<span class="ms">add</span>Add to Home`;
-    ah.onclick=()=>{ if(on){ homeWos=homeWos.filter(x=>x!==w.id); saveHome(); snack(`Removed ${w.name} from Home.`); } else { homeWos.push(w.id); saveHome(); snack(`${w.name} is on your Home screen.`); } };
+    ah.onclick=()=>{ if(on){ homeWos=homeWos.filter(x=>x!==w.id); saveHome(); snack(`Unpinned ${w.name}`); } else { homeWos.push(w.id); saveHome(); snack(`Pinned ${w.name}`); } };
     foot.appendChild(ah);
   }
   const cp=btn("icon-btn sl","Copy to My routines and edit","edit"); cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w)},null); foot.appendChild(cp);
@@ -1573,8 +1576,8 @@ function syncMusic(){
 $("m-svc").onchange=e=>{ musicSvc=e.target.value; store.set("musicSvc",musicSvc); syncMusic(); };
 $("m-link").oninput=$("m-link").onchange=e=>{ musicLink=e.target.value.trim(); store.set("musicLink",musicLink); syncMusic(); };
 $("t-music").onclick=()=>{ musicAuto=!musicAuto; store.set("musicAuto",musicAuto); syncMusic(); };
-$("m-test").onclick=()=>{ musicLink=$("m-link").value.trim(); store.set("musicLink",musicLink); if(!openMusic()) snack("Paste a link first."); };
-$("btn-music").onclick=()=>{ if(!openMusic()) snack("Add your music app in the Timer settings below."); };
+$("m-test").onclick=()=>{ musicLink=$("m-link").value.trim(); store.set("musicLink",musicLink); if(!openMusic()) snack("Paste a link first"); };
+$("btn-music").onclick=()=>{ if(!openMusic()) snack("Choose a music app first"); };
 function start(){
   audio();
   // Fresh start with music on: open the music app and start the timer at the same moment.
@@ -1663,7 +1666,7 @@ function runNames(ms){ const out=[]; ms.forEach(id=>{ const l=out[out.length-1];
 function myMeta(w){ const c=w.cfg||cfg; return `${w.moves.length} round${w.moves.length===1?"":"s"} · ${c.work}s / ${c.rest}s${c.sets>1?` · ${c.sets} sets`:""}`; }
 function renderMy(){
   const el=$("mw-list"); el.innerHTML="";
-  if(!myWos.length){ el.innerHTML=`<p class="hint" style="margin:0;grid-column:1/-1">No routines yet. Tap New routine to build one, or copy a ready-made one below with its edit button.</p>`; }
+  if(!myWos.length){ el.innerHTML=`<p class="hint" style="margin:0;grid-column:1/-1">No routines yet.</p>`; }
   myWos.forEach((w,i)=>{
     const c=document.createElement("article"); c.className="mw";
     c.innerHTML=`<div class="mw-top"><h4></h4><button class="icon-btn sl star" aria-label="Favorite" title="Add to Home"><span class="ms">star</span></button></div><p class="meta"></p><p class="mv"></p>
@@ -1674,7 +1677,7 @@ function renderMy(){
     c.querySelector("h4").textContent=w.name; c.querySelector(".meta").textContent=myMeta(w);
     c.querySelector(".mv").textContent=runNames(w.moves);
     const st=c.querySelector(".star"); st.setAttribute("aria-pressed",!!w.fav);
-    st.onclick=()=>{ if(!w.fav&&myWos.filter(x=>x.fav).length>=MAX_FAV){ snack(`You can pin ${MAX_FAV} favorites. Unstar one first.`); return; } w.fav=!w.fav; saveMy(); if(w.fav) snack(`${w.name} is on your Home screen.`); };
+    st.onclick=()=>{ if(!w.fav&&myWos.filter(x=>x.fav).length>=MAX_FAV){ snack(`Limit is ${MAX_FAV} pinned routines`); return; } w.fav=!w.fav; saveMy(); if(w.fav) snack(`Pinned ${w.name}`); };
     c.querySelector(".go").onclick=()=>runMy(w,true);
     c.querySelector(".ed").onclick=()=>openRoutine(w,w);
     c.querySelector(".sh").onclick=()=>shareRoutine(w);
@@ -1701,7 +1704,7 @@ function openRoutine(src,target){
 }
 function rtSum(){
   const n=rtD.moves.length, secs=10+rtD.sets*n*(rtD.work+rtD.rest)-rtD.rest+(rtD.sets-1)*60;
-  $("rt-sum").textContent=n?`${n} round${n===1?"":"s"}${rtD.sets>1?` × ${rtD.sets}`:""} · about ${Math.max(1,Math.round(secs/60))} min`:"Add at least one move.";
+  $("rt-sum").textContent=n?`${n} round${n===1?"":"s"}${rtD.sets>1?` × ${rtD.sets}`:""} · about ${Math.max(1,Math.round(secs/60))} min`:"Add at least one move";
 }
 function renderRt(){
   const ol=$("rt-list"); ol.innerHTML="";
@@ -1734,7 +1737,7 @@ function renderPal(){
     t.addEventListener("pointermove",e=>{ if(pid!==e.pointerId||moved) return; const dx=Math.abs(e.clientX-sx), dy=Math.abs(e.clientY-sy);
       if(dy>8&&dy>dx){ moved=true; pid=null; dragStart(e,{from:-1,id:ex.id},t); } else if(dx>8){ moved=true; pid=null; } });
     t.addEventListener("pointerup",()=>{ pid=null; });
-    t.onclick=()=>{ if(moved) return; rtD.moves.push(ex.id); renderRt(); snack(`Added ${ex.name}.`);
+    t.onclick=()=>{ if(moved) return; rtD.moves.push(ex.id); renderRt(); snack(`Added ${ex.name}`);
       const last=$("rt-list").lastElementChild; if(last) last.scrollIntoView({block:"nearest",behavior:"smooth"}); };
     p.appendChild(t); });
 }
@@ -1783,7 +1786,7 @@ function dragEnd(e){
   const {from,id}=drag, at=dropIndex(e.clientX,e.clientY); dragCleanup();
   if(at==null) return;
   const m=rtD.moves;
-  if(from<0){ m.splice(at,0,id); snack(`Added ${byId[id].name}.`); }
+  if(from<0){ m.splice(at,0,id); snack(`Added ${byId[id].name}`); }
   else { const to=at>from?at-1:at; if(to===from) { renderRt(); return; } m.splice(from,1); m.splice(to,0,id); }
   renderRt();
 }
@@ -1795,11 +1798,11 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("rt").hidden) c
 $("rt-del").onclick=()=>{ if(rtT&&confirm(`Delete ${rtT.name}?`)){ myWos.splice(myWos.indexOf(rtT),1); saveMy(); renderFavs(); closeRt(); } };
 $("rt-save").onclick=()=>{
   const name=$("rt-name").value.trim();
-  if(!name){ $("rt-name").focus(); snack("Give your routine a name."); return; }
-  if(!rtD.moves.length){ snack("Add at least one move."); return; }
+  if(!name){ $("rt-name").focus(); snack("Name required"); return; }
+  if(!rtD.moves.length){ snack("Add at least one move"); return; }
   let fav=$("rt-fav").checked;
-  if(fav&&!(rtT&&rtT.fav)&&myWos.filter(x=>x.fav).length>=MAX_FAV){ fav=false; snack(`Saved. Home already has ${MAX_FAV} favorites, so this one isn't pinned.`); }
-  else snack(`Saved ${name}.`);
+  if(fav&&!(rtT&&rtT.fav)&&myWos.filter(x=>x.fav).length>=MAX_FAV){ fav=false; snack(`Saved (not pinned, limit is ${MAX_FAV})`); }
+  else snack(`Saved ${name}`);
   const c=Object.assign({},woCfg({moves:rtD.moves}),{work:rtD.work,rest:rtD.rest,sets:rtD.sets,rounds:rtD.moves.length,roundLen:rtD.work+rtD.rest});
   const data={name,moves:rtD.moves.slice(),cfg:c,fav};
   if(rtT) Object.assign(rtT,data); else myWos.unshift(Object.assign(data,{id:"m"+Date.now()}));
@@ -1814,7 +1817,7 @@ function renderFavs(){
     b.setAttribute("aria-label","Start "+w.name); b.onclick=()=>runMy(w,true);
     b.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); runMy(w,true); } };
     b.querySelector(".unpin").onclick=e=>{ e.stopPropagation(); w.fav=false; saveMy(); renderFavs();
-      undoSnack(`Removed ${w.name} from Home.`,()=>{ w.fav=true; saveMy(); renderFavs(); }); };
+      undoSnack(`Unpinned ${w.name}`,()=>{ w.fav=true; saveMy(); renderFavs(); }); };
     el.appendChild(b); });
 }
 /* Sharing: a routine packs into a short code that rides in a link (#r=CODE) */
@@ -1832,17 +1835,17 @@ function decRoutine(code){
   }catch(e){ return null; }
 }
 function shareRoutine(w){
-  const url=SHARE_BASE+"#r="+encRoutine(w), text=`Try my "${w.name}" routine in Haruku Fit:`;
-  const copy=()=>{ try{ navigator.clipboard.writeText(url).then(()=>snack("Link copied. Send it to anyone."),()=>prompt("Copy this link:",url)); }catch(e){ prompt("Copy this link:",url); } };
+  const url=SHARE_BASE+"#r="+encRoutine(w), text=`${w.name} on Haruku Fit`;
+  const copy=()=>{ try{ navigator.clipboard.writeText(url).then(()=>snack("Link copied"),()=>prompt("Copy this link:",url)); }catch(e){ prompt("Copy this link:",url); } };
   if(navigator.share) navigator.share({title:w.name,text,url}).catch(e=>{ if(e&&e.name!=="AbortError") copy(); });
   else copy();
 }
 function importRoutine(code,ask){
-  const r=decRoutine(code); if(!r){ snack("That link or code doesn't look like a routine."); return false; }
+  const r=decRoutine(code); if(!r){ snack("Invalid routine link"); return false; }
   if(ask&&!confirm(`Add the shared routine "${r.name}" (${r.moves.length} moves) to your routines?`)) return false;
   const fav=myWos.filter(x=>x.fav).length<MAX_FAV;
   myWos.unshift(Object.assign(r,{id:"m"+Date.now(),fav})); saveMy(); renderFavs();
-  snack(fav?`Added ${r.name} to your Home screen.`:`Added ${r.name} to My routines.`);
+  snack(fav?`Added ${r.name}`:`Added ${r.name}`);
   return true;
 }
 $("imp").onsubmit=e=>{ e.preventDefault(); const v=$("imp-in").value; if(!v.trim()) return; if(importRoutine(v,false)) $("imp-in").value=""; };
@@ -1860,14 +1863,14 @@ $("fav-cat").onclick=()=>showView("lib");
   const ua=navigator.userAgent, ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1), android=/Android/.test(ua);
   if(framed||standalone||!(ios||android)||store.get("installHintOff",false)) return;
   $("install-how").innerHTML=ios
-    ? (/CriOS|FxiOS|EdgiOS/.test(ua)?"Open this page in <b>Safari</b>, then tap ":"Tap ")+`the <b>Share</b> button <span class="ms" style="font-size:18px;vertical-align:-4px">ios_share</span> at the bottom, scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>. Open it from the new icon.`
-    : `Tap the <b>⋮</b> menu at the top right and choose <b>Add to Home screen</b> (or <b>Install app</b>), then open it from the new icon.`;
+    ? (/CriOS|FxiOS|EdgiOS/.test(ua)?"Open in Safari, then tap ":"Tap ")+`<b>Share</b> <span class="ms" style="font-size:16px;vertical-align:-3px">ios_share</span> → <b>Add to Home Screen</b>.`
+    : `Open the <b>⋮</b> menu → <b>Add to Home screen</b>.`;
   $("install").hidden=false;
   $("install-x").onclick=()=>{ $("install").hidden=true; store.set("installHintOff",true); };
 })();
 $("btn-shareapp").onclick=()=>{
-  const url=SHARE_BASE, text="Try Haruku Fit, my workout app with a timer. Open the link and follow the steps at the top to put it on your home screen.";
-  const copy=()=>{ try{ navigator.clipboard.writeText(url).then(()=>snack("App link copied. Send it to anyone."),()=>prompt("Copy this link:",url)); }catch(e){ prompt("Copy this link:",url); } };
+  const url=SHARE_BASE, text="Haruku Fit: interval timer and workout routines.";
+  const copy=()=>{ try{ navigator.clipboard.writeText(url).then(()=>snack("Link copied"),()=>prompt("Copy this link:",url)); }catch(e){ prompt("Copy this link:",url); } };
   if(navigator.share) navigator.share({title:"Haruku Fit",text,url}).catch(e=>{ if(e&&e.name!=="AbortError") copy(); });
   else copy();
 };
@@ -1897,15 +1900,15 @@ function renderQuickFields(){
 function renderHome(){
   const h=new Date().getHours();
   $("hello").textContent=h<12?"Good morning":h<18?"Good afternoon":"Good evening";
-  $("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+". Ready to move?";
+  $("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
   const q=$("qchips"); q.innerHTML="";
   QUICK.forEach(k=>{ const b=document.createElement("button"); b.className="sl"; b.textContent=PRESETS[k].name; b.dataset.k=k;
     b.onclick=()=>{ quick=Object.assign({},quick,PRESETS[k].cfg); saveQuick(); renderQuickFields(); }; q.appendChild(b); });
   renderQuickFields();
   const names=playlist.map(id=>byId[id].name);
-  $("h-moves").textContent=names.length?`${names.length} move${names.length===1?"":"s"}: ${names.join(" · ")}`:"No moves picked yet. Add some from the Catalog or pick a routine there.";
+  $("h-moves").textContent=names.length?`${names.length} move${names.length===1?"":"s"}: ${names.join(" · ")}`:"No moves yet.";
   $("h-go").disabled=!names.length;
-  renderFavs(); fillStats("hs");
+  renderFavs();
 }
 $("q-go").onclick=()=>{ freeMode=true; store.set("freeMode",true);
   cfg=Object.assign({},quick,{perSet:false,plan:[],lock:false,roundLen:quick.work+quick.rest}); saveCfg(); renderFields();
@@ -1916,7 +1919,7 @@ $("h-cat").onclick=()=>showView("lib");
 function renderLog(){
   const now=new Date(); fillStats("st");
   const el=$("log-list"); el.innerHTML="";
-  if(!workLog.length){ el.innerHTML=`<div class="log-empty"><span class="ms">history</span>No workouts yet. Finish a workout on the Timer and it shows up here.</div>`; return; }
+  if(!workLog.length){ el.innerHTML=`<div class="log-empty"><span class="ms">history</span>No workouts yet.</div>`; return; }
   const today=dayKey(now), yd=new Date(now); yd.setDate(yd.getDate()-1);
   let last="";
   workLog.forEach((e,i)=>{
@@ -1941,7 +1944,7 @@ let freeMode = store.get("freeMode", false);
 function syncMode(){
   document.querySelectorAll(".mode-seg button").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.mode==="free")===freeMode));
   $("wo-section").hidden=freeMode; $("stage-fig").hidden=freeMode; $("ring-ico").hidden=!freeMode;
-  $("total").previousElementSibling.lastChild.textContent = freeMode ? "Total time" : "Total workout";
+  $("total").previousElementSibling.lastChild.textContent = "Total";
   if(!T.running&&!T.paused) idleStage();
 }
 document.querySelectorAll(".mode-seg button").forEach(b=>b.onclick=()=>{ freeMode=b.dataset.mode==="free"; store.set("freeMode",freeMode); syncMode(); });
@@ -1952,7 +1955,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.13.1";
+const APP_VERSION = "1.14.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
@@ -1967,8 +1970,8 @@ async function checkUpdate(manual){
     if(!r.ok) throw 0;
     const v=(await r.json()).version;
     if(v && v!==APP_VERSION){ newVersion=v; $("upd-dot").hidden=false; snack(`Version ${v} is ready`,{label:"Update",run:applyUpdate}); }
-    else if(manual) snack(`You're up to date (version ${APP_VERSION})`);
-  }catch(e){ if(manual) snack("Couldn't check for updates. Open the app from its GitHub link and try again."); }
+    else if(manual) snack(`Up to date (v${APP_VERSION})`);
+  }catch(e){ if(manual) snack("Update check failed"); }
 }
 $("btn-update").onclick=()=>{ if(newVersion) applyUpdate(); else checkUpdate(true); };
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") checkUpdate(false); });
