@@ -542,6 +542,7 @@ main .wrap{padding-block:8px 32px}
           <input class="mlink" id="m-link" type="url" inputmode="url" autocomplete="off" placeholder="Playlist link (e.g. deezer.com/playlist/…)">
           <div class="mhint" id="m-hint" hidden>Short links can't open the app. <a id="m-hint-open" href="#" target="_blank" rel="noopener">Open it</a>, then paste the full deezer.com/playlist/… address or the playlist number.</div>
           <button class="sw-row" role="switch" id="t-music" aria-checked="true"><span class="switch"></span>Open on start</button>
+          <p class="supporting" id="m-note">Come back to Haruku Fit once the music plays. The workout starts then. Keep Silent mode off to hear the voice and beeps.</p>
           <div><button class="btn btn-tonal with-icon sl" id="m-test"><span class="ms">open_in_new</span>Open</button></div>
         </div>
         <div id="wo-section" class="wo-section">
@@ -1374,8 +1375,13 @@ let actx=null;
 /* Mix our beeps and voice with music from other apps instead of pausing it (Safari/iOS 16.4+ Audio Session API). */
 function mixAudio(){ try{ if(navigator.audioSession && navigator.audioSession.type!=="ambient") navigator.audioSession.type="ambient"; }catch(e){} }
 mixAudio();
-document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ mixAudio(); try{ if(actx&&actx.state!=="running") actx.resume(); }catch(e){} } });
-function audio(){ mixAudio(); try{ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); }catch(e){} return actx; }
+/* iOS interrupts Web Audio and speech when another app (the music app) takes over. Wake both again on return and on the next tap. */
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ audio(); try{ speechSynthesis.cancel(); }catch(e){} } });
+["pointerdown","touchend"].forEach(ev=>document.addEventListener(ev,()=>{ if(actx&&actx.state!=="running") audio(); },{passive:true,capture:true}));
+function audio(){ mixAudio();
+  try{ if(!actx||actx.state==="closed") actx=new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state!=="running") actx.resume().catch(()=>{}); }catch(e){}
+  return actx; }
 function beep(freq,len,when=0,vol=.25,type="sine"){
   if(!soundOn||T.quiet) return; const a=audio(); if(!a) return;
   const t=a.currentTime+when, o=a.createOscillator(), g=a.createGain();
@@ -1567,7 +1573,7 @@ function openMusic(){
 }
 function syncMusic(){
   $("m-svc").value=musicSvc; $("m-link").value=musicLink; $("t-music").setAttribute("aria-checked",musicAuto);
-  const on=musicSvc!=="none"; $("m-link").hidden=$("t-music").hidden=$("m-test").parentElement.hidden=!on;
+  const on=musicSvc!=="none"; $("m-note").hidden=$("m-link").hidden=$("t-music").hidden=$("m-test").parentElement.hidden=!on;
   $("m-link").placeholder=musicSvc==="link"?"Paste any link to open":"Playlist link (optional)";
   $("btn-music").hidden=!on; $("btn-music-t").textContent=MUSIC_NAME[musicSvc]||"Music";
   const short=on&&musicSvc==="deezer"&&/(link\.deezer\.com|deezer\.page\.link|dzr\.page\.link)/i.test(musicLink||"");
@@ -1581,9 +1587,18 @@ $("btn-music").onclick=()=>{ if(!openMusic()) snack("Choose a music app first");
 function start(){
   audio();
   // Fresh start with music on: open the music app and start the timer at the same moment.
-  if(!T.paused && !T.running && musicAuto && musicSvc!=="none" && musicUrl()) openMusic();
+  const music=!T.paused && !T.running && musicAuto && musicSvc!=="none" && musicUrl() && openMusic();
   realStart();
+  T.musicAt=music?performance.now():0;
 }
+/* Opening the music app sends this page to the background, where iOS stops it and its sounds.
+   If that happens right at the start, hold the workout and begin it when the person comes back. */
+document.addEventListener("visibilitychange",()=>{
+  const hidden=document.visibilityState==="hidden";
+  if(hidden&&T.running&&T.musicAt&&performance.now()-T.musicAt<6000&&T.idx===0){ T.held=true; T.running=false; releaseWake(); $("phase").textContent="Starts when you're back"; }
+  else if(!hidden&&T.held){ T.held=false; T.musicAt=0; T.running=false; T.paused=false; realStart(); }
+  else if(hidden) T.musicAt=0;
+});
 function realStart(){
   if(T.paused){ T.paused=false; T.running=true; T.phaseStart=performance.now()-T.elapsed*1000; stageFig.t0=performance.now(); setPlayIcon(true); requestWake(); const ph=T.schedule[T.idx]; if(ph){ $("phase").textContent=PHASE_LABEL[ph.type]||""; setPhaseIco(ph.type); } return; }
   if(!freeMode && !playlist.length){ showView("timer"); $("plist").scrollIntoView({behavior:"smooth",block:"center"}); return; }
@@ -1599,7 +1614,7 @@ function pause(){
   setPlayIcon(false); $("phase").textContent="Paused"; setPhaseIco("paused"); releaseWake();
   try{speechSynthesis.cancel()}catch(e){}
 }
-function reset(){ if(T.running||T.paused) logWorkout(false); T.running=false; T.paused=false; T.done=false; releaseWake(); try{speechSynthesis.cancel()}catch(e){} idleStage(); }
+function reset(){ if(T.running||T.paused) logWorkout(false); T.held=false; T.musicAt=0; T.running=false; T.paused=false; T.done=false; releaseWake(); try{speechSynthesis.cancel()}catch(e){} idleStage(); }
 $("btn-play").onclick=()=>{ if(T.running) pause(); else start(); };
 $("btn-reset").onclick=reset;
 $("btn-skip").onclick=()=>{
@@ -1955,7 +1970,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.14.0";
+const APP_VERSION = "1.14.1";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
