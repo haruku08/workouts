@@ -261,6 +261,9 @@ main .wrap{padding-block:8px 32px}
 .voice-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .musicbox{display:flex;flex-direction:column;gap:12px}
 .musicbox .field.sel{flex:none}
+.mhint{background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:12px;padding:12px 14px;font-size:14px;line-height:20px}
+.mhint ol{margin:6px 0 0;padding-left:20px}
+.mhint a{color:inherit;font-weight:600}
 .mlink{height:52px;border:1px solid var(--outline);border-radius:4px;padding:0 12px;font:16px var(--font);background:transparent;color:var(--on-surface);width:100%;box-sizing:border-box}
 .mlink:focus{outline:2px solid var(--primary);border-color:transparent}
 .music-btn{height:36px;border-radius:18px;border:1px solid var(--outline-variant);background:none;color:var(--on-surface);display:inline-flex;align-items:center;gap:6px;padding:0 14px 0 10px;font:500 14px var(--font)}
@@ -519,6 +522,9 @@ main .wrap{padding-block:8px 32px}
           <div class="field sel"><label for="m-svc">Music app</label><select id="m-svc">
             <option value="none">None</option><option value="deezer">Deezer</option><option value="spotify">Spotify</option><option value="apple">Apple Music</option><option value="ytm">YouTube Music</option><option value="link">Other (any link)</option></select></div>
           <input class="mlink" id="m-link" type="url" inputmode="url" autocomplete="off" placeholder="Playlist link (optional)">
+          <div class="mhint" id="m-hint" hidden><b>That's a short share link.</b> It opens Deezer's website instead of the app, so the playlist can't start by itself. To get the full link:
+            <ol><li><a id="m-hint-open" href="#" target="_blank" rel="noopener">Open your short link in Safari</a>.</li><li>Copy the address from the address bar. It looks like deezer.com/…/playlist/123456.</li><li>Paste it here instead.</li></ol>
+            You can also paste just the playlist number.</div>
           <button class="sw-row" role="switch" id="t-music" aria-checked="true"><span class="switch"></span>Open music when I press Start</button>
           <div><button class="btn btn-tonal with-icon sl" id="m-test"><span class="ms">open_in_new</span>Open now</button></div>
         </div>
@@ -1500,7 +1506,8 @@ function musicUrl(){
   const l=(musicLink||"").trim(), http=/^https?:\/\//i.test(l); let m;
   switch(musicSvc){
     case "deezer":
-      if((m=l.match(/deezer\.com\/(?:[a-z]{2}\/)?(playlist|album|artist|track)\/(\d+)/i))) return `deezer://www.deezer.com/${m[1]}/${m[2]}?autoplay=true`;
+      if((m=l.match(/deezer\.com\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?(playlist|album|artist|track)\/(\d+)/i))) return `deezer://www.deezer.com/${m[1]}/${m[2]}?autoplay=true`;
+      if(/^\d{3,}$/.test(l)) return `deezer://www.deezer.com/playlist/${l}?autoplay=true`;
       return http?l:"deezer://";
     case "spotify":
       if((m=l.match(/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(playlist|album|artist|track)\/([A-Za-z0-9]+)/i))) return `spotify:${m[1]}:${m[2]}`;
@@ -1523,9 +1530,11 @@ function syncMusic(){
   const on=musicSvc!=="none"; $("m-link").hidden=$("t-music").hidden=$("m-test").parentElement.hidden=!on;
   $("m-link").placeholder=musicSvc==="link"?"Paste any link to open":"Playlist link (optional)";
   $("btn-music").hidden=!on; $("btn-music-t").textContent=MUSIC_NAME[musicSvc]||"Music";
+  const short=on&&musicSvc==="deezer"&&/(link\.deezer\.com|deezer\.page\.link|dzr\.page\.link)/i.test(musicLink||"");
+  $("m-hint").hidden=!short; if(short) $("m-hint-open").href=musicLink;
 }
 $("m-svc").onchange=e=>{ musicSvc=e.target.value; store.set("musicSvc",musicSvc); syncMusic(); };
-$("m-link").onchange=e=>{ musicLink=e.target.value.trim(); store.set("musicLink",musicLink); };
+$("m-link").oninput=$("m-link").onchange=e=>{ musicLink=e.target.value.trim(); store.set("musicLink",musicLink); syncMusic(); };
 $("t-music").onclick=()=>{ musicAuto=!musicAuto; store.set("musicAuto",musicAuto); syncMusic(); };
 $("m-test").onclick=()=>{ musicLink=$("m-link").value.trim(); store.set("musicLink",musicLink); if(!openMusic()) snack("Paste a link first."); };
 $("btn-music").onclick=()=>{ if(!openMusic()) snack("Add your music app in the Timer settings below."); };
@@ -1850,7 +1859,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.12.0";
+const APP_VERSION = "1.12.1";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
