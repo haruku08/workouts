@@ -325,6 +325,14 @@ main .wrap{padding-block:8px 32px}
 .fav b{padding-right:28px}
 .wo-hidden{margin:8px 0 0}
 .fav .ms{margin-top:auto;align-self:flex-end;width:40px;height:40px;border-radius:20px;display:grid;place-items:center;background:var(--primary);color:var(--on-primary);font-size:24px}
+.imp{display:flex;align-items:center;gap:8px;margin:-14px 0 28px;padding:6px 6px 6px 14px;border:1px solid var(--outline-variant);border-radius:999px;background:var(--sc-lowest)}
+.imp>.ms{color:var(--on-surface-variant)}
+.imp input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:14px;color:var(--on-surface);outline:none;padding:8px 0}
+.empty-dash b{color:var(--on-surface)}
+.empty-dash .btn{margin-top:12px}
+#lib-workouts .wo-foot>span{flex-basis:100%}
+#lib-workouts .wo-foot>.btn-filled{margin-left:auto}
+.wo-foot .on-home[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:16px}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
@@ -422,13 +430,12 @@ main .wrap{padding-block:8px 32px}
       <div class="stat"><b id="hs-min">0</b><span>Minutes this week</span></div>
       <div class="stat"><b id="hs-streak">0</b><span>Day streak</span></div>
     </div>
-    <div class="cat-head"><h3><span class="ms fill" style="--c:#B88600;--cc:#FFF1C2">star</span>Favorites</h3></div>
+    <div class="cat-head" id="fav-head"><h3><span class="ms fill" style="--c:#B88600;--cc:#FFF1C2">star</span>Favorites</h3></div>
     <div class="fav-grid" id="favs"></div>
-    <p class="hint" id="fav-hint" hidden>Make your own routine in the Catalog (or copy one of the workouts below) and star it to pin it here.</p>
-    <section class="wo-block">
-      <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Workouts</h3><span class="sub">Ready to go: 1-minute rounds, 45s work and 15s rest</span></div>
+    <div class="hint empty-dash" id="fav-hint" hidden><b>Your dashboard is empty.</b> Open the Catalog, pick a ready-made routine or build your own, and tap <i>Add to Home</i>.<br><button class="btn btn-tonal with-icon sl" id="fav-cat"><span class="ms">menu_book</span>Open the Catalog</button></div>
+    <section class="wo-block" id="wo-block">
+      <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Workouts</h3></div>
       <div class="wo-grid" id="workouts"></div>
-      <button class="text-btn sl wo-hidden" id="wo-more" hidden></button>
     </section>
   </section>
 
@@ -439,6 +446,11 @@ main .wrap{padding-block:8px 32px}
     </div>
     <div class="cat-head"><h3><span class="ms fill" style="--c:var(--kin);--cc:var(--kin-c)">bookmarks</span>My routines</h3><button class="btn btn-tonal with-icon sl" id="mw-save" style="margin-left:auto"><span class="ms">add</span>New routine</button></div>
     <div class="mw-grid" id="mw-list"></div>
+    <form class="imp" id="imp"><span class="ms">link</span><input id="imp-in" placeholder="Got a shared routine? Paste the link or code" autocomplete="off" aria-label="Shared routine link or code"><button class="btn btn-tonal sl" type="submit">Add</button></form>
+    <section class="wo-block">
+      <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Ready-made routines</h3><span class="sub">Tap Add to Home to put one on your dashboard</span></div>
+      <div class="wo-grid" id="lib-workouts"></div>
+    </section>
     <div class="lib-tools">
       <div class="chips" id="filters"></div>
       <div class="segmented" role="group" aria-label="Figure style">
@@ -1005,6 +1017,8 @@ const store = {
   get(k,d){try{const v=localStorage.getItem("pp:"+k);return v?JSON.parse(v):d}catch(e){return d}},
   set(k,v){try{localStorage.setItem("pp:"+k,JSON.stringify(v))}catch(e){}}
 };
+/* Anyone who already has saved data is a returning user; new people start with an empty dashboard. */
+const RETURNING=(()=>{try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k&&k.startsWith("pp:")) return true}}catch(e){} return false})();
 
 /* ---------- State ---------- */
 const PRESETS = {
@@ -1057,7 +1071,7 @@ function quickPairs(){
   return out.sort((a,b)=>b[0]-a[0]);
 }
 let playlist = store.get("playlist",null);
-if(!Array.isArray(playlist)) playlist = EX.filter(e=>e.cat==="kin").map(e=>e.id);
+if(!Array.isArray(playlist)) playlist = RETURNING?EX.filter(e=>e.cat==="kin").map(e=>e.id):[];
 playlist = playlist.filter(id=>byId[id]);
 let filter = store.get("filter","all");
 let soundOn = store.get("sound",true), voiceOn = store.get("voice",true);
@@ -1143,32 +1157,42 @@ function useWorkout(w){
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer");
 }
 let woFigs=[]; let hiddenWos=store.get("hiddenWos",[]); if(!Array.isArray(hiddenWos)) hiddenWos=[];
+let homeWos=store.get("homeWos",null);
+if(!Array.isArray(homeWos)){ homeWos=RETURNING?WORKOUTS.map(w=>w.id).filter(id=>!hiddenWos.includes(id)):[]; store.set("homeWos",homeWos); }
+const saveHome=()=>{ store.set("homeWos",homeWos); renderWorkouts(); renderFavs(); };
+function woCard(w,home){
+  const c=woCfg(w), uniq=[...new Set(w.moves)], mins=Math.round((c.prep+c.sets*c.rounds*(c.work+c.rest)-c.rest+(c.sets-1)*c.setRest)/60);
+  const card=document.createElement("article"); card.className="wo"; setC(card,w.c);
+  card.innerHTML=`<div class="wo-head"><span class="ms fill">${w.icon}</span><div><h4>${w.name}</h4><p>${w.blurb}</p></div></div><div class="wo-figs"></div><div class="wo-foot"><span>${uniq.length} moves · ${c.sets>1?c.sets+" sets":c.rounds+" rounds"} · ${mins} min</span></div>`;
+  const figs=card.querySelector(".wo-figs");
+  uniq.forEach(id=>{ const d=document.createElement("div"); d.className="wo-fig"; d.title=byId[id].name; const fg=new Figure(byId[id],{animate:false}); d.appendChild(fg.svg); woFigs.push(fg); figs.appendChild(d); });
+  const names=document.createElement("p"); names.className="wo-names"; names.textContent=uniq.map(id=>byId[id].name).join(" · "); card.insertBefore(names,card.querySelector(".wo-foot"));
+  const foot=card.querySelector(".wo-foot"), btn=(cls,label,icon)=>{ const x=document.createElement("button"); x.className=cls; x.setAttribute("aria-label",label); x.title=label; x.innerHTML=`<span class="ms">${icon}</span>`; return x; };
+  const on=homeWos.includes(w.id);
+  if(home){
+    const hd=btn("icon-btn sl","Remove from Home","close"); hd.style.marginLeft="auto";
+    hd.onclick=()=>{ homeWos=homeWos.filter(x=>x!==w.id); saveHome();
+      undoSnack(`Removed ${w.name} from Home.`,()=>{ if(!homeWos.includes(w.id)) homeWos.push(w.id); saveHome(); }); };
+    foot.appendChild(hd);
+  } else {
+    const ah=document.createElement("button"); ah.className="btn btn-tonal with-icon sl on-home"; ah.setAttribute("aria-pressed",on);
+    ah.innerHTML=on?`<span class="ms">check</span>On Home`:`<span class="ms">add</span>Add to Home`;
+    ah.onclick=()=>{ if(on){ homeWos=homeWos.filter(x=>x!==w.id); saveHome(); snack(`Removed ${w.name} from Home.`); } else { homeWos.push(w.id); saveHome(); snack(`${w.name} is on your Home screen.`); } };
+    foot.appendChild(ah);
+  }
+  const cp=btn("icon-btn sl","Copy to My routines and edit","edit"); cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w)},null); foot.appendChild(cp);
+  const go=document.createElement("button"); go.className="btn btn-filled with-icon sl"; go.innerHTML=`<span class="ms fill">play_arrow</span>Start`; go.onclick=()=>useWorkout(w); foot.appendChild(go);
+  return card;
+}
 function renderWorkouts(){
   woFigs.forEach(f=>f.destroy()); woFigs=[];
   const el=$("workouts"); el.innerHTML="";
-  const hid=hiddenWos.filter(id=>WORKOUTS.some(w=>w.id===id));
-  const more=$("wo-more"); more.hidden=!hid.length; more.textContent=`Show ${hid.length} hidden workout${hid.length===1?"":"s"}`;
-  WORKOUTS.filter(w=>!hid.includes(w.id)).forEach(w=>{
-    const c=woCfg(w), uniq=[...new Set(w.moves)], mins=Math.round((c.prep+c.sets*c.rounds*(c.work+c.rest)-c.rest+(c.sets-1)*c.setRest)/60);
-    const card=document.createElement("article"); card.className="wo"; setC(card,w.c);
-    card.innerHTML=`<div class="wo-head"><span class="ms fill">${w.icon}</span><div><h4>${w.name}</h4><p>${w.blurb}</p></div></div><div class="wo-figs"></div><div class="wo-foot"><span>${uniq.length} moves · ${c.sets>1?c.sets+" sets":c.rounds+" rounds"} · ${mins} min</span><button class="btn btn-filled with-icon sl"><span class="ms fill">play_arrow</span>Start</button></div>`;
-    const figs=card.querySelector(".wo-figs");
-    uniq.forEach(id=>{ const d=document.createElement("div"); d.className="wo-fig"; d.title=byId[id].name; const fg=new Figure(byId[id],{animate:false}); d.appendChild(fg.svg); woFigs.push(fg); figs.appendChild(d); });
-    const names=document.createElement("p"); names.className="wo-names"; names.textContent=uniq.map(id=>byId[id].name).join(" · "); card.insertBefore(names,card.querySelector(".wo-foot"));
-    card.querySelector("button").onclick=()=>useWorkout(w);
-    const cp=document.createElement("button"); cp.className="icon-btn sl"; cp.setAttribute("aria-label","Copy and edit"); cp.title="Copy to My routines and edit";
-    cp.innerHTML=`<span class="ms">edit</span>`; cp.style.marginLeft="auto";
-    cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w)},null);
-    card.querySelector(".wo-foot").insertBefore(cp,card.querySelector(".wo-foot button"));
-    const hd=document.createElement("button"); hd.className="icon-btn sl"; hd.setAttribute("aria-label","Remove from Home"); hd.title="Remove from Home";
-    hd.innerHTML=`<span class="ms">close</span>`; hd.style.marginLeft="auto"; cp.style.marginLeft="0";
-    hd.onclick=()=>{ hiddenWos.push(w.id); store.set("hiddenWos",hiddenWos); renderWorkouts();
-      undoSnack(`Removed ${w.name} from Home.`,()=>{ hiddenWos=hiddenWos.filter(x=>x!==w.id); store.set("hiddenWos",hiddenWos); renderWorkouts(); }); };
-    card.querySelector(".wo-foot").insertBefore(hd,cp);
-    el.appendChild(card);
-  });
+  const list=homeWos.map(id=>WORKOUTS.find(w=>w.id===id)).filter(Boolean);
+  $("wo-block").hidden=!list.length;
+  list.forEach(w=>el.appendChild(woCard(w,true)));
+  const lib=$("lib-workouts"); lib.innerHTML="";
+  WORKOUTS.forEach(w=>lib.appendChild(woCard(w,false)));
 }
-$("wo-more").onclick=()=>{ hiddenWos=[]; store.set("hiddenWos",hiddenWos); renderWorkouts(); };
 function useCategory(cat){
   playlist = EX.filter(e=>e.cat===cat).map(e=>e.id);
   applyPreset(catOf(cat).preset);
@@ -1626,11 +1650,12 @@ function runNames(ms){ const out=[]; ms.forEach(id=>{ const l=out[out.length-1];
 function myMeta(w){ const c=w.cfg||cfg; return `${w.moves.length} round${w.moves.length===1?"":"s"} · ${c.work}s / ${c.rest}s${c.sets>1?` · ${c.sets} sets`:""}`; }
 function renderMy(){
   const el=$("mw-list"); el.innerHTML="";
-  if(!myWos.length){ el.innerHTML=`<p class="hint" style="margin:0;grid-column:1/-1">No routines yet. Tap New routine to build one, or copy a ready-made workout from Home with its edit button.</p>`; }
+  if(!myWos.length){ el.innerHTML=`<p class="hint" style="margin:0;grid-column:1/-1">No routines yet. Tap New routine to build one, or copy a ready-made one below with its edit button.</p>`; }
   myWos.forEach((w,i)=>{
     const c=document.createElement("article"); c.className="mw";
-    c.innerHTML=`<div class="mw-top"><h4></h4><button class="icon-btn sl star" aria-label="Favorite" title="Show on Home"><span class="ms">star</span></button></div><p class="meta"></p><p class="mv"></p>
+    c.innerHTML=`<div class="mw-top"><h4></h4><button class="icon-btn sl star" aria-label="Favorite" title="Add to Home"><span class="ms">star</span></button></div><p class="meta"></p><p class="mv"></p>
       <div class="row"><button class="btn btn-filled with-icon sl go"><span class="ms fill">play_arrow</span>Start</button>
+      <button class="icon-btn sl sh" aria-label="Share routine" title="Share"><span class="ms">share</span></button>
       <button class="icon-btn sl ed" aria-label="Edit routine" title="Edit"><span class="ms">edit</span></button>
       <button class="icon-btn sl del" aria-label="Delete" title="Delete"><span class="ms">delete</span></button></div>`;
     c.querySelector("h4").textContent=w.name; c.querySelector(".meta").textContent=myMeta(w);
@@ -1639,6 +1664,7 @@ function renderMy(){
     st.onclick=()=>{ if(!w.fav&&myWos.filter(x=>x.fav).length>=MAX_FAV){ snack(`You can pin ${MAX_FAV} favorites. Unstar one first.`); return; } w.fav=!w.fav; saveMy(); if(w.fav) snack(`${w.name} is on your Home screen.`); };
     c.querySelector(".go").onclick=()=>runMy(w,true);
     c.querySelector(".ed").onclick=()=>openRoutine(w,w);
+    c.querySelector(".sh").onclick=()=>shareRoutine(w);
     c.querySelector(".del").onclick=()=>{ if(confirm(`Delete ${w.name}?`)){ myWos.splice(i,1); saveMy(); } };
     el.appendChild(c);
   });
@@ -1768,7 +1794,7 @@ $("rt-save").onclick=()=>{
 };
 function renderFavs(){
   const favs=myWos.filter(w=>w.fav).slice(0,MAX_FAV), el=$("favs"); el.innerHTML="";
-  $("fav-hint").hidden=!!favs.length; el.hidden=!favs.length;
+  $("fav-head").hidden=el.hidden=!favs.length; $("fav-hint").hidden=!!(favs.length||homeWos.length);
   favs.forEach(w=>{ const b=document.createElement("div"); b.className="fav sl"; b.setAttribute("role","button"); b.tabIndex=0;
     b.innerHTML=`<b></b><span></span><span class="ms fill" aria-hidden="true">play_arrow</span><button class="unpin" aria-label="Remove from Home" title="Remove from Home"><span class="ms">star</span></button>`;
     b.querySelector("b").textContent=w.name; b.querySelector("span").textContent=myMeta(w);
@@ -1778,6 +1804,42 @@ function renderFavs(){
       undoSnack(`Removed ${w.name} from Home.`,()=>{ w.fav=true; saveMy(); renderFavs(); }); };
     el.appendChild(b); });
 }
+/* Sharing: a routine packs into a short code that rides in a link (#r=CODE) */
+const SHARE_BASE="https://haruku08.github.io/workouts/";
+function encRoutine(w){ const c=w.cfg||cfg, j=JSON.stringify({v:1,n:w.name,m:w.moves,w:c.work,r:c.rest,s:c.sets||1});
+  let b=""; new TextEncoder().encode(j).forEach(x=>b+=String.fromCharCode(x));
+  return btoa(b).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function decRoutine(code){
+  try{ code=String(code||"").trim(); const m=code.match(/[#&?]r=([A-Za-z0-9_-]+)/); if(m) code=m[1];
+    const b=atob(code.replace(/-/g,"+").replace(/_/g,"/")), u=Uint8Array.from(b,ch=>ch.charCodeAt(0)), d=JSON.parse(new TextDecoder().decode(u));
+    const moves=(Array.isArray(d.m)?d.m:[]).filter(id=>byId[id]).slice(0,60); if(!moves.length) return null;
+    const cl=(v,lo,hi,df)=>{ v=Math.round(Number(v)); return isFinite(v)?Math.min(hi,Math.max(lo,v)):df; };
+    const work=cl(d.w,5,600,40), rest=cl(d.r,0,300,20), sets=cl(d.s,1,10,1);
+    return {name:String(d.n||"Shared routine").slice(0,40), moves, cfg:Object.assign({},woCfg({moves}),{work,rest,sets,rounds:moves.length,roundLen:work+rest})};
+  }catch(e){ return null; }
+}
+function shareRoutine(w){
+  const url=SHARE_BASE+"#r="+encRoutine(w), text=`Try my "${w.name}" routine in Haruku Fit:`;
+  const copy=()=>{ try{ navigator.clipboard.writeText(url).then(()=>snack("Link copied. Send it to anyone."),()=>prompt("Copy this link:",url)); }catch(e){ prompt("Copy this link:",url); } };
+  if(navigator.share) navigator.share({title:w.name,text,url}).catch(e=>{ if(e&&e.name!=="AbortError") copy(); });
+  else copy();
+}
+function importRoutine(code,ask){
+  const r=decRoutine(code); if(!r){ snack("That link or code doesn't look like a routine."); return false; }
+  if(ask&&!confirm(`Add the shared routine "${r.name}" (${r.moves.length} moves) to your routines?`)) return false;
+  const fav=myWos.filter(x=>x.fav).length<MAX_FAV;
+  myWos.unshift(Object.assign(r,{id:"m"+Date.now(),fav})); saveMy(); renderFavs();
+  snack(fav?`Added ${r.name} to your Home screen.`:`Added ${r.name} to My routines.`);
+  return true;
+}
+$("imp").onsubmit=e=>{ e.preventDefault(); const v=$("imp-in").value; if(!v.trim()) return; if(importRoutine(v,false)) $("imp-in").value=""; };
+function checkShareHash(){
+  if(!/^#r=/.test(location.hash)) return;
+  const code=location.hash; try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){}
+  if(importRoutine(code,true)) showView("home");
+}
+window.addEventListener("hashchange",checkShareHash);
+$("fav-cat").onclick=()=>showView("lib");
 /* Home dashboard */
 const QUICK=["p4515","p4020","tabata","stretch"];
 const QF=[{k:"work",l:"Work",u:"sec",min:5,max:600,st:5},{k:"rest",l:"Rest",u:"sec",min:0,max:300,st:5},{k:"rounds",l:"Rounds",u:"per set",min:1,max:50,st:1},
@@ -1810,7 +1872,7 @@ function renderHome(){
     b.onclick=()=>{ quick=Object.assign({},quick,PRESETS[k].cfg); saveQuick(); renderQuickFields(); }; q.appendChild(b); });
   renderQuickFields();
   const names=playlist.map(id=>byId[id].name);
-  $("h-moves").textContent=names.length?`${names.length} move${names.length===1?"":"s"}: ${names.join(" · ")}`:"No moves picked yet. Add some from the catalog or pick a workout below.";
+  $("h-moves").textContent=names.length?`${names.length} move${names.length===1?"":"s"}: ${names.join(" · ")}`:"No moves picked yet. Add some from the Catalog or pick a routine there.";
   $("h-go").disabled=!names.length;
   renderFavs(); fillStats("hs");
 }
@@ -1859,7 +1921,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.12.1";
+const APP_VERSION = "1.13.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
@@ -1884,7 +1946,7 @@ setTimeout(()=>checkUpdate(false),1500);
 addEventListener("scroll",()=>{$("appbar").classList.toggle("scrolled",scrollY>4)},{passive:true});
 syncMusic(); renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderMy(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles();
 $("total").textContent=fmt(totalSeconds()); idleStage();
-showView("home");
+showView("home"); setTimeout(checkShareHash,300);
 })();
 </script>
 </body>
