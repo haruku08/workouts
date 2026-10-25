@@ -515,7 +515,7 @@ main .wrap{padding-block:8px 32px}
         </div>
         <div class="musicbox">
           <h3>Music</h3>
-          <p class="supporting">Open your music app when you start. Pick your app, and paste a playlist link if you want a specific one. Your music app opens on that playlist; tap play there, then come back here.</p>
+          <p class="supporting">Open your music app when you start. Pick your app, and paste a playlist link if you want a specific one. Your music app opens and the timer starts at the same time. Deezer is asked to start playing on its own; if it doesn't, tap play there once and come back. Beeps and the voice play over your music.</p>
           <div class="field sel"><label for="m-svc">Music app</label><select id="m-svc">
             <option value="none">None</option><option value="deezer">Deezer</option><option value="spotify">Spotify</option><option value="apple">Apple Music</option><option value="ytm">YouTube Music</option><option value="link">Other (any link)</option></select></div>
           <input class="mlink" id="m-link" type="url" inputmode="url" autocomplete="off" placeholder="Playlist link (optional)">
@@ -1325,9 +1325,13 @@ function renderPlaylist(){
 
 /* ---------- Audio ---------- */
 let actx=null;
-function audio(){ try{ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); }catch(e){} return actx; }
+/* Mix our beeps and voice with music from other apps instead of pausing it (Safari/iOS 16.4+ Audio Session API). */
+function mixAudio(){ try{ if(navigator.audioSession && navigator.audioSession.type!=="ambient") navigator.audioSession.type="ambient"; }catch(e){} }
+mixAudio();
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ mixAudio(); try{ if(actx&&actx.state!=="running") actx.resume(); }catch(e){} } });
+function audio(){ mixAudio(); try{ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); }catch(e){} return actx; }
 function beep(freq,len,when=0,vol=.25,type="sine"){
-  if(!soundOn) return; const a=audio(); if(!a) return;
+  if(!soundOn||T.quiet) return; const a=audio(); if(!a) return;
   const t=a.currentTime+when, o=a.createOscillator(), g=a.createGain();
   o.type=type; o.frequency.value=freq; o.connect(g); g.connect(a.destination);
   g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.001,t+len);
@@ -1371,7 +1375,8 @@ function renderVoices(){
 }
 if("speechSynthesis" in window){ try{ speechSynthesis.addEventListener("voiceschanged",renderVoices); }catch(e){} }
 function speak(text,force){
-  if((!voiceOn&&!force)||!("speechSynthesis" in window)) return;
+  if((!voiceOn&&!force)||!("speechSynthesis" in window)||(T.quiet&&!force)) return;
+  mixAudio();
   try{
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text), v=pickVoice();
@@ -1380,10 +1385,10 @@ function speak(text,force){
     speechSynthesis.speak(u);
   }catch(e){}
 }
-function buzz(p){ try{ navigator.vibrate&&navigator.vibrate(p) }catch(e){} }
+function buzz(p){ if(T.quiet) return; try{ navigator.vibrate&&navigator.vibrate(p) }catch(e){} }
 
 /* ---------- Timer ---------- */
-const T = {schedule:[],idx:0,phaseStart:0,elapsed:0,running:false,paused:false,lastSec:null,wake:null};
+const T = {quiet:false,schedule:[],idx:0,phaseStart:0,elapsed:0,running:false,paused:false,lastSec:null,wake:null};
 function buildSchedule(){
   const s=[], list=freeMode?[null]:(playlist.length?playlist:[EX[0].id]); let k=0;
   if(cfg.prep>0) s.push({type:"prep",dur:cfg.prep,ex:list[0]});
@@ -1472,7 +1477,8 @@ function tick(){
   const ph=T.schedule[T.idx]; if(!ph) return;
   const now=performance.now();
   let el=(now-T.phaseStart)/1000;
-  if(el>=ph.dur){ T.phaseStart+=ph.dur*1000; enterPhase(T.idx+1); if(T.running) tick(); return; }
+  if(el>=ph.dur){ T.phaseStart+=ph.dur*1000; const nx=T.schedule[T.idx+1];
+    T.quiet=!!nx && (now-T.phaseStart)/1000>=nx.dur; enterPhase(T.idx+1); T.quiet=false; if(T.running) tick(); return; }
   const rem=ph.dur-el, sec=Math.ceil(rem);
   $("digits").textContent=fmt(rem);
   $("digits").classList.toggle("blink", sec<=3);
@@ -1494,7 +1500,7 @@ function musicUrl(){
   const l=(musicLink||"").trim(), http=/^https?:\/\//i.test(l); let m;
   switch(musicSvc){
     case "deezer":
-      if((m=l.match(/deezer\.com\/(?:[a-z]{2}\/)?(playlist|album|artist|track)\/(\d+)/i))) return `deezer://www.deezer.com/${m[1]}/${m[2]}`;
+      if((m=l.match(/deezer\.com\/(?:[a-z]{2}\/)?(playlist|album|artist|track)\/(\d+)/i))) return `deezer://www.deezer.com/${m[1]}/${m[2]}?autoplay=true`;
       return http?l:"deezer://";
     case "spotify":
       if((m=l.match(/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(playlist|album|artist|track)\/([A-Za-z0-9]+)/i))) return `spotify:${m[1]}:${m[2]}`;
@@ -1523,18 +1529,10 @@ $("m-link").onchange=e=>{ musicLink=e.target.value.trim(); store.set("musicLink"
 $("t-music").onclick=()=>{ musicAuto=!musicAuto; store.set("musicAuto",musicAuto); syncMusic(); };
 $("m-test").onclick=()=>{ musicLink=$("m-link").value.trim(); store.set("musicLink",musicLink); if(!openMusic()) snack("Paste a link first."); };
 $("btn-music").onclick=()=>{ if(!openMusic()) snack("Add your music app in the Timer settings below."); };
-let musicWait=null;
 function start(){
   audio();
-  // Fresh start with music on: open the music app first, then start the timer once Haruku Fit is back in front.
-  if(!T.paused && !T.running && musicAuto && musicSvc!=="none" && !musicWait && musicUrl()){
-    openMusic();
-    const go=()=>{ if(!musicWait) return; clearTimeout(musicWait.t); document.removeEventListener("visibilitychange",musicWait.v); musicWait=null; realStart(); };
-    musicWait={v:()=>{ if(document.visibilityState==="visible") setTimeout(go,400); }};
-    document.addEventListener("visibilitychange",musicWait.v);
-    musicWait.t=setTimeout(()=>{ if(document.visibilityState==="visible") go(); },1500);
-    return;
-  }
+  // Fresh start with music on: open the music app and start the timer at the same moment.
+  if(!T.paused && !T.running && musicAuto && musicSvc!=="none" && musicUrl()) openMusic();
   realStart();
 }
 function realStart(){
@@ -1852,7 +1850,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.11.0";
+const APP_VERSION = "1.12.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
