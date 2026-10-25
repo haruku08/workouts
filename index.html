@@ -259,6 +259,11 @@ main .wrap{padding-block:8px 32px}
 .ring-ico .ms{font-size:min(120px,30vw);width:auto;opacity:.9}
 .voicebox{display:flex;flex-direction:column;gap:12px}
 .voice-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.musicbox{display:flex;flex-direction:column;gap:12px}
+.musicbox .field.sel{flex:none}
+.mlink{height:52px;border:1px solid var(--outline);border-radius:4px;padding:0 12px;font:16px var(--font);background:transparent;color:var(--on-surface);width:100%;box-sizing:border-box}
+.mlink:focus{outline:2px solid var(--primary);border-color:transparent}
+.music-btn{height:36px;border-radius:18px;border:1px solid var(--outline-variant);background:none;color:var(--on-surface);display:inline-flex;align-items:center;gap:6px;padding:0 14px 0 10px;font:500 14px var(--font)}
 .field.sel{flex:1 1 200px;padding:0}
 .field.sel select{width:100%;height:52px;border:0;background:transparent;color:var(--on-surface);font:inherit;font-size:16px;padding:0 12px;outline:none;border-radius:4px}
 .field.sel select option{background:var(--sc-high);color:var(--on-surface)}
@@ -465,6 +470,7 @@ main .wrap{padding-block:8px 32px}
         <div class="switches">
           <button class="sw-row" role="switch" id="t-sound" aria-checked="true"><span class="switch"></span>Beeps</button>
           <button class="sw-row" role="switch" id="t-voice" aria-checked="true"><span class="switch"></span>Voice</button>
+          <button class="music-btn sl" id="btn-music" hidden><span class="ms">music_note</span><span id="btn-music-t">Music</span></button>
         </div>
       </div>
 
@@ -492,6 +498,15 @@ main .wrap{padding-block:8px 32px}
             <div class="field sel"><label for="voice-sel">Voice</label><select id="voice-sel"></select></div>
             <button class="btn btn-tonal with-icon sl" id="voice-test"><span class="ms">volume_up</span>Test</button>
           </div>
+        </div>
+        <div class="musicbox">
+          <h3>Music</h3>
+          <p class="supporting">Open your music app when you start. Pick your app, and paste a playlist link if you want a specific one. Your music app opens on that playlist; tap play there, then come back here.</p>
+          <div class="field sel"><label for="m-svc">Music app</label><select id="m-svc">
+            <option value="none">None</option><option value="deezer">Deezer</option><option value="spotify">Spotify</option><option value="apple">Apple Music</option><option value="ytm">YouTube Music</option><option value="link">Other (any link)</option></select></div>
+          <input class="mlink" id="m-link" type="url" inputmode="url" autocomplete="off" placeholder="Playlist link (optional)">
+          <button class="sw-row" role="switch" id="t-music" aria-checked="true"><span class="switch"></span>Open music when I press Start</button>
+          <div><button class="btn btn-tonal with-icon sl" id="m-test"><span class="ms">open_in_new</span>Open now</button></div>
         </div>
         <div id="wo-section" class="wo-section">
         <div class="divider"></div>
@@ -1457,9 +1472,59 @@ async function requestWake(){ try{ if("wakeLock" in navigator) T.wake=await navi
 function releaseWake(){ try{ T.wake&&T.wake.release(); }catch(e){} T.wake=null; }
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&T.running) requestWake(); });
 
+/* Music: open the chosen music app (optionally on a playlist) when a workout starts.
+   A web app can open another app by link, but can't press play inside it. */
+let musicSvc=store.get("musicSvc","none"), musicLink=store.get("musicLink",""), musicAuto=store.get("musicAuto",true);
+const MUSIC_NAME={deezer:"Deezer",spotify:"Spotify",apple:"Apple Music",ytm:"YouTube Music",link:"Music"};
+function musicUrl(){
+  const l=(musicLink||"").trim(), http=/^https?:\/\//i.test(l); let m;
+  switch(musicSvc){
+    case "deezer":
+      if((m=l.match(/deezer\.com\/(?:[a-z]{2}\/)?(playlist|album|artist|track)\/(\d+)/i))) return `deezer://www.deezer.com/${m[1]}/${m[2]}`;
+      return http?l:"deezer://";
+    case "spotify":
+      if((m=l.match(/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(playlist|album|artist|track)\/([A-Za-z0-9]+)/i))) return `spotify:${m[1]}:${m[2]}`;
+      if(/^spotify:/i.test(l)) return l; return http?l:"spotify:";
+    case "apple":
+      if(/^https:\/\/music\.apple\.com\//i.test(l)) return "music://"+l.slice(8); return "music://";
+    case "ytm": return http?l:"https://music.youtube.com/";
+    case "link": return l||null;
+  }
+  return null;
+}
+function openMusic(){
+  const u=musicUrl(); if(!u) return false;
+  if(/^https?:/i.test(u)){ const w=window.open(u,"_blank","noopener"); if(!w) location.href=u; }
+  else location.href=u;
+  return true;
+}
+function syncMusic(){
+  $("m-svc").value=musicSvc; $("m-link").value=musicLink; $("t-music").setAttribute("aria-checked",musicAuto);
+  const on=musicSvc!=="none"; $("m-link").hidden=$("t-music").hidden=$("m-test").parentElement.hidden=!on;
+  $("m-link").placeholder=musicSvc==="link"?"Paste any link to open":"Playlist link (optional)";
+  $("btn-music").hidden=!on; $("btn-music-t").textContent=MUSIC_NAME[musicSvc]||"Music";
+}
+$("m-svc").onchange=e=>{ musicSvc=e.target.value; store.set("musicSvc",musicSvc); syncMusic(); };
+$("m-link").onchange=e=>{ musicLink=e.target.value.trim(); store.set("musicLink",musicLink); };
+$("t-music").onclick=()=>{ musicAuto=!musicAuto; store.set("musicAuto",musicAuto); syncMusic(); };
+$("m-test").onclick=()=>{ musicLink=$("m-link").value.trim(); store.set("musicLink",musicLink); if(!openMusic()) snack("Paste a link first."); };
+$("btn-music").onclick=()=>{ if(!openMusic()) snack("Add your music app in the Timer settings below."); };
+let musicWait=null;
 function start(){
   audio();
-  if(T.paused){ T.paused=false; T.running=true; T.phaseStart=performance.now()-T.elapsed*1000; stageFig.t0=performance.now(); setPlayIcon(true); requestWake(); return; }
+  // Fresh start with music on: open the music app first, then start the timer once Haruku Fit is back in front.
+  if(!T.paused && !T.running && musicAuto && musicSvc!=="none" && !musicWait && musicUrl()){
+    openMusic();
+    const go=()=>{ if(!musicWait) return; clearTimeout(musicWait.t); document.removeEventListener("visibilitychange",musicWait.v); musicWait=null; realStart(); };
+    musicWait={v:()=>{ if(document.visibilityState==="visible") setTimeout(go,400); }};
+    document.addEventListener("visibilitychange",musicWait.v);
+    musicWait.t=setTimeout(()=>{ if(document.visibilityState==="visible") go(); },1500);
+    return;
+  }
+  realStart();
+}
+function realStart(){
+  if(T.paused){ T.paused=false; T.running=true; T.phaseStart=performance.now()-T.elapsed*1000; stageFig.t0=performance.now(); setPlayIcon(true); requestWake(); const ph=T.schedule[T.idx]; if(ph){ $("phase").textContent=PHASE_LABEL[ph.type]||""; setPhaseIco(ph.type); } return; }
   if(!freeMode && !playlist.length){ showView("timer"); $("plist").scrollIntoView({behavior:"smooth",block:"center"}); return; }
   T.schedule=buildSchedule(); T.done=false; T.running=true; T.paused=false;
   T.phaseStart=performance.now(); $("setup").hidden=true;
@@ -1750,7 +1815,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.9.3";
+const APP_VERSION = "1.10.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
@@ -1773,7 +1838,7 @@ document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==
 setTimeout(()=>checkUpdate(false),1500);
 /* ---------- Boot ---------- */
 addEventListener("scroll",()=>{$("appbar").classList.toggle("scrolled",scrollY>4)},{passive:true});
-renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderMy(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles();
+syncMusic(); renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderMy(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles();
 $("total").textContent=fmt(totalSeconds()); idleStage();
 showView("home");
 })();
