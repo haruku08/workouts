@@ -350,6 +350,15 @@ main .wrap{padding-block:8px 32px}
 .bk-pick{align-self:flex-start;display:inline-flex;align-items:center}
 .mylink{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 12px 12px 16px;border-radius:var(--r-md);background:var(--secondary-container);color:var(--on-secondary-container)}
 .mylink span{flex:1;min-width:140px}
+.lib-intro{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.lib-seg{height:40px}
+.search{display:flex;align-items:center;gap:8px;margin:0 0 16px;padding:0 14px;height:48px;border:1px solid var(--outline-variant);border-radius:999px;background:var(--sc-lowest);color:var(--on-surface-variant)}
+.search input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:15px;color:var(--on-surface);outline:none}
+.pal-search{height:40px;margin:0}
+.lib-none{color:var(--on-surface-variant);padding:24px 4px}
+.rt-label b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:999px;background:var(--primary);color:var(--on-primary);font-size:11px;margin-right:6px}
+.rt-help{margin:-6px 0 0;font-size:13px;color:var(--on-surface-variant)}
+.rt-times .field.off{opacity:.45}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:var(--r-md)}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
@@ -357,7 +366,7 @@ main .wrap{padding-block:8px 32px}
 .rt-label{font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--on-surface-variant);margin-bottom:-8px}
 .rt-name{height:52px;border:1px solid var(--outline);border-radius:var(--r-sm);padding:0 14px;font:500 17px var(--font);background:var(--sc-lowest);color:var(--on-surface);width:100%;box-sizing:border-box}
 .rt-name:focus{outline:2px solid var(--primary);border-color:transparent}
-.rt-times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rt-times{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .rt-sum{font-size:14px;color:var(--on-surface-variant)}
 .rt-list{list-style:none;margin:0!important;padding:0!important;display:flex;flex-direction:column;gap:6px}
 .rt-list li{display:flex;align-items:center;gap:2px;background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:var(--r-sm);padding:4px 4px 4px 12px}
@@ -379,7 +388,7 @@ main .wrap{padding-block:8px 32px}
 .pal-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
 .pal-chips .chip{flex:none;height:30px;padding:0 12px;font-size:13px}
 .pal{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:2px 20px 6px;scrollbar-width:thin}
-.tile{flex:none;width:84px;border:1px solid var(--outline-variant);background:var(--sc-lowest);border-radius:var(--r-sm);padding:4px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;touch-action:pan-x;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tile{flex:none;width:84px;border:1px solid var(--outline-variant);background:var(--sc-lowest);border-radius:var(--r-sm);padding:4px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;touch-action:manipulation;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .tile .tf{width:64px;height:64px;border-radius:var(--r-sm);background:var(--cc)}
 .tile .tf svg{width:100%;height:100%;display:block}
 .tile span{font-size:11px;line-height:14px;text-align:center;font-weight:500;color:var(--on-surface);overflow-wrap:anywhere}
@@ -457,9 +466,14 @@ main .wrap{padding-block:8px 32px}
   </section>
 
   <section id="view-lib" class="wrap" hidden>
-    <div class="intro">
+    <div class="intro lib-intro">
       <h2>Catalog</h2>
+      <div class="segmented lib-seg" role="tablist" aria-label="Catalog">
+        <button class="sl" data-sub="routines"><span class="ms">check</span>Routines</button>
+        <button class="sl" data-sub="moves"><span class="ms">check</span>Exercises</button>
+      </div>
     </div>
+    <div id="lib-routines">
     <div class="cat-head"><h3><span class="ms fill" style="--c:var(--kin);--cc:var(--kin-c)">bookmarks</span>My routines</h3><button class="btn btn-tonal with-icon sl" id="mw-save" style="margin-left:auto"><span class="ms">add</span>New routine</button></div>
     <div class="mw-grid" id="mw-list"></div>
     <form class="imp" id="imp"><span class="ms">link</span><input id="imp-in" placeholder="Paste a routine link or code" autocomplete="off" aria-label="Shared routine link or code"><button class="btn btn-tonal sl" type="submit">Add</button></form>
@@ -467,6 +481,9 @@ main .wrap{padding-block:8px 32px}
       <div class="cat-head"><h3><span class="ms fill" style="--c:var(--primary);--cc:var(--primary-container)">event_note</span>Routines</h3></div>
       <div class="wo-grid" id="lib-workouts"></div>
     </section>
+    </div>
+    <div id="lib-moves" hidden>
+    <div class="search"><span class="ms">search</span><input id="ex-search" type="search" placeholder="Search exercises" autocomplete="off" aria-label="Search exercises"></div>
     <div class="lib-tools">
       <div class="chips" id="filters"></div>
       <div class="segmented" role="group" aria-label="Figure style">
@@ -476,6 +493,7 @@ main .wrap{padding-block:8px 32px}
       </div>
     </div>
     <div id="library"></div>
+    </div>
   </section>
 
   <section id="view-log" class="wrap" hidden>
@@ -581,16 +599,17 @@ main .wrap{padding-block:8px 32px}
 <div class="sheet" id="rt" hidden>
   <div class="sheet-in rt-in" role="dialog" aria-modal="true" aria-labelledby="rt-title">
     <div class="rt-head"><h2 id="rt-title">New routine</h2><button class="icon-btn sl" id="rt-close" aria-label="Close"><span class="ms">close</span></button></div>
-    <div class="rt-label">Name</div>
+    <div class="rt-label"><b>1</b>Name</div>
     <input class="rt-name" id="rt-name" maxlength="40" placeholder="e.g. Morning Routine" autocomplete="off">
-    <div class="rt-label">Timing</div>
-    <div class="rt-times" id="rt-times"></div>
-    <div class="rt-sum" id="rt-sum"></div>
-    <div class="rt-label">Moves, in order</div>
+    <div class="rt-label"><b>2</b>Moves in one set</div>
+    <p class="rt-help">Tap a move below to add it, or hold it and drag it into place. Drag the handles to reorder.</p>
     <ol class="rt-list" id="rt-list"></ol>
-    <div class="rt-label">Add moves</div>
+    <div class="search pal-search"><span class="ms">search</span><input id="pal-q" type="search" placeholder="Find a move" autocomplete="off" aria-label="Find a move"></div>
     <div class="pal-chips" id="pal-chips"></div>
     <div class="pal" id="pal"></div>
+    <div class="rt-label"><b>3</b>Timing and sets</div>
+    <div class="rt-times" id="rt-times"></div>
+    <div class="rt-sum" id="rt-sum"></div>
     <label class="rt-fav"><input type="checkbox" id="rt-fav">Pin to Home</label>
     <div class="rt-actions"><button class="text-btn sl" id="rt-del" style="color:var(--alert)"><span class="ms">delete</span>Delete</button><span class="sp"></span>
       <button class="text-btn sl" id="rt-cancel">Cancel</button><button class="btn btn-filled with-icon sl" id="rt-save"><span class="ms">check</span>Save</button></div>
@@ -1072,7 +1091,7 @@ const store = {
   set(k,v){try{localStorage.setItem("pp:"+k,JSON.stringify(v)); return true}catch(e){ if(!store.warned){ store.warned=true; setTimeout(()=>snack("Can't save on this device: storage is full or blocked"),0); } return false}}
 };
 /* Icons (Lucide, ISC license). Markup writes <span class="ms">name</span>; paintIcon swaps the name for its SVG. */
-const ICONS={"check":"<path d=\"M20 6 9 17l-5-5\"/>","add":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","play_arrow":"<polygon points=\"6 3 20 12 6 21 6 3\"/>","close":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","remove":"<path d=\"M5 12h14\"/>","delete":"<path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/><line x1=\"10\" x2=\"10\" y1=\"11\" y2=\"17\"/><line x1=\"14\" x2=\"14\" y1=\"11\" y2=\"17\"/>","ios_share":"<path d=\"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8\"/><polyline points=\"16 6 12 2 8 6\"/><line x1=\"12\" x2=\"12\" y1=\"2\" y2=\"15\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","event_note":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M8 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M16 14h.01\"/><path d=\"M8 18h.01\"/><path d=\"M12 18h.01\"/><path d=\"M16 18h.01\"/>","drag_indicator":"<circle cx=\"9\" cy=\"12\" r=\"1\"/><circle cx=\"9\" cy=\"5\" r=\"1\"/><circle cx=\"9\" cy=\"19\" r=\"1\"/><circle cx=\"15\" cy=\"12\" r=\"1\"/><circle cx=\"15\" cy=\"5\" r=\"1\"/><circle cx=\"15\" cy=\"19\" r=\"1\"/>","volume_up":"<path d=\"M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z\"/><path d=\"M16 9a5 5 0 0 1 0 6\"/><path d=\"M19.364 18.364a9 9 0 0 0 0-12.728\"/>","tune":"<line x1=\"21\" x2=\"14\" y1=\"4\" y2=\"4\"/><line x1=\"10\" x2=\"3\" y1=\"4\" y2=\"4\"/><line x1=\"21\" x2=\"12\" y1=\"12\" y2=\"12\"/><line x1=\"8\" x2=\"3\" y1=\"12\" y2=\"12\"/><line x1=\"21\" x2=\"16\" y1=\"20\" y2=\"20\"/><line x1=\"12\" x2=\"3\" y1=\"20\" y2=\"20\"/><line x1=\"14\" x2=\"14\" y1=\"2\" y2=\"6\"/><line x1=\"8\" x2=\"8\" y1=\"10\" y2=\"14\"/><line x1=\"16\" x2=\"16\" y1=\"18\" y2=\"22\"/>","sync":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","sports_gymnastics":"<circle cx=\"12\" cy=\"5\" r=\"1\"/><path d=\"m9 20 3-6 3 6\"/><path d=\"m6 8 6 2 6-2\"/><path d=\"M12 10v4\"/>","skip_next":"<polygon points=\"5 4 15 12 5 20 5 4\"/><line x1=\"19\" x2=\"19\" y1=\"5\" y2=\"19\"/>","share":"<circle cx=\"18\" cy=\"5\" r=\"3\"/><circle cx=\"6\" cy=\"12\" r=\"3\"/><circle cx=\"18\" cy=\"19\" r=\"3\"/><line x1=\"8.59\" x2=\"15.42\" y1=\"13.51\" y2=\"17.49\"/><line x1=\"15.41\" x2=\"8.59\" y1=\"6.51\" y2=\"10.49\"/>","schedule":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","replay":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/>","playlist_play":"<path d=\"M12 12H3\"/><path d=\"M16 6H3\"/><path d=\"M12 18H3\"/><path d=\"m16 12 5 3-5 3v-6Z\"/>","pause":"<rect x=\"14\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/><rect x=\"6\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/>","open_in_new":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","music_note":"<path d=\"M9 18V5l12-2v13\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><circle cx=\"18\" cy=\"16\" r=\"3\"/>","menu_book":"<path d=\"M12 7v14\"/><path d=\"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z\"/>","link":"<path d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/><path d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","install_mobile":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","home":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","fitness_center":"<path d=\"M14.4 14.4 9.6 9.6\"/><path d=\"M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z\"/><path d=\"m21.5 21.5-1.4-1.4\"/><path d=\"M3.9 3.9 2.5 2.5\"/><path d=\"M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z\"/>","edit":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","content_copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","bookmarks":"<path d=\"m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z\"/>","arrow_upward":"<path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/>","arrow_forward":"<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>","accessibility_new":"<circle cx=\"16\" cy=\"4\" r=\"1\"/><path d=\"m18 19 1-7-6 1\"/><path d=\"m5 8 3-3 5.5 3-2.36 3.5\"/><path d=\"M4.24 14.5a5 5 0 0 0 6.88 6\"/><path d=\"M13.76 17.5a5 5 0 0 0-6.88-6\"/>","self_improvement":"<path d=\"M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1\"/><circle cx=\"12\" cy=\"8\" r=\"2\"/><path d=\"M12 10v12\"/><path d=\"M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z\"/><path d=\"M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z\"/>","bolt":"<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"/>","directions_walk":"<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>","radio_button_checked":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","sports_mma":"<path d=\"M12.409 13.017A5 5 0 0 1 22 15c0 3.866-4 7-9 7-4.077 0-8.153-.82-10.371-2.462-.426-.316-.631-.832-.62-1.362C2.118 12.723 2.627 2 10 2a3 3 0 0 1 3 3 2 2 0 0 1-2 2c-1.105 0-1.64-.444-2-1\"/><path d=\"M15 14a5 5 0 0 0-7.584 2\"/><path d=\"M9.964 6.825C8.019 7.977 9.5 13 8 15\"/>","wb_sunny":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","emoji_events":"<path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/>","timelapse":"<path d=\"M10.1 2.182a10 10 0 0 1 3.8 0\"/><path d=\"M13.9 21.818a10 10 0 0 1-3.8 0\"/><path d=\"M17.609 3.721a10 10 0 0 1 2.69 2.7\"/><path d=\"M2.182 13.9a10 10 0 0 1 0-3.8\"/><path d=\"M20.279 17.609a10 10 0 0 1-2.7 2.69\"/><path d=\"M21.818 10.1a10 10 0 0 1 0 3.8\"/><path d=\"M3.721 6.391a10 10 0 0 1 2.7-2.69\"/><path d=\"M6.391 20.279a10 10 0 0 1-2.69-2.7\"/>","hourglass_top":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","local_fire_department":"<path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\"/>","coffee":"<path d=\"M10 2v2\"/><path d=\"M14 2v2\"/><path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\"/><path d=\"M6 2v2\"/>","logo":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>"};
+const ICONS={"search":"<circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","add":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","play_arrow":"<polygon points=\"6 3 20 12 6 21 6 3\"/>","close":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","remove":"<path d=\"M5 12h14\"/>","delete":"<path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/><line x1=\"10\" x2=\"10\" y1=\"11\" y2=\"17\"/><line x1=\"14\" x2=\"14\" y1=\"11\" y2=\"17\"/>","ios_share":"<path d=\"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8\"/><polyline points=\"16 6 12 2 8 6\"/><line x1=\"12\" x2=\"12\" y1=\"2\" y2=\"15\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","event_note":"<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"M8 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M16 14h.01\"/><path d=\"M8 18h.01\"/><path d=\"M12 18h.01\"/><path d=\"M16 18h.01\"/>","drag_indicator":"<circle cx=\"9\" cy=\"12\" r=\"1\"/><circle cx=\"9\" cy=\"5\" r=\"1\"/><circle cx=\"9\" cy=\"19\" r=\"1\"/><circle cx=\"15\" cy=\"12\" r=\"1\"/><circle cx=\"15\" cy=\"5\" r=\"1\"/><circle cx=\"15\" cy=\"19\" r=\"1\"/>","volume_up":"<path d=\"M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z\"/><path d=\"M16 9a5 5 0 0 1 0 6\"/><path d=\"M19.364 18.364a9 9 0 0 0 0-12.728\"/>","tune":"<line x1=\"21\" x2=\"14\" y1=\"4\" y2=\"4\"/><line x1=\"10\" x2=\"3\" y1=\"4\" y2=\"4\"/><line x1=\"21\" x2=\"12\" y1=\"12\" y2=\"12\"/><line x1=\"8\" x2=\"3\" y1=\"12\" y2=\"12\"/><line x1=\"21\" x2=\"16\" y1=\"20\" y2=\"20\"/><line x1=\"12\" x2=\"3\" y1=\"20\" y2=\"20\"/><line x1=\"14\" x2=\"14\" y1=\"2\" y2=\"6\"/><line x1=\"8\" x2=\"8\" y1=\"10\" y2=\"14\"/><line x1=\"16\" x2=\"16\" y1=\"18\" y2=\"22\"/>","sync":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","sports_gymnastics":"<circle cx=\"12\" cy=\"5\" r=\"1\"/><path d=\"m9 20 3-6 3 6\"/><path d=\"m6 8 6 2 6-2\"/><path d=\"M12 10v4\"/>","skip_next":"<polygon points=\"5 4 15 12 5 20 5 4\"/><line x1=\"19\" x2=\"19\" y1=\"5\" y2=\"19\"/>","share":"<circle cx=\"18\" cy=\"5\" r=\"3\"/><circle cx=\"6\" cy=\"12\" r=\"3\"/><circle cx=\"18\" cy=\"19\" r=\"3\"/><line x1=\"8.59\" x2=\"15.42\" y1=\"13.51\" y2=\"17.49\"/><line x1=\"15.41\" x2=\"8.59\" y1=\"6.51\" y2=\"10.49\"/>","schedule":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><polyline points=\"12 6 12 12 16 14\"/>","replay":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/>","playlist_play":"<path d=\"M12 12H3\"/><path d=\"M16 6H3\"/><path d=\"M12 18H3\"/><path d=\"m16 12 5 3-5 3v-6Z\"/>","pause":"<rect x=\"14\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/><rect x=\"6\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/>","open_in_new":"<path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>","music_note":"<path d=\"M9 18V5l12-2v13\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><circle cx=\"18\" cy=\"16\" r=\"3\"/>","menu_book":"<path d=\"M12 7v14\"/><path d=\"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z\"/>","link":"<path d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/><path d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","install_mobile":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","home":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","fitness_center":"<path d=\"M14.4 14.4 9.6 9.6\"/><path d=\"M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z\"/><path d=\"m21.5 21.5-1.4-1.4\"/><path d=\"M3.9 3.9 2.5 2.5\"/><path d=\"M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z\"/>","edit":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","content_copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","bookmarks":"<path d=\"m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z\"/>","arrow_upward":"<path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/>","arrow_forward":"<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>","accessibility_new":"<circle cx=\"16\" cy=\"4\" r=\"1\"/><path d=\"m18 19 1-7-6 1\"/><path d=\"m5 8 3-3 5.5 3-2.36 3.5\"/><path d=\"M4.24 14.5a5 5 0 0 0 6.88 6\"/><path d=\"M13.76 17.5a5 5 0 0 0-6.88-6\"/>","self_improvement":"<path d=\"M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1\"/><circle cx=\"12\" cy=\"8\" r=\"2\"/><path d=\"M12 10v12\"/><path d=\"M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z\"/><path d=\"M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z\"/>","bolt":"<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"/>","directions_walk":"<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>","radio_button_checked":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","sports_mma":"<path d=\"M12.409 13.017A5 5 0 0 1 22 15c0 3.866-4 7-9 7-4.077 0-8.153-.82-10.371-2.462-.426-.316-.631-.832-.62-1.362C2.118 12.723 2.627 2 10 2a3 3 0 0 1 3 3 2 2 0 0 1-2 2c-1.105 0-1.64-.444-2-1\"/><path d=\"M15 14a5 5 0 0 0-7.584 2\"/><path d=\"M9.964 6.825C8.019 7.977 9.5 13 8 15\"/>","wb_sunny":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","emoji_events":"<path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/>","timelapse":"<path d=\"M10.1 2.182a10 10 0 0 1 3.8 0\"/><path d=\"M13.9 21.818a10 10 0 0 1-3.8 0\"/><path d=\"M17.609 3.721a10 10 0 0 1 2.69 2.7\"/><path d=\"M2.182 13.9a10 10 0 0 1 0-3.8\"/><path d=\"M20.279 17.609a10 10 0 0 1-2.7 2.69\"/><path d=\"M21.818 10.1a10 10 0 0 1 0 3.8\"/><path d=\"M3.721 6.391a10 10 0 0 1 2.7-2.69\"/><path d=\"M6.391 20.279a10 10 0 0 1-2.69-2.7\"/>","hourglass_top":"<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>","local_fire_department":"<path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\"/>","coffee":"<path d=\"M10 2v2\"/><path d=\"M14 2v2\"/><path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\"/><path d=\"M6 2v2\"/>","logo":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>"};
 function paintIcon(el){
   const n=el.textContent.trim(); if(!n) return;
   el.dataset.i=n; el.setAttribute("aria-hidden","true");
@@ -1164,9 +1183,11 @@ let libFigs=[];
 function renderLibrary(){
   libFigs.forEach(f=>f.destroy()); libFigs=[];
   const root=$("library"); root.innerHTML="";
+  const q=($("ex-search").value||"").trim().toLowerCase(), hit=e=>!q||(e.name+" "+e.focus).toLowerCase().includes(q);
+  if(q&&!EX.some(hit)) root.innerHTML=`<p class="lib-none">No exercises match "${q.replace(/[<&]/g,"")}".</p>`;
   CATS.filter(c=>filter==="all"||filter===c.id).forEach(c=>{
+    const items=EX.filter(e=>e.cat===c.id&&hit(e)); if(!items.length) return;
     const block=document.createElement("section"); block.className="cat-block"; setC(block,c.id);
-    const items=EX.filter(e=>e.cat===c.id);
     block.innerHTML=`<div class="cat-head"><h3><span class="ms fill">${c.icon}</span>${c.name}</h3><button class="text-btn fill sl" data-cat="${c.id}">Use all ${items.length}<span class="ms">arrow_forward</span></button><span class="sub">${c.blurb} · ${items.length} moves</span></div>`;
     block.querySelector(".fill").onclick=()=>{useCategory(c.id);showView("timer")};
     const grid=document.createElement("div"); grid.className="grid";
@@ -1299,10 +1320,15 @@ $("sh-now").onclick=()=>{
 function showView(v){
   ["home","lib","timer","log"].forEach(k=>{ $("view-"+k).hidden = v!==k; $("tab-"+k).setAttribute("aria-selected",v===k); });
   if(v==="log") renderLog(); if(v==="home") renderHome();
-  $("tray").hidden = v!=="lib";
-  store.set("view",v); window.scrollTo(0,0);
+  store.set("view",v); showSub(libSub); window.scrollTo(0,0);
 }
 document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+let libSub=store.get("libSub","routines");
+function showSub(v){ libSub=v; store.set("libSub",v);
+  document.querySelectorAll(".lib-seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sub===v));
+  $("lib-routines").hidden=v!=="routines"; $("lib-moves").hidden=v!=="moves";
+  $("tray").hidden=!($("view-lib").hidden===false&&v==="moves"); }
+document.querySelectorAll(".lib-seg button").forEach(b=>b.onclick=()=>{ showSub(b.dataset.sub); window.scrollTo(0,0); });
 $("tray-go").onclick=()=>showView("timer");
 
 /* ---------- Setup panel ---------- */
@@ -1801,13 +1827,13 @@ function renderMy(){
 $("mw-save").onclick=()=>openRoutine({name:"",moves:playlist.slice(),cfg:{work:cfg.work,rest:cfg.rest,sets:1}},null);
 /* Routine editor */
 let rtD=null, rtT=null, rtSnap=null;
-const rtState=()=>rtD?JSON.stringify([$("rt-name").value.trim(),rtD.moves,rtD.work,rtD.rest,rtD.sets,$("rt-fav").checked]):null;
+const rtState=()=>rtD?JSON.stringify([$("rt-name").value.trim(),rtD.moves,rtD.work,rtD.rest,rtD.sets,rtD.setRest,$("rt-fav").checked]):null;
 const rtDirty=()=>!!rtD&&rtState()!==rtSnap;
 function tryCloseRt(){ if(rtDirty()&&!confirm("Discard your changes to this routine?")) return; closeRt(); }
-const RT_F=[{k:"work",label:"Work",unit:"sec",min:5,max:600,step:5},{k:"rest",label:"Rest",unit:"sec",min:0,max:300,step:5},{k:"sets",label:"Repeat",unit:"times",min:1,max:10,step:1}];
+const RT_F=[{k:"work",label:"Work",unit:"sec",min:5,max:600,step:5},{k:"rest",label:"Rest",unit:"sec",min:0,max:300,step:5},{k:"sets",label:"Sets",unit:"times through the list",min:1,max:10,step:1},{k:"setRest",label:"Break between sets",unit:"sec",min:0,max:600,step:15}];
 function openRoutine(src,target){
   const c=src.cfg||{};
-  rtT=target; rtSnap=null; rtD={name:src.name||"", moves:(src.moves||[]).filter(id=>byId[id]), work:c.work||40, rest:c.rest==null?20:c.rest, sets:c.sets||1, fav:target?!!target.fav:false};
+  rtT=target; rtSnap=null; rtD={name:src.name||"", moves:(src.moves||[]).filter(id=>byId[id]), work:c.work||40, rest:c.rest==null?20:c.rest, sets:c.sets||1, setRest:c.setRest==null?60:c.setRest, fav:target?!!target.fav:false};
   $("rt-title").textContent=target?"Edit routine":"New routine"; $("rt-name").value=rtD.name; $("rt-fav").checked=rtD.fav; $("rt-del").hidden=!target;
   const t=$("rt-times"); t.innerHTML="";
   RT_F.forEach(o=>{ const d=document.createElement("div"); d.className="field";
@@ -1816,11 +1842,12 @@ function openRoutine(src,target){
     const set=v=>{v=Math.round(Number(v)); if(!isFinite(v)) v=rtD[o.k]; v=Math.min(o.max,Math.max(o.min,v)); rtD[o.k]=v; inp.value=v; rtSum();};
     mi.onclick=()=>set(rtD[o.k]-o.step); pl.onclick=()=>set(rtD[o.k]+o.step); inp.onchange=()=>set(inp.value);
     t.appendChild(d); });
-  renderRt(); renderPal(); $("rt").hidden=false; rtSnap=rtState(); setTimeout(()=>{ if(!rtD.name) $("rt-name").focus(); },50);
+  $("pal-q").value=""; renderRt(); renderPal(); $("rt").hidden=false; rtSnap=rtState(); setTimeout(()=>{ if(!rtD.name) $("rt-name").focus(); },50);
 }
 function rtSum(){
-  const n=rtD.moves.length, secs=10+rtD.sets*n*(rtD.work+rtD.rest)-rtD.rest+(rtD.sets-1)*60;
-  $("rt-sum").textContent=n?`${n} round${n===1?"":"s"}${rtD.sets>1?` × ${rtD.sets}`:""} · about ${Math.max(1,Math.round(secs/60))} min`:"Add at least one move";
+  const n=rtD.moves.length, secs=10+rtD.sets*n*(rtD.work+rtD.rest)-rtD.rest+(rtD.sets-1)*rtD.setRest;
+  const sr=$("rt-times").children[3]; if(sr) sr.classList.toggle("off",rtD.sets<2);
+  $("rt-sum").textContent=n?`${n} move${n===1?"":"s"} × ${rtD.sets} set${rtD.sets===1?"":"s"} · about ${Math.max(1,Math.round(secs/60))} min`:"Add at least one move";
 }
 function renderRt(){
   const ol=$("rt-list"); ol.innerHTML="";
@@ -1844,15 +1871,22 @@ function renderPal(){
     b.onclick=()=>{ palCat=c.id; renderPal(); }; ch.appendChild(b); });
   palFigs.splice(0).forEach(f=>f.destroy());
   const p=$("pal"); p.innerHTML=""; p.scrollLeft=0;
-  EX.filter(e=>palCat==="all"||e.cat===palCat).forEach(ex=>{
+  const pq=($("pal-q").value||"").trim().toLowerCase();
+  EX.filter(e=>(palCat==="all"||e.cat===palCat)&&(!pq||(e.name+" "+e.focus).toLowerCase().includes(pq))).forEach(ex=>{
     const t=document.createElement("button"); t.className="tile"; setC(t,ex.cat); t.setAttribute("aria-label","Add "+ex.name);
     t.innerHTML=`<div class="tf"></div><span></span>`; t.querySelector("span").textContent=ex.name;
     const fg=new Figure(ex,{animate:false}); t.querySelector(".tf").appendChild(fg.svg); palFigs.push(fg);
-    let sx=0, sy=0, pid=null, moved=false;
-    t.addEventListener("pointerdown",e=>{ sx=e.clientX; sy=e.clientY; pid=e.pointerId; moved=false; });
+    let sx=0, sy=0, pid=null, moved=false, hold=null;
+    t.addEventListener("pointerdown",e=>{ sx=e.clientX; sy=e.clientY; pid=e.pointerId; moved=false; clearTimeout(hold);
+      if(e.pointerType==="mouse") return;
+      hold=setTimeout(()=>{ if(pid==null) return; moved=true; try{navigator.vibrate&&navigator.vibrate(15)}catch(_){} dragStart({pointerId:pid,clientX:sx,clientY:sy,preventDefault(){}},{from:-1,id:ex.id},t); },350); });
     t.addEventListener("pointermove",e=>{ if(pid!==e.pointerId||moved) return; const dx=Math.abs(e.clientX-sx), dy=Math.abs(e.clientY-sy);
-      if(dy>8&&dy>dx){ moved=true; pid=null; dragStart(e,{from:-1,id:ex.id},t); } else if(dx>8){ moved=true; pid=null; } });
-    t.addEventListener("pointerup",()=>{ pid=null; });
+      if(e.pointerType==="mouse"&&dy>8&&dy>dx){ moved=true; pid=null; dragStart(e,{from:-1,id:ex.id},t); }
+      else if(dx>8||dy>8){ clearTimeout(hold); pid=null; if(dx>8) moved=true; } });
+    t.addEventListener("pointerup",()=>{ clearTimeout(hold); pid=null; });
+    t.addEventListener("pointercancel",()=>{ clearTimeout(hold); pid=null; });
+    t.addEventListener("touchmove",e=>{ if(drag) e.preventDefault(); },{passive:false});
+    t.addEventListener("contextmenu",e=>e.preventDefault());
     t.onclick=()=>{ if(moved) return; rtD.moves.push(ex.id); renderRt(); snack(`Added ${ex.name}`);
       const last=$("rt-list").lastElementChild; if(last) last.scrollIntoView({block:"nearest",behavior:"smooth"}); };
     p.appendChild(t); });
@@ -1919,7 +1953,7 @@ $("rt-save").onclick=()=>{
   let fav=$("rt-fav").checked;
   if(fav&&!(rtT&&rtT.fav)&&myWos.filter(x=>x.fav).length>=MAX_FAV){ fav=false; snack(`Saved (not pinned, limit is ${MAX_FAV})`); }
   else snack(`Saved ${name}`);
-  const c=Object.assign({},woCfg({moves:rtD.moves}),{work:rtD.work,rest:rtD.rest,sets:rtD.sets,rounds:rtD.moves.length,roundLen:rtD.work+rtD.rest});
+  const c=Object.assign({},woCfg({moves:rtD.moves}),{work:rtD.work,rest:rtD.rest,sets:rtD.sets,setRest:rtD.setRest,rounds:rtD.moves.length,roundLen:rtD.work+rtD.rest});
   const data={name,moves:rtD.moves.slice(),cfg:c,fav};
   if(rtT) Object.assign(rtT,data); else myWos.unshift(Object.assign(data,{id:"m"+Date.now()}));
   saveMy(); renderFavs(); closeRt();
@@ -1971,7 +2005,9 @@ function checkShareHash(){
   if(importRoutine(code,true)) showView("home");
 }
 window.addEventListener("hashchange",checkShareHash);
-$("fav-cat").onclick=()=>showView("lib");
+let exT=null; $("ex-search").addEventListener("input",()=>{ clearTimeout(exT); exT=setTimeout(renderLibrary,150); });
+$("pal-q").addEventListener("input",()=>renderPal());
+$("fav-cat").onclick=()=>{ libSub="routines"; showView("lib"); };
 /* Backup: every saved key packed into one code (HFB1:...) that can be pasted back or saved as a file */
 function backupCode(){
   const d={}; try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.startsWith("pp:")) d[k]=localStorage.getItem(k); } }catch(e){}
@@ -2094,7 +2130,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.17.0";
+const APP_VERSION = "1.18.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
