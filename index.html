@@ -348,6 +348,8 @@ main .wrap{padding-block:8px 32px}
 .backup .row{display:flex;gap:8px;flex-wrap:wrap}
 .backup .imp{margin:0}
 .bk-pick{align-self:flex-start;display:inline-flex;align-items:center}
+.mylink{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 12px 12px 16px;border-radius:var(--r-md);background:var(--secondary-container);color:var(--on-secondary-container)}
+.mylink span{flex:1;min-width:140px}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:var(--r-md)}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
@@ -563,6 +565,7 @@ main .wrap{padding-block:8px 32px}
           <h3>Your workout</h3>
           <p class="supporting">Rounds cycle through this list.</p>
         </div>
+        <div class="mylink" id="my-link" hidden><span id="my-link-t"></span><button class="btn btn-filled with-icon sl" id="my-link-save"><span class="ms">check</span>Save to routine</button></div>
         <ul class="plist" id="plist"></ul>
         <div class="quick" id="quick"></div>
         </div>
@@ -1170,7 +1173,7 @@ function togglePlaylist(id){
   if(i>=0) playlist.splice(i,1); else playlist.push(id);
   savePlaylist();
 }
-function savePlaylist(){ store.set("playlist",playlist); syncAddButtons(); renderPlaylist(); if(!T.running&&!T.paused) idleStage(); }
+function savePlaylist(){ store.set("playlist",playlist); syncAddButtons(); renderPlaylist(); syncMyLink(); if(!T.running&&!T.paused) idleStage(); }
 /* Ready-made workouts: each move once per set, 45s work / 15s rest (1-minute rounds), 2 sets. */
 const WORKOUTS = [
   {id:"morning",name:"Morning Routine",icon:"wb_sunny",c:"stretch",blurb:"40s holds, 20s transitions",
@@ -1182,6 +1185,7 @@ const WORKOUTS = [
 ];
 const woCfg = w => Object.assign({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60},w.cfg||{});
 function useWorkout(w){
+  setActiveMy(null);
   playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer");
 }
@@ -1223,6 +1227,7 @@ function renderWorkouts(){
   WORKOUTS.forEach(w=>lib.appendChild(woCard(w,false)));
 }
 function useCategory(cat){
+  setActiveMy(null);
   playlist = EX.filter(e=>e.cat===cat).map(e=>e.id);
   applyPreset(catOf(cat).preset);
   savePlaylist();
@@ -1333,7 +1338,7 @@ function renderPlan(){
     syncQuick(); row.appendChild(q); el.appendChild(row);
   }
 }
-function saveCfg(){ store.set("cfg",cfg); renderPresets(); $("total").textContent=fmt(totalSeconds()); if(!T.running&&!T.paused) idleStage(); }
+function saveCfg(){ store.set("cfg",cfg); if(typeof syncMyLink==="function") try{ syncMyLink(); }catch(e){} renderPresets(); $("total").textContent=fmt(totalSeconds()); if(!T.running&&!T.paused) idleStage(); }
 let plFigs=[];
 /* Simple drag-to-reorder for any list: drag the grip, drop between items. */
 function sortDrag(e,list,li,from,done){
@@ -1376,7 +1381,7 @@ function renderPlaylist(){
   });
   WORKOUTS.forEach(w=>{
     const b=document.createElement("button"); b.className="chip sl"; b.innerHTML=`<span class="ms">${w.icon}</span>${w.name}`;
-    b.onclick=()=>{ playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist(); };
+    b.onclick=()=>{ setActiveMy(null); playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist(); };
     q.appendChild(b);
   });
   if(playlist.length){const cl=document.createElement("button");cl.className="chip sl";cl.textContent="Clear";cl.onclick=()=>{playlist=[];savePlaylist()};q.appendChild(cl)}
@@ -1429,15 +1434,47 @@ function voiceList(){
   if(!mine.length) mine=vs;
   return mine.slice().sort((a,b)=>voiceScore(b)-voiceScore(a));
 }
-function pickVoice(){ if(!voiceName) return null; return voiceList().find(v=>v.name===voiceName)||null; }
+function pickVoice(){ if(useCoach()) return null; return voiceList().find(v=>v.name===voiceName)||null; }
 function renderVoices(){
   const sel=$("voice-sel"); if(!sel) return;
   const vs=voiceList(), cur=pickVoice();
-  sel.innerHTML = '<option value="">Device default</option>';
-  if(!cur) sel.firstChild.selected=true;
-  vs.forEach((v,i)=>{ const o=document.createElement("option"); o.value=v.name; o.textContent=v.name.replace(/^Microsoft |^Google /,"")+` · ${v.lang}`; if(cur&&v.name===cur.name) o.selected=true; sel.appendChild(o); });
+  sel.innerHTML = '<option value="__coach">Haruku coach (plays over music)</option><option value="__device">Device default</option>';
+
+  vs.forEach((v,i)=>{ const o=document.createElement("option"); o.value=v.name; o.textContent=v.name.replace(/^Microsoft |^Google /,"")+` · ${v.lang}`; sel.appendChild(o); });
+  sel.value=useCoach()?COACH:(cur?cur.name:"__device");
 }
 if("speechSynthesis" in window){ try{ speechSynthesis.addEventListener("voiceschanged",renderVoices); }catch(e){} }
+/* Coach voice: recorded clips played through Web Audio, which mixes with music on iPhone.
+   The device voice (speechSynthesis) pauses other apps' music on iOS, so it is only a fallback. */
+const COACH="__coach", clips={}, clipLoad={};
+const useCoach=()=>!voiceName||voiceName===COACH;
+if(!store.get("coachV1",false)){ voiceName=COACH; store.set("voiceName",COACH); store.set("coachV1",true); }
+function loadClip(k){
+  if(clips[k]||clipLoad[k]) return clipLoad[k]||Promise.resolve(clips[k]);
+  const a=audio(); if(!a||!window.fetch) return Promise.resolve(null);
+  return clipLoad[k]=fetch("voice/"+k+".mp3").then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); })
+    .then(b=>new Promise((ok,no)=>a.decodeAudioData(b,ok,no))).then(buf=>(clips[k]=buf)).catch(()=>{ delete clipLoad[k]; return null; });
+}
+function preloadClips(){
+  if(!useCoach()) return;
+  ["go","lastgo","rest","setdone","ready","done","nextup","firstup","sample"].forEach(loadClip);
+  new Set(playlist).forEach(id=>loadClip("ex_"+id));
+}
+let voiceSrc=[], sayN=0;
+function say(parts,text,force){
+  if((!voiceOn&&!force)||(T.quiet&&!force)) return;
+  if(!useCoach()){ speak(text,force); return; }
+  const play=()=>{ const a=audio(); voiceSrc.forEach(n=>{try{n.stop()}catch(e){}}); voiceSrc=[];
+    let t=a.currentTime+.05; const g=a.createGain(); g.gain.value=1; g.connect(a.destination);
+    parts.forEach(k=>{ const n=a.createBufferSource(); n.buffer=clips[k]; n.connect(g); n.start(t); t+=clips[k].duration+.04; voiceSrc.push(n); }); };
+  if(parts.every(k=>clips[k])){ play(); return; }
+  const t0=performance.now(), seq=++sayN;
+  Promise.all(parts.map(loadClip)).then(b=>{
+    if(seq!==sayN) return;
+    if(b.every(Boolean)){ if(performance.now()-t0<2500) play(); }
+    else speak(text,force); // clips unavailable (offline or embedded): fall back to the device voice
+  });
+}
 function speak(text,force){
   if((!voiceOn&&!force)||!("speechSynthesis" in window)||(T.quiet&&!force)) return;
   mixAudio();
@@ -1509,10 +1546,10 @@ function enterPhase(i){
     const rn = ph.type==="prep" ? 1 : (ph.type==="work" ? ph.round : ph.round+1);
     $("exname").textContent = ph.type==="work" ? `Round ${ph.round} of ${ph.rounds}` : ph.type==="prep" ? "Starting soon" : ph.type==="setrest" ? `Set ${ph.set} done` : "Breathe";
     $("next").textContent = nxt ? `Next: ${PHASE_LABEL[nxt.type].toLowerCase()} ${nxt.dur}s` : "Last interval. Give it everything.";
-    if(ph.type==="work"){ SFX.work(); buzz([120,60,120]); speak(ph.round===ph.rounds&&ph.set===cfg.sets?"Last round. Go!":"Go!"); }
-    else if(ph.type==="rest"){ SFX.rest(); buzz(250); speak("Rest."); }
-    else if(ph.type==="setrest"){ SFX.rest(); buzz(250); speak("Set done. Take a break."); }
-    else if(ph.type==="prep"){ speak("Get ready."); }
+    if(ph.type==="work"){ SFX.work(); buzz([120,60,120]); { const last=ph.round===ph.rounds&&ph.set===cfg.sets; say([last?"lastgo":"go"],last?"Last round. Go!":"Go!"); } }
+    else if(ph.type==="rest"){ SFX.rest(); buzz(250); say(["rest"],"Rest."); }
+    else if(ph.type==="setrest"){ SFX.rest(); buzz(250); say(["setdone"],"Set done. Take a break."); }
+    else if(ph.type==="prep"){ say(["ready"],"Get ready."); }
     return;
   }
   const ex=byId[ph.ex];
@@ -1520,10 +1557,10 @@ function enterPhase(i){
   $("exname").textContent = (ph.type==="work"?"":"Next: ")+ex.name;
   const nxtW = T.schedule.slice(i+1).find(p=>p.type==="work");
   $("next").textContent = ph.type==="work" ? (nxtW?`Then: ${byId[nxtW.ex].name}`:"Last interval. Give it everything.") : ex.cue;
-  if(ph.type==="work"){ SFX.work(); buzz([120,60,120]); speak(`${ex.name}. Go!`); }
-  else if(ph.type==="rest"){ SFX.rest(); buzz(250); speak(`Rest. Next up, ${ex.name}.`); }
-  else if(ph.type==="setrest"){ SFX.rest(); buzz(250); speak("Set done. Take a break."); }
-  else if(ph.type==="prep"){ speak(`Get ready. First up, ${ex.name}.`); }
+  if(ph.type==="work"){ SFX.work(); buzz([120,60,120]); say(["ex_"+ex.id,"go"],`${ex.name}. Go!`); }
+  else if(ph.type==="rest"){ SFX.rest(); buzz(250); say(["nextup","ex_"+ex.id],`Rest. Next up, ${ex.name}.`); }
+  else if(ph.type==="setrest"){ SFX.rest(); buzz(250); say(["setdone"],"Set done. Take a break."); }
+  else if(ph.type==="prep"){ say(["firstup","ex_"+ex.id],`Get ready. First up, ${ex.name}.`); }
 }
 function finish(){
   T.running=false; T.paused=false; releaseWake();
@@ -1532,7 +1569,7 @@ function finish(){
   $("exname").textContent="Workout complete"; $("ring-ico-s").textContent="emoji_events"; $("next").textContent=`${fmt(totalSeconds())} of work and rest. Nice job.`;
   $("ring").setAttribute("stroke-dashoffset",0); renderDots({round:999,rounds:setCfg(cfg.sets).rounds});
   setPlayIcon(false); $("btn-play").setAttribute("aria-label","Start again"); $("setup").hidden=false;
-  SFX.done(); buzz([200,100,200,100,400]); speak("Workout done. Great job!");
+  SFX.done(); buzz([200,100,200,100,400]); say(["done"],"Workout done. Great job!");
   logWorkout(true);
   T.done=true;
 }
@@ -1597,7 +1634,7 @@ $("t-music").onclick=()=>{ musicAuto=!musicAuto; store.set("musicAuto",musicAuto
 $("m-test").onclick=()=>{ musicLink=$("m-link").value.trim(); store.set("musicLink",musicLink); if(!openMusic()) snack("Paste a link first"); };
 $("btn-music").onclick=()=>{ if(!openMusic()) snack("Choose a music app first"); };
 function start(){
-  audio();
+  audio(); preloadClips();
   // Fresh start with music on: open the music app and start the timer at the same moment.
   const music=!T.paused && !T.running && musicAuto && musicSvc!=="none" && musicUrl() && openMusic();
   realStart();
@@ -1636,8 +1673,8 @@ $("btn-skip").onclick=()=>{
 };
 function syncToggles(){ $("t-sound").setAttribute("aria-checked",soundOn); $("t-voice").setAttribute("aria-checked",voiceOn); }
 $("t-sound").onclick=()=>{soundOn=!soundOn;store.set("sound",soundOn);syncToggles();if(soundOn){audio();SFX.tick()}};
-$("voice-sel").onchange=e=>{ voiceName=e.target.value; store.set("voiceName",voiceName); speak("Squats. Go!",true); };
-$("voice-test").onclick=()=>{ audio(); speak("Squats. Go!",true); };
+$("voice-sel").onchange=e=>{ voiceName=e.target.value; store.set("voiceName",voiceName); preloadClips(); loadClip("sample").then(()=>say(["sample"],"Squats. Go!",true)); };
+$("voice-test").onclick=()=>{ audio(); if(useCoach()) loadClip("sample").then(()=>say(["sample"],"Squats. Go!",true)); else speak("Squats. Go!",true); };
 $("t-lock").onclick=()=>{ cfg.lock=!cfg.lock; if(cfg.lock){ cfg.roundLen=cfg.work+cfg.rest; cfg.plan.forEach(p=>{p.rest=Math.min(p.rest,cfg.roundLen-5);p.work=cfg.roundLen-p.rest}); } saveCfg(); renderFields(); };
 $("t-perset").onclick=()=>{cfg.perSet=!(cfg.perSet&&cfg.sets>1); if(cfg.perSet){cfg.plan=[];syncPlan();} saveCfg(); renderFields();};
 $("t-voice").onclick=()=>{voiceOn=!voiceOn;store.set("voice",voiceOn);syncToggles();if(!voiceOn)try{speechSynthesis.cancel()}catch(e){}};
@@ -1684,7 +1721,21 @@ let myWos = store.get("myWorkouts", []); if(!Array.isArray(myWos)) myWos=[];
 myWos = myWos.filter(w=>w&&Array.isArray(w.moves)).map(w=>Object.assign(w,{moves:w.moves.filter(id=>byId[id])}));
 const MAX_FAV=8;
 function saveMy(){ const ok=store.set("myWorkouts",myWos); renderMy(); return ok; }
+let activeMy=store.get("activeMy",null);
+const setActiveMy=id=>{ activeMy=id; store.set("activeMy",id); syncMyLink(); };
+function syncMyLink(){
+  const w=activeMy&&myWos.find(x=>x.id===activeMy), el=$("my-link");
+  if(!w){ el.hidden=true; return; }
+  const c=w.cfg||{}, changed=w.moves.join()!==playlist.join()||c.work!==cfg.work||c.rest!==cfg.rest||(c.sets||1)!==cfg.sets;
+  el.hidden=!changed; $("my-link-t").textContent=`You changed "${w.name}". Keep these changes?`;
+}
+$("my-link-save").onclick=()=>{
+  const w=activeMy&&myWos.find(x=>x.id===activeMy); if(!w||!playlist.length) return;
+  w.moves=playlist.slice(); w.cfg=Object.assign({},w.cfg||{},{work:cfg.work,rest:cfg.rest,sets:cfg.sets,rounds:playlist.length,roundLen:cfg.work+cfg.rest});
+  saveMy(); renderFavs(); syncMyLink(); snack(`Saved ${w.name}`);
+};
 function runMy(w,go){
+  setActiveMy(w.id);
   playlist=w.moves.slice(); cfg=Object.assign({},w.cfg||cfg); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); if(go) start();
 }
@@ -1714,11 +1765,14 @@ function renderMy(){
 }
 $("mw-save").onclick=()=>openRoutine({name:"",moves:playlist.slice(),cfg:{work:cfg.work,rest:cfg.rest,sets:1}},null);
 /* Routine editor */
-let rtD=null, rtT=null;
+let rtD=null, rtT=null, rtSnap=null;
+const rtState=()=>rtD?JSON.stringify([$("rt-name").value.trim(),rtD.moves,rtD.work,rtD.rest,rtD.sets,$("rt-fav").checked]):null;
+const rtDirty=()=>!!rtD&&rtState()!==rtSnap;
+function tryCloseRt(){ if(rtDirty()&&!confirm("Discard your changes to this routine?")) return; closeRt(); }
 const RT_F=[{k:"work",label:"Work",unit:"sec",min:5,max:600,step:5},{k:"rest",label:"Rest",unit:"sec",min:0,max:300,step:5},{k:"sets",label:"Repeat",unit:"times",min:1,max:10,step:1}];
 function openRoutine(src,target){
   const c=src.cfg||{};
-  rtT=target; rtD={name:src.name||"", moves:(src.moves||[]).filter(id=>byId[id]), work:c.work||40, rest:c.rest==null?20:c.rest, sets:c.sets||1, fav:target?!!target.fav:false};
+  rtT=target; rtSnap=null; rtD={name:src.name||"", moves:(src.moves||[]).filter(id=>byId[id]), work:c.work||40, rest:c.rest==null?20:c.rest, sets:c.sets||1, fav:target?!!target.fav:false};
   $("rt-title").textContent=target?"Edit routine":"New routine"; $("rt-name").value=rtD.name; $("rt-fav").checked=rtD.fav; $("rt-del").hidden=!target;
   const t=$("rt-times"); t.innerHTML="";
   RT_F.forEach(o=>{ const d=document.createElement("div"); d.className="field";
@@ -1727,7 +1781,7 @@ function openRoutine(src,target){
     const set=v=>{v=Math.round(Number(v)); if(!isFinite(v)) v=rtD[o.k]; v=Math.min(o.max,Math.max(o.min,v)); rtD[o.k]=v; inp.value=v; rtSum();};
     mi.onclick=()=>set(rtD[o.k]-o.step); pl.onclick=()=>set(rtD[o.k]+o.step); inp.onchange=()=>set(inp.value);
     t.appendChild(d); });
-  renderRt(); renderPal(); $("rt").hidden=false; setTimeout(()=>{ if(!rtD.name) $("rt-name").focus(); },50);
+  renderRt(); renderPal(); $("rt").hidden=false; rtSnap=rtState(); setTimeout(()=>{ if(!rtD.name) $("rt-name").focus(); },50);
 }
 function rtSum(){
   const n=rtD.moves.length, secs=10+rtD.sets*n*(rtD.work+rtD.rest)-rtD.rest+(rtD.sets-1)*60;
@@ -1819,9 +1873,9 @@ function dragEnd(e){
 }
 function dragCancel(){ dragCleanup(); }
 function closeRt(){ dragCleanup(); $("rt").hidden=true; rtD=rtT=null; palFigs.splice(0).forEach(f=>f.destroy()); $("pal").innerHTML=""; }
-$("rt-close").onclick=closeRt; $("rt-cancel").onclick=closeRt;
-$("rt").addEventListener("click",e=>{ if(e.target.id==="rt") closeRt(); });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("rt").hidden) closeRt(); });
+$("rt-close").onclick=tryCloseRt; $("rt-cancel").onclick=tryCloseRt;
+$("rt").addEventListener("click",e=>{ if(e.target.id==="rt"&&!rtDirty()) closeRt(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("rt").hidden) tryCloseRt(); });
 $("rt-del").onclick=()=>{ if(rtT&&confirm(`Delete ${rtT.name}?`)){ myWos.splice(myWos.indexOf(rtT),1); saveMy(); renderFavs(); closeRt(); } };
 $("rt-save").onclick=()=>{
   const name=$("rt-name").value.trim();
@@ -2005,7 +2059,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.15.1";
+const APP_VERSION = "1.16.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
@@ -2028,7 +2082,7 @@ document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==
 setTimeout(()=>checkUpdate(false),1500);
 /* ---------- Boot ---------- */
 addEventListener("scroll",()=>{$("appbar").classList.toggle("scrolled",scrollY>4)},{passive:true});
-syncMusic(); renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderMy(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles();
+syncMusic(); renderVoices(); syncStyle(); syncMode(); renderWorkouts(); renderMy(); renderFilters(); renderLibrary(); renderPresets(); renderFields(); renderPlaylist(); syncToggles(); syncMyLink();
 $("total").textContent=fmt(totalSeconds()); idleStage();
 showView("home"); setTimeout(checkShareHash,300);
 })();
