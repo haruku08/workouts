@@ -756,6 +756,40 @@ const EX = [
   frames:[{h:[43,55],n:[42,64],p:[40,90],le:[50,74],lh:[57,77],re:[49,75],rh:[56,79],lk:[55,73],lf:[57,92],rk:[58,91],rf:[77,92]},
           {h:[40,55],n:[41,64],p:[40,90],le:[52,71],lh:[60,67],re:[33,76],rh:[25,90],lk:[55,73],lf:[57,92],rk:[58,91],rf:[77,92]}],
   steps:["Sit tall with one leg straight and the other knee bent, foot outside the straight leg.","Hug the bent knee with the opposite arm and place your other hand behind you.","Twist toward the bent knee as you breathe out. Switch sides each round."],cue:"Grow tall on every breath in, twist a little more on every breath out."},
+ // Leo Moves flow
+ {id:"bearside",cat:"kin",name:"Bear Side Steps",dur:1.4,level:"Medium",focus:"Shoulders, core, hips",
+  frames:[BSQ,P(BSQ,{le:[67,81],lh:[73,88],lk:[58,75],lf:[48,89]}),BSQ,P(BSQ,{re:[61,82],rh:[63,89],rk:[52,76],rf:[39,89]})],
+  steps:["Get on hands and feet, knees bent and hovering just off the floor.","Step a hand and the opposite foot sideways at the same time.","Follow with the other pair. Take a few steps, then go back the other way."],cue:"Knees stay low. Back flat like a table."},
+ {id:"squathand",cat:"kin",name:"Squat to Handstand",dur:3.6,level:"Hard",focus:"Shoulders, legs, balance",
+  frames:[S,
+    {h:[62,60],n:[56,65],p:[38,76],le:[61,79],lh:[64,93],re:[60,79],rh:[63,93],lk:[52,76],lf:[44,94],rk:[51,77],rf:[43,94]},
+    {h:[61,76],n:[59,68],p:[49,47],le:[60,80],lh:[61,93],re:[59,80],rh:[60,93],lk:[40,32],lf:[33,17],rk:[50,68],rf:[44,83]},
+    {h:[60,78],n:[59,69],p:[58,41],le:[60,81],lh:[61,93],re:[59,81],rh:[60,93],lk:[57,22],lf:[56,4],rk:[59,22],rf:[60,4]},
+    {h:[61,76],n:[59,68],p:[49,47],le:[60,80],lh:[61,93],re:[59,80],rh:[60,93],lk:[40,32],lf:[33,17],rk:[50,68],rf:[44,83]},
+    {h:[62,60],n:[56,65],p:[38,76],le:[61,79],lh:[64,93],re:[60,79],rh:[63,93],lk:[52,76],lf:[44,94],rk:[51,77],rf:[43,94]}],
+  steps:["Squat down and put your hands flat on the floor in front of your feet.","Shift your weight onto your hands and kick up into a handstand. A wall helps at first.","Come down softly into the squat and stand up."],cue:"Lock your arms and push the floor away. Easier: hop your hips up instead of going all the way."},
+ {id:"curlswitch",cat:"stretch",name:"Leg Curl Switch",dur:5,level:"Medium",focus:"Hips, hamstrings, core",
+  frames:[{h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]},
+    {h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[60,74],lf:[52,92],rk:[59,75],rf:[51,92]},
+    {h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]},
+    mirror({h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]}),
+    mirror({h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[60,74],lf:[52,92],rk:[59,75],rf:[51,92]}),
+    mirror({h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]})],
+  steps:["Sit with your hands behind you and both legs out to one side.","Curl your legs in until your heel touches, then stretch them long again.","Turn 180 degrees through the middle so your legs are on the other side and repeat."],cue:"Move slowly and lift your chest as you rotate."},
+ {id:"breakdancer",cat:"stretch",name:"Breakdancer Stretch",dur:6,level:"Medium",focus:"Hips, hamstrings, upper back",
+  frames:[{h:[66,62],n:[59,66],p:[44,75],le:[60,80],lh:[60,93],re:[59,80],rh:[59,93],lk:[62,76],lf:[64,94],rk:[33,86],rf:[17,92]},
+    {h:[68,74],n:[61,72],p:[37,66],le:[63,83],lh:[64,93],re:[62,83],rh:[63,93],lk:[55,79],lf:[73,90],rk:[30,85],rf:[17,92]},
+    {h:[66,62],n:[59,66],p:[44,75],le:[60,80],lh:[60,93],re:[59,80],rh:[59,93],lk:[62,76],lf:[64,94],rk:[33,86],rf:[17,92]},
+    {h:[66,62],n:[59,66],p:[44,75],le:[60,80],lh:[60,93],re:[59,80],rh:[59,93],rk:[62,76],rf:[64,94],lk:[33,86],lf:[17,92]},
+    {h:[68,74],n:[61,72],p:[37,66],le:[63,83],lh:[64,93],re:[62,83],rh:[63,93],rk:[55,79],rf:[73,90],lk:[30,85],lf:[17,92]},
+    {h:[66,62],n:[59,66],p:[44,75],le:[60,80],lh:[60,93],re:[59,80],rh:[59,93],rk:[62,76],rf:[64,94],lk:[33,86],lf:[17,92]}],
+  steps:["Start in a deep lunge with both hands on the floor, like the world's greatest stretch.","Push the front leg forward and straighten it while your hips go back, stretching leg and body long.","Pull the leg back into the lunge, then switch sides."],cue:"Keep your back long. Breathe out as you stretch."},
+ {id:"vtouch",cat:"str",name:"V-Up Toe Touch",dur:2.4,level:"Medium",focus:"Abs, obliques, hip flexors",
+  frames:[{h:[13,89],n:[22,90],p:[49,91],le:[13,84],lh:[5,86],re:[14,85],rh:[6,87],lk:[68,90],lf:[87,91],rk:[67,91],rf:[86,92]},
+    {h:[33,60],n:[36,69],p:[48,92],c:[41,82],le:[47,64],lh:[61,57],re:[33,80],rh:[31,92],lk:[60,76],lf:[70,60],rk:[64,86],rf:[82,90]},
+    {h:[13,89],n:[22,90],p:[49,91],le:[13,84],lh:[5,86],re:[14,85],rh:[6,87],lk:[68,90],lf:[87,91],rk:[67,91],rf:[86,92]},
+    {h:[33,60],n:[36,69],p:[48,92],c:[41,82],re:[47,64],rh:[61,57],le:[33,80],lh:[31,92],rk:[60,76],rf:[70,60],lk:[64,86],lf:[82,90]}],
+  steps:["Lie on your back with your arms overhead and legs long.","Lift your upper body and one leg, and reach to touch that toe with the opposite hand.","Lower with control and switch sides."],cue:"Twist from your ribs, not your neck. Breathe out on the way up."},
  // Yoga
  {id:"downdog",cat:"yoga",name:"Plank to Down Dog",dur:6,level:"Medium",focus:"Shoulders, hamstrings, calves",
   frames:[YPLANK,{h:[61,85],n:[56,77],p:[36,58],le:[65,85],lh:[74,93],re:[64,85],rh:[73,93],lk:[26,76],lf:[16,93],rk:[25,76],rf:[15,93]},{h:[61,86],n:[56,78],p:[36,57],le:[65,86],lh:[74,93],re:[64,86],rh:[73,93],lk:[26,75],lf:[16,93],rk:[25,75],rf:[15,93]}],
@@ -1181,7 +1215,8 @@ const WORKOUTS = [
   {id:"upper",name:"Upper Body",icon:"sports_mma",c:"str",blurb:"Chest, shoulders, arms and back",moves:["pushup","dips","pike","pullup","boxing","superman"]},
   {id:"core",name:"Core",icon:"radio_button_checked",c:"yoga",blurb:"Abs, obliques and lower back",moves:["plank","crunch","climbers","superman","bridge","highknees"]},
   {id:"legs",name:"Legs",icon:"directions_walk",c:"stretch",blurb:"Quads, glutes, hamstrings and calves",moves:["squat","lunge","nordic","squatjump","skaters","bridge","chair"]},
-  {id:"full",name:"Full Body",icon:"bolt",c:"kin",blurb:"Full-body conditioning",moves:["burpee","squat","pushup","climbers","lunge","jacks"]}
+  {id:"full",name:"Full Body",icon:"bolt",c:"kin",blurb:"Full-body conditioning",moves:["burpee","squat","pushup","climbers","lunge","jacks"]},
+  {id:"leo",name:"Leo Flow",icon:"self_improvement",c:"yoga",blurb:"Movement flow inspired by Leo Moves",moves:["bearside","squathand","curlswitch","breakdancer","vtouch"],cfg:{work:40,rest:20,sets:2}}
 ];
 const woCfg = w => Object.assign({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60},w.cfg||{});
 function useWorkout(w){
@@ -2059,7 +2094,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.16.0";
+const APP_VERSION = "1.17.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
