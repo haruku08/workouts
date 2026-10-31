@@ -361,6 +361,7 @@ main .wrap{padding-block:8px 32px}
 .rt-times .field.off{opacity:.45}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:var(--r-md)}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+.rt-in>*{flex-shrink:0}
 .rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
 .rt-head h2{flex:1;font-size:24px;line-height:32px}
 .rt-label{font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--on-surface-variant);margin-bottom:-8px}
@@ -412,7 +413,7 @@ main .wrap{padding-block:8px 32px}
 .log-main p{margin:2px 0 0;font-size:13px;line-height:18px;color:var(--on-surface-variant);overflow-wrap:anywhere}
 .tag{font-size:11px;line-height:16px;font-weight:500;padding:0 8px;border-radius:var(--r-sm);background:var(--sc-high);color:var(--on-surface-variant)}
 .log-empty{text-align:center;color:var(--on-surface-variant);padding:40px 16px}
-.log-empty .ms{font-size:48px;display:block;margin-bottom:8px;color:var(--outline)}
+.log-empty .ms{font-size:48px;display:block;margin:0 auto 8px;color:var(--outline)}
 </style>
 </head>
 <body>
@@ -508,7 +509,7 @@ main .wrap{padding-block:8px 32px}
       <h3>Backup</h3>
       <p class="supporting">Saves your history, routines and settings as a code. Restore it after reinstalling or on another device.</p>
       <div class="row"><button class="btn btn-tonal with-icon sl" id="bk-copy"><span class="ms">content_copy</span>Copy backup</button><button class="btn btn-tonal with-icon sl" id="bk-file"><span class="ms">arrow_upward</span>Save as file</button></div>
-      <form class="imp" id="bk-form"><span class="ms">replay</span><input id="bk-in" placeholder="Paste a backup code to restore" autocomplete="off" aria-label="Backup code"><button class="btn btn-tonal sl" type="submit">Restore</button></form>
+      <form class="imp" id="bk-form"><span class="ms">replay</span><input id="bk-in" placeholder="Paste backup code" autocomplete="off" aria-label="Backup code"><button class="btn btn-tonal sl" type="submit">Restore</button></form>
       <label class="text-btn sl bk-pick"><input type="file" id="bk-pick" accept=".txt,text/plain" hidden>Restore from file</label>
     </div>
   </section>
@@ -1240,8 +1241,10 @@ const WORKOUTS = [
   {id:"leo",name:"Leo Flow",icon:"self_improvement",c:"yoga",blurb:"Movement flow inspired by Leo Moves",moves:["bearside","squathand","curlswitch","breakdancer","vtouch"],cfg:{work:40,rest:20,sets:2}}
 ];
 const woCfg = w => Object.assign({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60},w.cfg||{});
+// Starting a different workout ends the one in progress (and saves it to History if it counts).
+function stopCurrent(){ if(T.running||T.paused||T.held) reset(); }
 function useWorkout(w){
-  setActiveMy(null);
+  stopCurrent(); setActiveMy(null);
   playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer");
 }
@@ -1270,7 +1273,7 @@ function woCard(w,home){
     foot.appendChild(ah);
   }
   const cp=btn("icon-btn sl","Copy to My routines and edit","edit"); cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w)},null); foot.appendChild(cp);
-  const go=document.createElement("button"); go.className="btn btn-filled with-icon sl"; go.innerHTML=`<span class="ms fill">play_arrow</span>Start`; go.onclick=()=>useWorkout(w); foot.appendChild(go);
+  const go=document.createElement("button"); go.className="btn btn-filled with-icon sl"; go.innerHTML=`<span class="ms fill">play_arrow</span>Start`; go.onclick=()=>{ useWorkout(w); start(); }; foot.appendChild(go);
   return card;
 }
 function renderWorkouts(){
@@ -1550,7 +1553,7 @@ function speak(text,force){
 function buzz(p){ if(T.quiet) return; try{ navigator.vibrate&&navigator.vibrate(p) }catch(e){} }
 
 /* ---------- Timer ---------- */
-const T = {quiet:false,schedule:[],idx:0,phaseStart:0,elapsed:0,running:false,paused:false,lastSec:null,wake:null};
+const T = {act:{w:0,all:0,rounds:0},quiet:false,schedule:[],idx:0,phaseStart:0,elapsed:0,running:false,paused:false,lastSec:null,wake:null};
 function buildSchedule(){
   const s=[], list=freeMode?[null]:(playlist.length?playlist:[EX[0].id]); let k=0;
   if(cfg.prep>0) s.push({type:"prep",dur:cfg.prep,ex:list[0]});
@@ -1627,19 +1630,25 @@ function finish(){
   T.running=false; T.paused=false; releaseWake();
   $("stage").dataset.phase="done"; $("phase").textContent="Done"; setPhaseIco("done");
   $("digits").textContent="0:00"; $("digits").classList.remove("blink");
-  $("exname").textContent="Workout complete"; $("ring-ico-s").textContent="emoji_events"; $("next").textContent=`${fmt(totalSeconds())} of work and rest. Nice job.`;
+  $("exname").textContent="Workout complete"; $("ring-ico-s").textContent="emoji_events"; { const t=workedSoFar(); $("next").textContent=`${fmt(t.all)} total · ${fmt(t.w)} of work · ${t.rounds} ${t.rounds===1?"round":"rounds"}. Nice job.`; }
   $("ring").setAttribute("stroke-dashoffset",0); renderDots({round:999,rounds:setCfg(cfg.sets).rounds});
   setPlayIcon(false); $("btn-play").setAttribute("aria-label","Start again"); $("setup").hidden=false;
   SFX.done(); buzz([200,100,200,100,400]); say(["done"],"Workout done. Great job!");
   logWorkout(true);
   T.done=true;
 }
+/* Credit the interval being left with the time really spent in it.
+   A work interval counts as a round once at least half of it was done. */
+function credit(ph,sec){
+  if(!ph) return; sec=Math.max(0,Math.min(sec,ph.dur));
+  T.act.all+=sec; if(ph.type==="work"){ T.act.w+=sec; if(sec>=ph.dur/2) T.act.rounds++; }
+}
 function tick(){
   if(!T.running) return;
   const ph=T.schedule[T.idx]; if(!ph) return;
   const now=performance.now();
   let el=(now-T.phaseStart)/1000;
-  if(el>=ph.dur){ T.phaseStart+=ph.dur*1000; const nx=T.schedule[T.idx+1];
+  if(el>=ph.dur){ credit(ph,ph.dur); T.phaseStart+=ph.dur*1000; const nx=T.schedule[T.idx+1];
     T.quiet=!!nx && (now-T.phaseStart)/1000>=nx.dur; enterPhase(T.idx+1); T.quiet=false; if(T.running) tick(); return; }
   const rem=ph.dur-el, sec=Math.ceil(rem);
   $("digits").textContent=fmt(rem);
@@ -1712,7 +1721,7 @@ document.addEventListener("visibilitychange",()=>{
 function realStart(){
   if(T.paused){ T.paused=false; T.running=true; T.phaseStart=performance.now()-T.elapsed*1000; stageFig.t0=performance.now(); setPlayIcon(true); requestWake(); const ph=T.schedule[T.idx]; if(ph){ $("phase").textContent=PHASE_LABEL[ph.type]||""; setPhaseIco(ph.type); } return; }
   if(!freeMode && !playlist.length){ showView("timer"); $("plist").scrollIntoView({behavior:"smooth",block:"center"}); return; }
-  T.schedule=buildSchedule(); T.done=false; T.running=true; T.paused=false;
+  T.schedule=buildSchedule(); T.act={w:0,all:0,rounds:0}; T.done=false; T.running=true; T.paused=false;
   T.phaseStart=performance.now(); $("setup").hidden=true;
   setPlayIcon(true); requestWake();
   enterPhase(0); tick();
@@ -1729,7 +1738,8 @@ $("btn-play").onclick=()=>{ if(T.running) pause(); else start(); };
 $("btn-reset").onclick=reset;
 $("btn-skip").onclick=()=>{
   if(!T.running&&!T.paused) return;
-  const wasPaused=T.paused; T.phaseStart=performance.now(); T.elapsed=0; enterPhase(T.idx+1);
+  const wasPaused=T.paused; credit(T.schedule[T.idx], wasPaused?(T.elapsed||0):(performance.now()-T.phaseStart)/1000);
+  T.phaseStart=performance.now(); T.elapsed=0; enterPhase(T.idx+1);
   if(wasPaused&&T.schedule[T.idx]){ $("phase").textContent="Paused"; setPhaseIco("paused"); const ph=T.schedule[T.idx]; $("digits").textContent=fmt(ph.dur); $("ring").setAttribute("stroke-dashoffset",0); }
 };
 function syncToggles(){ $("t-sound").setAttribute("aria-checked",soundOn); $("t-voice").setAttribute("aria-checked",voiceOn); }
@@ -1747,19 +1757,20 @@ document.addEventListener("keydown",e=>{
 /* Workout log: one entry per finished (or stopped after a minute of work) session. */
 let workLog = store.get("log", []); if(!Array.isArray(workLog)) workLog=[];
 function workedSoFar(){
-  const sch=T.schedule||[]; let w=0, all=0;
-  for(let i=0;i<Math.min(T.idx,sch.length);i++){ all+=sch[i].dur; if(sch[i].type==="work") w+=sch[i].dur; }
-  const cur=sch[T.idx];
-  if(cur){ const el=T.running?(performance.now()-T.phaseStart)/1000:(T.elapsed||0); all+=el; if(cur.type==="work") w+=el; }
-  return {w:Math.round(w), all:Math.round(all)};
+  const a=T.act||{w:0,all:0,rounds:0}; let w=a.w, all=a.all, rounds=a.rounds;
+  const cur=(T.schedule||[])[T.idx];
+  if(cur&&(T.running||T.paused)){ const el=Math.min(cur.dur,T.running?(performance.now()-T.phaseStart)/1000:(T.elapsed||0)); all+=el; if(cur.type==="work"){ w+=el; if(el>=cur.dur/2) rounds++; } }
+  return {w:Math.round(w), all:Math.round(all), rounds};
 }
 function logWorkout(done){
   const sch=T.schedule||[]; if(!sch.length) return;
-  const t=done?{w:sch.filter(p=>p.type==="work").reduce((a,p)=>a+p.dur,0),all:sch.reduce((a,p)=>a+p.dur,0)}:workedSoFar();
-  if(!done && t.w<60) return;
+  const t=workedSoFar();
+  // Skip near-empty sessions, e.g. a workout skipped straight to the end.
+  const planned=sch.filter(p=>p.type==="work").reduce((a,p)=>a+p.dur,0);
+  if(t.w<Math.min(60,planned/2)) return;
   const ids=[...new Set(sch.filter(p=>p.type==="work"&&p.ex).map(p=>p.ex))];
   const wo=WORKOUTS.find(w=>w.moves.length===playlist.length&&w.moves.every((m,i)=>m===playlist[i]));
-  const rounds=sch.slice(0,done?sch.length:T.idx+1).filter(p=>p.type==="work").length;
+  const rounds=t.rounds;
   workLog.unshift({at:Date.now(), name:freeMode?"Timer only":(wo?wo.name:"Custom workout"), moves:freeMode?[]:ids.map(id=>byId[id]?byId[id].name:id),
     work:t.w, total:t.all, rounds, done});
   if(workLog.length>1000) workLog.length=1000;
@@ -1796,7 +1807,7 @@ $("my-link-save").onclick=()=>{
   saveMy(); renderFavs(); syncMyLink(); snack(`Saved ${w.name}`);
 };
 function runMy(w,go){
-  setActiveMy(w.id);
+  stopCurrent(); setActiveMy(w.id);
   playlist=w.moves.slice(); cfg=Object.assign({},w.cfg||cfg); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); if(go) start();
 }
@@ -2085,7 +2096,7 @@ function renderHome(){
   $("h-go").disabled=!names.length;
   renderFavs();
 }
-$("q-go").onclick=()=>{ freeMode=true; store.set("freeMode",true);
+$("q-go").onclick=()=>{ stopCurrent(); freeMode=true; store.set("freeMode",true);
   cfg=Object.assign({},quick,{perSet:false,plan:[],lock:false,roundLen:quick.work+quick.rest}); saveCfg(); renderFields();
   syncMode(); showView("timer"); start(); };
 $("h-go").onclick=()=>{ if(!playlist.length) return; freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); start(); };
@@ -2130,7 +2141,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.18.0";
+const APP_VERSION = "1.18.1";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
