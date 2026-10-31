@@ -13,7 +13,7 @@ A workout app with a built-in interval timer. It's a single `index.html` file wi
 - **History:** every workout you finish (or stop after at least a minute of work) is saved on the device with the time you actually spent, so skipped intervals don't count, with weekly totals and a day streak. **Backup** copies everything (history, routines, settings) as a code or file you can restore after reinstalling or on another device.
 - **Exercises:** 40 moves in four groups (Calisthenics, Strength, Stretch, Yoga). Each one has an animated figure that shows the movement, in a hand-drawn doodle style (the default, inspired by CocoMaterial's people illustrations), or a cartoon, realistic or stick-figure style, plus steps and a tip.
 - **Ready-made routines (Catalog):** Upper Body, Core, Legs and Full Body sessions, plus a Morning Routine of stretches (40s holds, both sides) and a Leo Flow (bear side steps, squat to handstand, leg curl switch, breakdancer stretch, V-up toe touch). Tap Add to Home to put one on your dashboard.
-- **Timer:**
+- **Timer:** opens full screen with no top bar, so it is just the timer (the tabs at the bottom still take you elsewhere).
   - Use **Timer only** for your own workouts, or **With exercises** to follow the moves.
   - Set your own work, rest, rounds, sets and set break, or keep every round a fixed length (for example 45/15 = 1 minute).
   - Each set can have its own timing.
