@@ -677,7 +677,7 @@ const EX = [
   frames:[F,P(F,{h:[50,13],n:[50,23],p:[50,51],le:[39,14],lh:[33,3],re:[61,14],rh:[67,3],lk:[42,72],lf:[35,92],rk:[58,72],rf:[65,92]})],
   steps:["Stand tall with feet together and arms at your sides.","Jump your feet out wide while swinging your arms overhead.","Jump back to the start. Keep a steady rhythm."],cue:"Land softly on the balls of your feet."},
  {id:"highknees",cat:"kin",name:"High Knees",dur:0.7,level:"Medium",focus:"Cardio, hip flexors, core",
-  frames:[P(F,{h:[50,14],n:[50,24],p:[50,52],lk:[45,58],lf:[45,76],re:[60,32],rh:[57,22],rk:[54,73],rf:[55,93]}),P(F,{h:[50,14],n:[50,24],p:[50,52],rk:[55,58],rf:[55,76],le:[40,32],lh:[43,22],lk:[46,73],lf:[45,93]})],
+  frames:[P(F,{h:[50,14],n:[50,24],p:[50,52],lk:[46.5,60],lf:[46,78],re:[60,32],rh:[57,22],rk:[54,73],rf:[54,93]}),P(F,{h:[50,14],n:[50,24],p:[50,52],rk:[53.5,60],rf:[54,78],le:[40,32],lh:[43,22],lk:[46,73],lf:[46,93]})],
   steps:["Run in place.","Drive each knee up to hip height.","Pump your arms in time with your legs."],cue:"Stay tall. Don't lean back."},
  {id:"buttkicks",cat:"kin",name:"Butt Kicks",dur:0.7,level:"Easy",focus:"Cardio, hamstrings",
   frames:[P(S,{lk:[50,74],lf:[35,62],le:[56,37],lh:[62,29],re:[44,40],rh:[41,51]}),P(S,{rk:[49,74],rf:[34,62],lk:[51,74],lf:[51,94],le:[45,40],lh:[42,51],re:[55,37],rh:[61,29]})],
@@ -948,12 +948,13 @@ class Figure{
       const o={leg,far};
       o.body=part(leg?3.1:2.2,null,false,DO.skin);
       o.cloth=part(leg?4.2:3.2,leg?DO.shorts:DO.shirt,true);
-      if(leg) o.shoe=P({stroke:DO.shoe,"stroke-width":2.8});
+      if(leg){ o.shoe=P({stroke:DO.shoe,"stroke-width":2.8}); if(!far) o.knee=P({fill:DO.skin,stroke:DO.ink,"stroke-width":.75}); }
       else o.hand=P({fill:DO.skin,stroke:DO.ink,"stroke-width":.75});
       return o;
     };
     const D=this.d={farArm:limb(true,false),farLeg:limb(true,true)};
     D.body=part(11,DO.shirt); D.shorts=part(12,DO.shorts);
+    D.farLeg.knee=P({fill:DO.skin,stroke:DO.ink,"stroke-width":.75}); // over the shorts, for a knee raised toward the viewer
     D.nearLeg=limb(false,true); D.nearArm=limb(false,false);
     D.neck=part(1.8,null,false,DO.skin);
     D.hair=P({fill:DO.hair,stroke:DO.ink,"stroke-width":.75});
@@ -984,16 +985,23 @@ class Figure{
         const d=unit(sub(e,b)); let toe=front?[0,0]:[d[1],-d[0]]; if(!front&&toe[0]<0) toe=[-toe[0],-toe[1]];
         const h=front?add(e,[-.9,.6]):add(e,toe,-.6), t=front?add(e,[.9,.6]):add(e,toe,3);
         o.shoe.setAttribute("d",`M${f(h)}L${f(t)}`);
+        // Facing the viewer, a knee raised toward us shows a short thigh: draw the round knee so it reads as coming forward.
+        const lift=front&&Math.hypot(...sub(b,a))<10;
+        o.knee.setAttribute("d",lift?ring(b,2.5,s):"");
       } else o.hand.setAttribute("d",ring(e,1.4,s));
     };
-    limb(D.farArm,q.n,q.re,q.rh,-1); limb(D.farLeg,q.p,q.rk,q.rf,1);
+    // Facing the viewer, arms hang from two shoulders and legs from two hips, not from one point as in a side view.
+    const side=front?(()=>{ const pp=perp(unit(sub(q.n,q.p))); return pp[0]<0?[-pp[0],-pp[1]]:pp; })():[0,0];
+    const shL=add(q.n,side,-4.6), shR=add(q.n,side,4.6), hpL=add(q.p,side,-3), hpR=add(q.p,side,3);
+    limb(D.farArm,front?shR:q.n,q.re,q.rh,-1); limb(D.farLeg,front?hpR:q.p,q.rk,q.rf,1);
     const top=lerp(q.n,c,.1);
-    D.body.ink.setAttribute("stroke-width",front?11.5:8.5); D.body.fill.setAttribute("stroke-width",front?10:7); D.body.col.setAttribute("stroke-width",front?7.6:5.2);
-    D.shorts.ink.setAttribute("stroke-width",front?11.9:8.9); D.shorts.fill.setAttribute("stroke-width",front?10.4:7.4); D.shorts.col.setAttribute("stroke-width",front?7.8:5.4);
+    D.body.ink.setAttribute("stroke-width",front?14:8.5); D.body.fill.setAttribute("stroke-width",front?12.5:7); D.body.col.setAttribute("stroke-width",front?9.4:5.2);
+    const off=front?"translate(.6 .9)":"translate(1.3 1)"; D.body.col.setAttribute("transform",off); D.shorts.col.setAttribute("transform",off);
+    D.shorts.ink.setAttribute("stroke-width",front?13.5:8.9); D.shorts.fill.setAttribute("stroke-width",front?12:7.4); D.shorts.col.setAttribute("stroke-width",front?9:5.4);
     setP(D.body,`M${f(q.p)}Q${f(c)} ${f(top)}`);
     const ql=t=>{const u=1-t;return [u*u*q.p[0]+2*u*t*c[0]+t*t*q.n[0], u*u*q.p[1]+2*u*t*c[1]+t*t*q.n[1]]};
     setP(D.shorts,`M${f(add(q.p,unit(sub(q.p,c)),.5))}L${f(ql(.2))}`);
-    limb(D.nearLeg,q.p,q.lk,q.lf,1); limb(D.nearArm,q.n,q.le,q.lh,1);
+    limb(D.nearLeg,front?hpL:q.p,q.lk,q.lf,1); limb(D.nearArm,front?shL:q.n,q.le,q.lh,1);
     const ax=unit(sub(q.h,q.n)), fd=[-ax[1],ax[0]], H=add(q.n,ax,6.8), R=5.5;
     setP(D.neck,`M${f(q.n)}L${f(add(q.n,ax,2.4))}`);
     const dot=(p,r)=>`M${f(add(p,[-r,0]))}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0`;
