@@ -1370,7 +1370,7 @@ function woCard(w,home){
     ah.onclick=()=>{ if(on){ homeWos=homeWos.filter(x=>x!==w.id); saveHome(); snack(`Unpinned ${w.name}`); } else { homeWos.push(w.id); saveHome(); snack(`Pinned ${w.name}`); } };
     foot.appendChild(ah);
   }
-  const cp=btn("icon-btn sl","Copy to My routines and edit","edit"); cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w)},null); foot.appendChild(cp);
+  const cp=btn("icon-btn sl","Copy to My routines and edit","edit"); cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w),from:w.id},null); foot.appendChild(cp);
   const go=document.createElement("button"); go.className="btn btn-filled with-icon sl"; go.innerHTML=`<span class="ms fill">play_arrow</span>Start`; go.onclick=()=>{ useWorkout(w); start(); }; foot.appendChild(go);
   return card;
 }
@@ -1957,7 +1957,9 @@ function tryCloseRt(){ if(rtDirty()&&!confirm("Discard your changes to this rout
 const RT_F=[{k:"work",label:"Work",unit:"sec",min:5,max:600,step:5},{k:"rest",label:"Rest",unit:"sec",min:0,max:300,step:5},{k:"sets",label:"Sets",unit:"times through the list",min:1,max:10,step:1},{k:"setRest",label:"Break between sets",unit:"sec",min:0,max:600,step:15}];
 function openRoutine(src,target){
   const c=src.cfg||{};
-  rtT=target; rtSnap=null; rtD={name:src.name||"", moves:(src.moves||[]).filter(id=>byId[id]), work:c.work||40, rest:c.rest==null?20:c.rest, sets:c.sets||1, setRest:c.setRest==null?60:c.setRest, fav:target?!!target.fav:false};
+  rtT=target; rtSnap=null; rtD={name:src.name||"", moves:(src.moves||[]).filter(id=>byId[id]), work:c.work||40, rest:c.rest==null?20:c.rest, sets:c.sets||1, setRest:c.setRest==null?60:c.setRest, from:target?null:(src.from||null),
+    // Editing a ready-made routine that sits on Home: the edited copy takes its place there.
+    fav:target?!!target.fav:!!(src.from&&homeWos.includes(src.from))};
   $("rt-title").textContent=target?"Edit routine":"New routine"; $("rt-name").value=rtD.name; $("rt-fav").checked=rtD.fav; $("rt-del").hidden=!target;
   const t=$("rt-times"); t.innerHTML="";
   RT_F.forEach(o=>{ const d=document.createElement("div"); d.className="field";
@@ -2075,11 +2077,14 @@ $("rt-save").onclick=()=>{
   if(!name){ $("rt-name").focus(); snack("Name required"); return; }
   if(!rtD.moves.length){ snack("Add at least one move"); return; }
   let fav=$("rt-fav").checked;
+  // A pinned copy of a ready-made routine replaces the original on Home, so the new order is what you see and start.
+  let replaces=false;
   if(fav&&!(rtT&&rtT.fav)&&myWos.filter(x=>x.fav).length>=MAX_FAV){ fav=false; snack(`Saved (not pinned, limit is ${MAX_FAV})`); }
-  else snack(`Saved ${name}`);
+  else { replaces=!rtT&&fav&&!!rtD.from&&homeWos.includes(rtD.from); snack(replaces?`Saved ${name}. It replaces the original on Home`:`Saved ${name}`); }
   const c=Object.assign({},woCfg({moves:rtD.moves}),{work:rtD.work,rest:rtD.rest,sets:rtD.sets,setRest:rtD.setRest,rounds:rtD.moves.length,roundLen:rtD.work+rtD.rest});
   const data={name,moves:rtD.moves.slice(),cfg:c,fav};
   if(rtT) Object.assign(rtT,data); else myWos.unshift(Object.assign(data,{id:"m"+Date.now()}));
+  if(replaces){ homeWos=homeWos.filter(x=>x!==rtD.from); store.set("homeWos",homeWos); renderWorkouts(); }
   saveMy(); renderFavs(); closeRt();
 };
 function renderFavs(){
@@ -2254,7 +2259,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.20.0";
+const APP_VERSION = "1.20.1";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
