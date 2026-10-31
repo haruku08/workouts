@@ -361,6 +361,7 @@ main .wrap{padding-block:8px 32px}
 .rt-times .field.off{opacity:.45}
 .hint{color:var(--on-surface-variant);font-size:14px;line-height:20px;margin:0 0 28px;padding:16px;border:1px dashed var(--outline-variant);border-radius:var(--r-md)}
 .rt-in{padding:8px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+.rt-in>*{flex-shrink:0}
 .rt-head{display:flex;align-items:center;gap:8px;padding-top:8px}
 .rt-head h2{flex:1;font-size:24px;line-height:32px}
 .rt-label{font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--on-surface-variant);margin-bottom:-8px}
@@ -1240,8 +1241,10 @@ const WORKOUTS = [
   {id:"leo",name:"Leo Flow",icon:"self_improvement",c:"yoga",blurb:"Movement flow inspired by Leo Moves",moves:["bearside","squathand","curlswitch","breakdancer","vtouch"],cfg:{work:40,rest:20,sets:2}}
 ];
 const woCfg = w => Object.assign({prep:10,work:45,rest:15,rounds:w.moves.length,sets:2,setRest:60,perSet:false,plan:[],lock:true,roundLen:60},w.cfg||{});
+// Starting a different workout ends the one in progress (and saves it to History if it counts).
+function stopCurrent(){ if(T.running||T.paused||T.held) reset(); }
 function useWorkout(w){
-  setActiveMy(null);
+  stopCurrent(); setActiveMy(null);
   playlist=w.moves.slice(); cfg=woCfg(w); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer");
 }
@@ -1270,7 +1273,7 @@ function woCard(w,home){
     foot.appendChild(ah);
   }
   const cp=btn("icon-btn sl","Copy to My routines and edit","edit"); cp.onclick=()=>openRoutine({name:w.name,moves:w.moves,cfg:woCfg(w)},null); foot.appendChild(cp);
-  const go=document.createElement("button"); go.className="btn btn-filled with-icon sl"; go.innerHTML=`<span class="ms fill">play_arrow</span>Start`; go.onclick=()=>useWorkout(w); foot.appendChild(go);
+  const go=document.createElement("button"); go.className="btn btn-filled with-icon sl"; go.innerHTML=`<span class="ms fill">play_arrow</span>Start`; go.onclick=()=>{ useWorkout(w); start(); }; foot.appendChild(go);
   return card;
 }
 function renderWorkouts(){
@@ -1804,7 +1807,7 @@ $("my-link-save").onclick=()=>{
   saveMy(); renderFavs(); syncMyLink(); snack(`Saved ${w.name}`);
 };
 function runMy(w,go){
-  setActiveMy(w.id);
+  stopCurrent(); setActiveMy(w.id);
   playlist=w.moves.slice(); cfg=Object.assign({},w.cfg||cfg); saveCfg(); renderFields(); savePlaylist();
   freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); if(go) start();
 }
@@ -2093,7 +2096,7 @@ function renderHome(){
   $("h-go").disabled=!names.length;
   renderFavs();
 }
-$("q-go").onclick=()=>{ freeMode=true; store.set("freeMode",true);
+$("q-go").onclick=()=>{ stopCurrent(); freeMode=true; store.set("freeMode",true);
   cfg=Object.assign({},quick,{perSet:false,plan:[],lock:false,roundLen:quick.work+quick.rest}); saveCfg(); renderFields();
   syncMode(); showView("timer"); start(); };
 $("h-go").onclick=()=>{ if(!playlist.length) return; freeMode=false; store.set("freeMode",false); syncMode(); showView("timer"); start(); };
