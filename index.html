@@ -851,8 +851,8 @@ let figStyle = (()=>{ try{ const v=JSON.parse(localStorage.getItem("pp:figStyle"
 const FRONT = new Set(["jacks","highknees","skaters","neck","sidebend","armcross","butterfly","warrior2","tree","pullup"]);
 const CH = {skin:"#B07A50", skinFar:"#9C6942", skinLine:"#6B4126", skinHi:"#C48D62", shirt:"#69BE28", shirtFar:"#4E9A1C", shirtLine:"#2F6A0E", shorts:"#0B2A4F", shortsFar:"#081F3B", shortsLine:"#020F1F", hair:"#1C1714", hairLine:"#0B0807", shoe:"#F4F6F8", shoeLine:"#5C6670", sole:"#C8102E", feat:"#1E130C", lip:"#7A3F2C"};
 const TO = {skin:"#B57A4E", skinFar:"#A06A42", line:"#3A2418", shirt:"#7CCB45", shirtFar:"#5FAE30", shorts:"#1F4F8F", shortsFar:"#173D70", hair:"#1C1512", shoe:"#FFFFFF", eye:"#1C1512", cheek:"#E58A7A", mouth:"#5A2618"};
-/* Doodle style colors: black ink on white paper, with flat color fills printed slightly off the lines. */
-const DO = {ink:"#1D1B1A", paper:"#FFFFFF", shirt:"#8FD15E", shorts:"#6E9BE0", shoe:"#1D1B1A", cheek:"#F4A08F", hair:"#1D1B1A"};
+/* Doodle style colors: black ink, tan skin, and flat clothing colors printed slightly off the lines. */
+const DO = {ink:"#1D1B1A", paper:"#FFFFFF", skin:"#D9A06E", shirt:"#8FD15E", shorts:"#6E9BE0", shoe:"#1D1B1A", cheek:"#E0735F", hair:"#1D1B1A"};
 const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
 class Figure{
   constructor(ex,opts={}){
@@ -937,24 +937,24 @@ class Figure{
     g.style.display="none";
     const LW=1.5, P=(a)=>mk("path",a,g);
     // ink outline + paper body, plus an optional color layer nudged off the lines
-    // bare=true gives only the color layer, washed over the limb's own lines
-    const part=(w,col,bare)=>{ const o=bare?{}:{ink:P({stroke:DO.ink,"stroke-width":w+LW}),fill:P({stroke:DO.paper,"stroke-width":w})};
-      if(col) o.col=P({stroke:col,"stroke-width":w*.72,transform:"translate(1.3 1)",style:"mix-blend-mode:multiply"});
+    // bare=true gives only the color layer, laid over the limb's own lines
+    const part=(w,col,bare,base)=>{ const o=bare?{}:{ink:P({stroke:DO.ink,"stroke-width":w+LW}),fill:P({stroke:base||DO.paper,"stroke-width":w})};
+      if(col) o.col=P({stroke:col,"stroke-width":w*.72,transform:"translate(1.3 1)",style:bare?"":"mix-blend-mode:multiply"});
       o.w=w; return o; };
     const limb=(far,leg)=>{
       const o={leg,far};
-      o.body=part(leg?3.1:2.2);
+      o.body=part(leg?3.1:2.2,null,false,DO.skin);
       o.cloth=part(leg?4.2:3.2,leg?DO.shorts:DO.shirt,true);
       if(leg) o.shoe=P({stroke:DO.shoe,"stroke-width":2.8});
-      else o.hand=P({fill:DO.paper,stroke:DO.ink,"stroke-width":.75});
+      else o.hand=P({fill:DO.skin,stroke:DO.ink,"stroke-width":.75});
       return o;
     };
     const D=this.d={farArm:limb(true,false),farLeg:limb(true,true)};
     D.body=part(11,DO.shirt); D.shorts=part(12,DO.shorts);
     D.nearLeg=limb(false,true); D.nearArm=limb(false,false);
-    D.neck=part(1.8);
+    D.neck=part(1.8,null,false,DO.skin);
     D.hair=P({fill:DO.hair,stroke:DO.ink,"stroke-width":.75});
-    D.face=P({fill:DO.paper,stroke:DO.ink,"stroke-width":.8});
+    D.face=P({fill:DO.skin,stroke:DO.ink,"stroke-width":.8});
     D.fringe=P({fill:DO.hair});
     D.cheeks=P({fill:DO.cheek,opacity:.7});
     D.eyes=P({fill:DO.ink});
