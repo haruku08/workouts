@@ -83,6 +83,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 main .wrap{padding-block:8px 32px}
+/* The timer is full focus: no app bar, just the timer (the bottom tabs still lead away). */
+body.focus .appbar{display:none}
+body.focus main #view-timer{padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
 
 /* Navigation bar / rail */
 .navbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--sc);display:flex;justify-content:center;gap:8px;padding:12px max(8px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
@@ -1420,6 +1423,7 @@ $("sh-now").onclick=()=>{
 /* ---------- Views ---------- */
 function showView(v){
   ["home","lib","timer","log"].forEach(k=>{ $("view-"+k).hidden = v!==k; $("tab-"+k).setAttribute("aria-selected",v===k); });
+  document.body.classList.toggle("focus",v==="timer");
   if(v==="log") renderLog(); if(v==="home") renderHome();
   store.set("view",v); showSub(libSub); window.scrollTo(0,0);
 }
@@ -2259,7 +2263,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.20.1";
+const APP_VERSION = "1.21.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
