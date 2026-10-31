@@ -935,35 +935,36 @@ class Figure{
   buildDoodle(){
     const g=this.doo=mk("g",{fill:"none","stroke-linecap":"round","stroke-linejoin":"round"},this.svg);
     g.style.display="none";
-    const LW=2.3, P=(a)=>mk("path",a,g);
+    const LW=1.5, P=(a)=>mk("path",a,g);
     // ink outline + paper body, plus an optional color layer nudged off the lines
-    const part=(w,col)=>{ const o={ink:P({stroke:DO.ink,"stroke-width":w+LW}),fill:P({stroke:DO.paper,"stroke-width":w})};
-      if(col) o.col=P({stroke:col,"stroke-width":w*.74,transform:"translate(1.5 1.2)",style:"mix-blend-mode:multiply"});
+    // bare=true gives only the color layer, washed over the limb's own lines
+    const part=(w,col,bare)=>{ const o=bare?{}:{ink:P({stroke:DO.ink,"stroke-width":w+LW}),fill:P({stroke:DO.paper,"stroke-width":w})};
+      if(col) o.col=P({stroke:col,"stroke-width":w*.72,transform:"translate(1.3 1)",style:"mix-blend-mode:multiply"});
       o.w=w; return o; };
     const limb=(far,leg)=>{
       const o={leg,far};
-      o.body=part(leg?4.6:3.4);
-      o.cloth=part(leg?7:5.2,leg?DO.shorts:DO.shirt);
-      if(leg) o.shoe=P({stroke:DO.shoe,"stroke-width":4.4});
-      else o.hand=P({fill:DO.paper,stroke:DO.ink,"stroke-width":1.1});
+      o.body=part(leg?3.1:2.2);
+      o.cloth=part(leg?4.2:3.2,leg?DO.shorts:DO.shirt,true);
+      if(leg) o.shoe=P({stroke:DO.shoe,"stroke-width":2.8});
+      else o.hand=P({fill:DO.paper,stroke:DO.ink,"stroke-width":.75});
       return o;
     };
     const D=this.d={farArm:limb(true,false),farLeg:limb(true,true)};
     D.body=part(11,DO.shirt); D.shorts=part(12,DO.shorts);
     D.nearLeg=limb(false,true); D.nearArm=limb(false,false);
-    D.neck=part(2.8);
-    D.hair=P({fill:DO.hair,stroke:DO.ink,"stroke-width":1.1});
-    D.face=P({fill:DO.paper,stroke:DO.ink,"stroke-width":1.15});
+    D.neck=part(1.8);
+    D.hair=P({fill:DO.hair,stroke:DO.ink,"stroke-width":.75});
+    D.face=P({fill:DO.paper,stroke:DO.ink,"stroke-width":.8});
     D.fringe=P({fill:DO.hair});
     D.cheeks=P({fill:DO.cheek,opacity:.7});
     D.eyes=P({fill:DO.ink});
-    D.mouth=P({stroke:DO.ink,"stroke-width":.9});
+    D.mouth=P({stroke:DO.ink,"stroke-width":.7});
   }
   drawDoodle(q,c){
     const f=v=>v[0].toFixed(1)+" "+v[1].toFixed(1), D=this.d, front=FRONT.has(this.ex.id);
     const add=(a,b,k=1)=>[a[0]+b[0]*k,a[1]+b[1]*k], sub=(a,b)=>[a[0]-b[0],a[1]-b[1]];
     const unit=v=>{const L=Math.hypot(v[0],v[1])||1;return [v[0]/L,v[1]/L]}, perp=v=>[-v[1],v[0]];
-    const setP=(o,d)=>{o.ink.setAttribute("d",d);o.fill.setAttribute("d",d);if(o.col)o.col.setAttribute("d",d)};
+    const setP=(o,d)=>{if(o.ink){o.ink.setAttribute("d",d);o.fill.setAttribute("d",d)} if(o.col)o.col.setAttribute("d",d)};
     // a slightly bowed line, so segments look drawn by hand instead of ruled
     const bow=(a,b,k)=>`Q${f(add(lerp(a,b,.5),perp(unit(sub(b,a))),k))} ${f(b)}`;
     // a hand-drawn ring: uneven radius, and the stroke runs a little past where it started
@@ -978,39 +979,39 @@ class Figure{
       setP(o.cloth,`M${f(c0)}L${f(c1)}`);
       if(o.leg){
         const d=unit(sub(e,b)); let toe=front?[0,0]:[d[1],-d[0]]; if(!front&&toe[0]<0) toe=[-toe[0],-toe[1]];
-        const h=front?add(e,[-1.1,.9]):add(e,toe,-.9), t=front?add(e,[1.1,.9]):add(e,toe,3.8);
+        const h=front?add(e,[-.9,.6]):add(e,toe,-.6), t=front?add(e,[.9,.6]):add(e,toe,3);
         o.shoe.setAttribute("d",`M${f(h)}L${f(t)}`);
-      } else o.hand.setAttribute("d",ring(e,2.1,s));
+      } else o.hand.setAttribute("d",ring(e,1.4,s));
     };
     limb(D.farArm,q.n,q.re,q.rh,-1); limb(D.farLeg,q.p,q.rk,q.rf,1);
     const top=lerp(q.n,c,.1);
-    D.body.ink.setAttribute("stroke-width",front?17.3:12.3); D.body.fill.setAttribute("stroke-width",front?15:10); D.body.col.setAttribute("stroke-width",front?11.6:7.6);
-    D.shorts.ink.setAttribute("stroke-width",front?17.8:12.8); D.shorts.fill.setAttribute("stroke-width",front?15.5:10.5); D.shorts.col.setAttribute("stroke-width",front?12:8);
+    D.body.ink.setAttribute("stroke-width",front?11.5:8.5); D.body.fill.setAttribute("stroke-width",front?10:7); D.body.col.setAttribute("stroke-width",front?7.6:5.2);
+    D.shorts.ink.setAttribute("stroke-width",front?11.9:8.9); D.shorts.fill.setAttribute("stroke-width",front?10.4:7.4); D.shorts.col.setAttribute("stroke-width",front?7.8:5.4);
     setP(D.body,`M${f(q.p)}Q${f(c)} ${f(top)}`);
     const ql=t=>{const u=1-t;return [u*u*q.p[0]+2*u*t*c[0]+t*t*q.n[0], u*u*q.p[1]+2*u*t*c[1]+t*t*q.n[1]]};
     setP(D.shorts,`M${f(add(q.p,unit(sub(q.p,c)),.5))}L${f(ql(.2))}`);
     limb(D.nearLeg,q.p,q.lk,q.lf,1); limb(D.nearArm,q.n,q.le,q.lh,1);
-    const ax=unit(sub(q.h,q.n)), fd=[-ax[1],ax[0]], H=add(q.n,ax,8), R=6.6;
+    const ax=unit(sub(q.h,q.n)), fd=[-ax[1],ax[0]], H=add(q.n,ax,6.8), R=5.5;
     setP(D.neck,`M${f(q.n)}L${f(add(q.n,ax,2.4))}`);
     const dot=(p,r)=>`M${f(add(p,[-r,0]))}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0`;
     if(front){
-      D.hair.setAttribute("d",ring(add(H,ax,1.2),R+.5,.4));
+      D.hair.setAttribute("d",ring(add(H,ax,1),R+.4,.4));
       const fc=add(H,ax,-.4); D.face.setAttribute("d",ring(fc,R-.4,1.1));
       const fr=add(fc,ax,R*.6);
       D.fringe.setAttribute("d",`M${f(add(fr,fd,-R*.85))}Q${f(add(add(fc,ax,R*.2),fd,-R*.1))} ${f(add(fr,fd,R*.35))}Q${f(add(add(fc,ax,R*.35),fd,R*.6))} ${f(add(fr,fd,R*.85))}Q${f(add(fr,ax,R*.5))} ${f(add(fr,fd,-R*.85))}Z`);
-      const e1=add(add(fc,fd,-2.4),ax,.3), e2=add(add(fc,fd,2.4),ax,.3);
-      D.eyes.setAttribute("d",dot(e1,.8)+dot(e2,.8));
-      D.cheeks.setAttribute("d",dot(add(add(fc,fd,-3.9),ax,-1.7),1.2)+dot(add(add(fc,fd,3.9),ax,-1.7),1.2));
-      const m=add(fc,ax,-2.8); D.mouth.setAttribute("d",`M${f(add(add(m,fd,-1.5),ax,.3))}Q${f(add(m,ax,-1))} ${f(add(add(m,fd,1.5),ax,.3))}`);
+      const e1=add(add(fc,fd,-2),ax,.3), e2=add(add(fc,fd,2),ax,.3);
+      D.eyes.setAttribute("d",dot(e1,.6)+dot(e2,.6));
+      D.cheeks.setAttribute("d",dot(add(add(fc,fd,-3.2),ax,-1.4),.9)+dot(add(add(fc,fd,3.2),ax,-1.4),.9));
+      const m=add(fc,ax,-2.3); D.mouth.setAttribute("d",`M${f(add(add(m,fd,-1.1),ax,.3))}Q${f(add(m,ax,-.8))} ${f(add(add(m,fd,1.1),ax,.3))}`);
     } else {
-      D.hair.setAttribute("d",ring(add(add(H,ax,.9),fd,-1.3),R+.3,.4));
+      D.hair.setAttribute("d",ring(add(add(H,ax,.8),fd,-1.1),R+.3,.4));
       const fc=add(add(H,ax,-.3),fd,.6); D.face.setAttribute("d",ring(fc,R-.5,1.1));
       const fr=add(add(fc,ax,R*.55),fd,R*.1);
       D.fringe.setAttribute("d",`M${f(add(fr,fd,-R*.95))}Q${f(add(fr,ax,R*.5))} ${f(add(fr,fd,R*.7))}Q${f(add(add(fc,ax,R*.25),fd,R*.2))} ${f(add(fr,fd,-R*.95))}Z`);
-      const e=add(add(fc,fd,3.4),ax,.4);
-      D.eyes.setAttribute("d",dot(e,.8));
-      D.cheeks.setAttribute("d",dot(add(add(fc,fd,2.2),ax,-2),1.2));
-      const m=add(add(fc,fd,3.8),ax,-2.6); D.mouth.setAttribute("d",`M${f(add(m,fd,-1))}Q${f(add(m,ax,-.8))} ${f(add(add(m,fd,1.4),ax,.5))}`);
+      const e=add(add(fc,fd,2.8),ax,.4);
+      D.eyes.setAttribute("d",dot(e,.6));
+      D.cheeks.setAttribute("d",dot(add(add(fc,fd,1.8),ax,-1.6),.9));
+      const m=add(add(fc,fd,3.1),ax,-2.2); D.mouth.setAttribute("d",`M${f(add(m,fd,-.8))}Q${f(add(m,ax,-.6))} ${f(add(add(m,fd,1.1),ax,.4))}`);
     }
   }
   drawToon(q,c){
