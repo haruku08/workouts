@@ -19,6 +19,7 @@ A workout app with a built-in interval timer. It's a single `index.html` file wi
   - Each set can have its own timing.
   - Beeps, an optional spoken coach, vibration, and the screen stays on while the timer runs.
 - **Design:** Material 3 in a lighter blue and fresh green with white and red accents, with Eczar for titles and Plus Jakarta Sans for text. Icons are inline SVGs from Lucide (ISC license). Light mode and a warm charcoal dark mode.
+- **Home screen help:** phone visitors see a banner on Home with a "Show me how" button that walks them through adding the app to the home screen (iPhone, Android, Samsung Internet, and in-app browsers like Instagram). Android Chrome also gets a one-tap Install button. The steps stay available under History.
 - **Updates:** tap the sync button in the top bar to get the latest version. The app also checks when you open it.
 
 Settings are saved in your browser.
