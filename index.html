@@ -681,20 +681,25 @@ const S = {h:[51,16],n:[50,26],p:[49,54],le:[51,40],lh:[53,53],re:[49,40],rh:[48
 const P = (b,o)=>Object.assign({},b,o||{});
 const mirror = p=>{const o={};for(const k in p)o[k]=[100-p[k][0],p[k][1]];return o};
 const shift = (p,dx,dy)=>{const o={};for(const k in p)o[k]=[p[k][0]+dx,p[k][1]+(dy||0)];return o};
+/* in-between pose: k=0 is a, k=1 is b */
+const mix = (a,b,k)=>{const o={};for(const x in a)if(b[x])o[x]=[a[x][0]+(b[x][0]-a[x][0])*k,a[x][1]+(b[x][1]-a[x][1])*k];return o};
+/* front-view mirror for the upper body only: the feet stay where they stand */
+const mirrorTop = p=>{const o=mirror(p);[o.lk,o.rk,o.lf,o.rf]=[o.rk,o.lk,o.rf,o.lf];return o};
 
 const PLANK = {h:[79,61],n:[70,66],p:[42,79],le:[70,80],lh:[70,93],re:[69,80],rh:[69,93],lk:[29,86],lf:[16,92],rk:[29,86],rf:[16,92]};
 const YPLANK = {h:[81,62],n:[72,67],p:[44,79],le:[73,80],lh:[74,93],re:[72,80],rh:[73,93],lk:[30,86],lf:[16,92],rk:[30,86],rf:[16,92]};
 const BSQ = {h:[66,66],n:[60,70],p:[40,72],le:[64,82],lh:[68,93],re:[63,82],rh:[67,93],lk:[56,78],lf:[44,94],rk:[55,79],rf:[43,94]};
 const GUARD = P(S,{le:[57,36],lh:[60,26],re:[55,38],rh:[58,27],lk:[54,74],lf:[57,94],rk:[45,74],rf:[41,94]});
+const BSQ2 = P(BSQ,{le:[65,82],lh:[70,93],re:[64,82],rh:[69,93],lf:[51,94],rf:[48,94]});
 const SKATE = shift({h:[44,22],n:[46,31],p:[50,58],le:[40,37],lh:[32,31],re:[46,45],rh:[38,53],lk:[45,76],lf:[46,94],rk:[52,78],rf:[38,91]},-12);
 const ALL4 = {h:[78,66],n:[70,70],p:[40,70],c:[55,70],le:[70,82],lh:[70,93],re:[69,82],rh:[69,93],lk:[40,92],lf:[22,93],rk:[39,92],rf:[21,93]};
 const SIDEL = P(F,{n:[46,27],h:[41,19],c:[49,40],le:[39,17],lh:[30,10],re:[47,13],rh:[38,5]});
-const ARMX = P(F,{re:[42,35],rh:[30,33],le:[40,42],lh:[43,35]});
+const ARMX = P(F,{re:[37,28],rh:[24,30],le:[42.5,39],lh:[47,30]});
 /* Warrior II, facing the viewer: wide stance, front knee bent right over the ankle (thigh close to level),
    back leg straight, torso upright over the hips, arms level at shoulder height, gaze over the front hand. */
 const W1 = {h:[49,25],n:[50,35],p:[50,62],le:[36,35],lh:[22,35],re:[64,35],rh:[78,35],lk:[29,74],lf:[27,94],rk:[65,78],rf:[77,94]};
 const TREE1 = P(F,{lk:[49,74],lf:[49,94],rk:[65,63],rf:[52,70],le:[41,40],lh:[49,37],re:[59,40],rh:[51,37]});
-const SIT = {h:[50,51],n:[50,60],p:[50,88],le:[42,73],lh:[47,88],re:[58,73],rh:[53,88],lk:[32,82],lf:[47,92],rk:[68,82],rf:[53,92]};
+const SIT = {h:[50,51],n:[50,60],p:[50,88],le:[44,74],lh:[47,88],re:[56,74],rh:[53,88],lk:[32,82],lf:[47,92],rk:[68,82],rf:[53,92]};
 
 const CATS = [
   {id:"kin",icon:"sports_gymnastics",name:"Calisthenics",blurb:"Bodyweight skills and conditioning",preset:"p4515"},
@@ -703,38 +708,49 @@ const CATS = [
   {id:"yoga",icon:"self_improvement",name:"Yoga",blurb:"Poses and slow flows",preset:"yoga"}
 ];
 
+const BURPM = {h:[79,62],n:[70,68],p:[42,62],le:[70,81],lh:[70,93],re:[69,81],rh:[69,93],lk:[52.6,79],lf:[33,83],rk:[51.6,79],rf:[32,83]};
+/* Squat to handstand: squat with hands down (Q), hips rise as one leg reaches back (T), kick (K),
+   legs on the way up (M), handstand (H). The in-betweens keep each knee bending the right way. */
+const SQH = {
+  Q:{h:[62,60],n:[57,66],p:[38,76],le:[59,79.5],lh:[61,93],re:[58,79.5],rh:[60,93],lk:[52,76],lf:[51,94],rk:[51,77],rf:[48,94]},
+  T:{h:[62,78],n:[58,70],p:[46,58],le:[59.5,81.5],lh:[61,93],re:[58.5,81.5],rh:[60,93],lk:[36,46],lf:[37,30],rk:[53,74],rf:[51,92]},
+  K:{h:[61,76],n:[59,68],p:[49,47],le:[60,80],lh:[61,93],re:[59,80],rh:[60,93],lk:[40,32],lf:[33,17],rk:[50,68],rf:[44,83]},
+  M:{h:[60.5,77],n:[59,69],p:[54,44],le:[60,81],lh:[61,93],re:[59,81],rh:[60,93],lk:[48,27],lf:[44,10],rk:[36,40],rf:[27,28]},
+  H:{h:[60,78],n:[59,69],p:[58,41],le:[60,81],lh:[61,93],re:[59,81],rh:[60,93],lk:[57,22],lf:[56,4],rk:[59,22],rf:[60,4]}
+};
+const JO = P(F,{h:[50,13],n:[50,23],p:[50,51],le:[39,14],lh:[33,3],re:[61,14],rh:[67,3],lk:[42,72],lf:[35,92],rk:[58,72],rf:[65,92]});
 const EX = [
  // Kinesthetic
- {id:"jacks",cat:"kin",name:"Jumping Jacks",dur:1.0,level:"Easy",focus:"Cardio, shoulders, calves",
-  frames:[F,P(F,{h:[50,13],n:[50,23],p:[50,51],le:[39,14],lh:[33,3],re:[61,14],rh:[67,3],lk:[42,72],lf:[35,92],rk:[58,72],rf:[65,92]})],
+ {id:"jacks",cat:"kin",name:"Jumping Jacks",dur:1.3,level:"Easy",focus:"Cardio, shoulders, calves",
+  frames:[F,shift(mix(F,JO,.5),0,-5),JO,shift(mix(F,JO,.5),0,-5)],
   steps:["Stand tall with feet together and arms at your sides.","Jump your feet out wide while swinging your arms overhead.","Jump back to the start. Keep a steady rhythm."],cue:"Land softly on the balls of your feet."},
- {id:"highknees",cat:"kin",name:"High Knees",dur:0.7,level:"Medium",focus:"Cardio, hip flexors, core",
-  frames:[P(F,{h:[50,14],n:[50,24],p:[50,52],lk:[46.5,60],lf:[46,78],re:[60,32],rh:[57,22],rk:[54,73],rf:[54,93]}),P(F,{h:[50,14],n:[50,24],p:[50,52],rk:[53.5,60],rf:[54,78],le:[40,32],lh:[43,22],lk:[46,73],lf:[46,93]})],
+ {id:"highknees",cat:"kin",name:"High Knees",dur:0.9,level:"Medium",focus:"Cardio, hip flexors, core",
+  frames:[P(F,{h:[50,14],n:[50,24],p:[50,52],lk:[46.5,60],lf:[46,78],re:[60,32],rh:[57,22],rk:[54,73],rf:[54,94]}),P(F,{h:[50,14],n:[50,24],p:[50,52],lk:[46,73],lf:[46,94],rk:[54,73],rf:[54,94]}),P(F,{h:[50,14],n:[50,24],p:[50,52],rk:[53.5,60],rf:[54,78],le:[40,32],lh:[43,22],lk:[46,73],lf:[46,94]}),P(F,{h:[50,14],n:[50,24],p:[50,52],lk:[46,73],lf:[46,94],rk:[54,73],rf:[54,94]})],
   steps:["Run in place.","Drive each knee up to hip height.","Pump your arms in time with your legs."],cue:"Stay tall. Don't lean back."},
- {id:"buttkicks",cat:"kin",name:"Butt Kicks",dur:0.7,level:"Easy",focus:"Cardio, hamstrings",
-  frames:[P(S,{lk:[50,74],lf:[35,62],le:[56,37],lh:[62,29],re:[44,40],rh:[41,51]}),P(S,{rk:[49,74],rf:[34,62],lk:[51,74],lf:[51,94],le:[45,40],lh:[42,51],re:[55,37],rh:[61,29]})],
+ {id:"buttkicks",cat:"kin",name:"Butt Kicks",dur:0.9,level:"Easy",focus:"Cardio, hamstrings",
+  frames:[P(S,{lk:[50,74],lf:[35,62],le:[56,37],lh:[62,29],re:[44,40],rh:[41,51]}),S,P(S,{rk:[49,74],rf:[34,62],lk:[51,74],lf:[51,94],le:[45,40],lh:[42,51],re:[55,37],rh:[61,29]}),S],
   steps:["Jog in place.","Kick each heel back toward your glutes.","Swing your arms like you're running."],cue:"Keep your knees pointing down."},
- {id:"skaters",cat:"kin",name:"Skaters",dur:1.4,level:"Medium",focus:"Legs, glutes, balance",
-  frames:[SKATE,mirror(SKATE)],
+ {id:"skaters",cat:"kin",name:"Skaters",dur:1.6,level:"Medium",focus:"Legs, glutes, balance",
+  frames:[SKATE,shift(mix(SKATE,mirror(SKATE),.5),0,-10),mirror(SKATE),shift(mix(SKATE,mirror(SKATE),.5),0,-10)],
   steps:["Leap sideways onto one leg.","Sweep the other leg behind you and swing your arms across.","Leap back to the other side."],cue:"Bend the landing knee to absorb the jump."},
  {id:"climbers",cat:"kin",name:"Mountain Climbers",dur:0.8,level:"Hard",focus:"Core, shoulders, cardio",
-  frames:[P(PLANK,{lk:[58,82],lf:[48,90]}),P(PLANK,{rk:[58,82],rf:[48,90]})],
+  frames:[P(PLANK,{lk:[59,76],lf:[49,80]}),P(PLANK,{rk:[59,76],rf:[49,80]})],
   steps:["Start in a high plank, hands under shoulders.","Drive one knee toward your chest.","Switch legs quickly, like running on the floor."],cue:"Keep your hips level with your shoulders."},
  {id:"boxing",cat:"kin",name:"Shadow Boxing",dur:1.6,level:"Easy",focus:"Arms, shoulders, cardio",
   frames:[P(GUARD,{le:[64,27],lh:[78,25]}),GUARD,P(GUARD,{re:[63,28],rh:[77,26],n:[52,26],h:[53,16]}),GUARD],
   steps:["Stand with one foot forward and fists up by your chin.","Throw a straight jab with the front hand.","Pull back, then throw a cross with the back hand and turn your hips."],cue:"Return to guard after every punch."},
 
- {id:"burpee",cat:"kin",name:"Burpees",dur:3.6,level:"Hard",focus:"Full body, cardio",
-  frames:[S,BSQ,PLANK,BSQ,shift(P(S,{le:[53,16],lh:[55,4],re:[51,16],rh:[52,4]}),0,-5)],
+ {id:"burpee",cat:"kin",name:"Burpees",dur:4.2,level:"Hard",focus:"Full body, cardio",
+  frames:[S,BSQ2,BURPM,PLANK,BURPM,BSQ2,shift(P(S,{le:[53,16],lh:[55,4],re:[51,16],rh:[52,4]}),0,-5)],
   steps:["Stand tall, then squat down and put your hands on the floor.","Jump your feet back into a plank.","Jump your feet back in and leap up with your arms overhead."],cue:"Easier version: step back and forward instead of jumping."},
  {id:"squatjump",cat:"kin",name:"Squat Jumps",dur:1.6,level:"Medium",focus:"Legs, power, cardio",
-  frames:[{h:[55,33],n:[51,42],p:[35,68],le:[46,52],lh:[40,62],re:[45,53],rh:[39,63],lk:[54,76],lf:[51,94],rk:[53,77],rf:[50,94]},
-          shift(P(S,{le:[54,18],lh:[58,8],re:[53,19],rh:[57,9],lf:[52,93],rf:[49,93]}),0,-6)],
+  frames:[{h:[59,35],n:[54,43],p:[37,68],le:[48,53],lh:[43,63],re:[47,54],rh:[42,64],lk:[55,75],lf:[51,94],rk:[53,77],rf:[48,94]},
+          shift(P(S,{le:[54,18],lh:[58,8],re:[53,19],rh:[57,9],lf:[52,93],rf:[48,93]}),0,-6)],
   steps:["Squat down with your arms back.","Explode up and swing your arms overhead.","Land softly and sink straight into the next squat."],cue:"Land quietly, knees soft."},
  {id:"pullup",cat:"kin",name:"Pull-ups",dur:2.6,level:"Hard",focus:"Back, biceps, grip",
   props:[["line",{x1:20,y1:12,x2:80,y2:12,"stroke-width":3}],["line",{x1:20,y1:2,x2:20,y2:12,"stroke-width":2}],["line",{x1:80,y1:2,x2:80,y2:12,"stroke-width":2}]],
   frames:[{h:[50,27],n:[50,36],p:[50,64],le:[43,24],lh:[37,12],re:[57,24],rh:[63,12],lk:[48,79],lf:[47,93],rk:[52,79],rf:[53,93]},
-          {h:[50,7],n:[50,21],p:[50,49],le:[34,22],lh:[37,12],re:[66,22],rh:[63,12],lk:[48,66],lf:[47,82],rk:[52,66],rf:[53,82]}],
+          {h:[50,6],n:[50,17],p:[50,45],le:[36,21],lh:[37,12],re:[64,21],rh:[63,12],lk:[48,64],lf:[47,81],rk:[52,64],rf:[53,81]}],
   steps:["Hang from a bar with hands a bit wider than your shoulders.","Pull your chest toward the bar until your chin is over it.","Lower all the way down with control."],cue:"No bar? Do slow negatives or use a resistance band."},
  {id:"dips",cat:"kin",name:"Bench Dips",dur:2.4,level:"Medium",focus:"Triceps, shoulders, chest",
   props:[["rect",{x:12,y:70,width:30,height:4,rx:1,"stroke-width":2}],["line",{x1:16,y1:74,x2:16,y2:96,"stroke-width":2}],["line",{x1:38,y1:74,x2:38,y2:96,"stroke-width":2}]],
@@ -742,8 +758,8 @@ const EX = [
           {h:[46,49],n:[43,58],p:[47,85],le:[31,58],lh:[40,69],re:[30,58],rh:[39,69],lk:[66,89],lf:[85,94],rk:[65,89],rf:[84,94]}],
   steps:["Sit on the edge of a bench or chair, hands next to your hips.","Slide your hips off and walk your feet out.","Bend your elbows to lower, then press back up."],cue:"Keep your back close to the bench."},
  {id:"pike",cat:"kin",name:"Pike Push-ups",dur:2.4,level:"Hard",focus:"Shoulders, triceps",
-  frames:[{h:[65,80],n:[60,72],p:[40,48],le:[65,82],lh:[70,93],re:[64,82],rh:[69,93],lk:[30,70],lf:[20,93],rk:[29,70],rf:[19,93]},
-          {h:[69,88],n:[63,82],p:[42,52],le:[57,77],lh:[70,93],re:[56,77],rh:[69,93],lk:[31,72],lf:[20,93],rk:[30,72],rf:[19,93]}],
+  frames:[{h:[73,74],n:[69,66],p:[42,60],le:[69.5,80],lh:[70,93],re:[68.5,80],rh:[69,93],lk:[31,76.5],lf:[20,93],rk:[30,76.5],rf:[19,93]},
+          {h:[72,87],n:[66,79],p:[43,62],le:[62,85],lh:[70,93],re:[61,85],rh:[69,93],lk:[31,77],lf:[20,93],rk:[30,77],rf:[19,93]}],
   steps:["Start in an upside-down V, hips high.","Bend your elbows and lower the top of your head toward the floor.","Press back up."],cue:"The higher your hips, the harder it gets."},
  {id:"superman",cat:"kin",name:"Superman",dur:2.6,level:"Easy",focus:"Lower back, glutes",
   frames:[{h:[80,89],n:[70,90],p:[44,90],le:[82,91],lh:[94,91],re:[81,91],rh:[93,91],lk:[30,91],lf:[16,92],rk:[30,91],rf:[16,92]},
@@ -751,13 +767,15 @@ const EX = [
   steps:["Lie face down with your arms stretched forward.","Lift your arms, chest and legs off the floor together.","Hold a moment, then lower."],cue:"Look at the floor to keep your neck long."},
  // Strength
  {id:"squat",cat:"str",name:"Squats",dur:2.4,level:"Easy",focus:"Quads, glutes",
-  frames:[S,{h:[55,33],n:[51,42],p:[35,68],le:[64,44],lh:[78,44],re:[63,45],rh:[77,45],lk:[54,76],lf:[51,94],rk:[53,77],rf:[50,94]}],
+  frames:[S,{h:[55,33],n:[51,42],p:[35,68],le:[64,44],lh:[78,44],re:[63,45],rh:[77,45],lk:[54,76],lf:[51,94],rk:[52,77],rf:[48,94]}],
   steps:["Stand with feet shoulder-width apart.","Push your hips back and bend your knees, arms reaching forward.","Go as low as feels good, then press up through your heels."],cue:"Chest up, knees track over your toes."},
  {id:"pushup",cat:"str",name:"Push-ups",dur:2.0,level:"Medium",focus:"Chest, triceps, core",
-  frames:[PLANK,{h:[79,80],n:[70,85],p:[42,88],le:[61,80],lh:[70,93],re:[60,80],rh:[69,93],lk:[29,90],lf:[16,92],rk:[29,90],rf:[16,92]}],
+  frames:[PLANK,{h:[79,80],n:[70,85],p:[42,88],le:[66,80],lh:[70,93],re:[65,80],rh:[69,93],lk:[29,90],lf:[16,92],rk:[29,90],rf:[16,92]}],
   steps:["Start in a high plank, hands a bit wider than shoulders.","Lower your chest toward the floor with elbows at about 45 degrees.","Press back up to straight arms."],cue:"Too hard? Drop your knees to the floor."},
- {id:"lunge",cat:"str",name:"Forward Lunges",dur:2.6,level:"Medium",focus:"Quads, glutes, balance",
-  frames:[S,{h:[50,30],n:[50,39],p:[49,66],le:[51,52],lh:[52,64],re:[49,52],rh:[48,64],lk:[63,76],lf:[65,94],rk:[44,86],rf:[30,92]}],
+ {id:"lunge",cat:"str",name:"Forward Lunges",dur:3.2,level:"Medium",focus:"Quads, glutes, balance",
+  frames:[shift(S,-8),{h:[47,20],n:[46,30],p:[44,57],le:[47,44],lh:[48,57],re:[45,44],rh:[46,57],lk:[56,70],lf:[58,84],rk:[49.4,76.4],rf:[40,94]},
+          {h:[60,30],n:[60,39],p:[59,66],le:[61,52],lh:[62,64],re:[59,52],rh:[58,64],lk:[73,76],lf:[75,94],rk:[54,86],rf:[40,92]},
+          {h:[47,20],n:[46,30],p:[44,57],le:[47,44],lh:[48,57],re:[45,44],rh:[46,57],lk:[56,70],lf:[58,84],rk:[49.4,76.4],rf:[40,94]}],
   steps:["Stand tall, then take a big step forward.","Lower until both knees bend to about 90 degrees.","Push off the front foot to stand. Switch legs each rep."],cue:"Keep your front knee over your ankle."},
  {id:"bridge",cat:"str",name:"Glute Bridge",dur:2.4,level:"Easy",focus:"Glutes, hamstrings, lower back",
   frames:[{h:[15,87],n:[24,89],p:[50,89],le:[34,92],lh:[44,93],re:[33,92],rh:[43,93],lk:[64,74],lf:[70,93],rk:[63,74],rf:[69,93]},
@@ -765,9 +783,9 @@ const EX = [
   steps:["Lie on your back with knees bent and feet flat.","Squeeze your glutes and lift your hips.","Pause at the top, then lower slowly."],cue:"Make a straight line from knees to shoulders."},
  {id:"nordic",cat:"str",name:"Nordic Curls",dur:4.5,level:"Hard",focus:"Hamstrings, glutes",
   props:[["rect",{x:5,y:84,width:15,height:5,rx:2.5,"stroke-width":2.5}]],
-  frames:[{h:[30,31],n:[29,40],p:[28,66],le:[35,50],lh:[33,44],re:[34,51],rh:[32,45],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]},
-          {h:[71,49],n:[65,55],p:[46,74],le:[68,64],lh:[73,72],re:[67,65],rh:[72,73],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]},
-          {h:[83,66],n:[75,70],p:[52,81],le:[77,81],lh:[80,93],re:[76,82],rh:[79,93],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]}],
+  frames:[{h:[30,35],n:[29,44],p:[28,72],le:[35,56],lh:[33,50],re:[34,57],rh:[32,51],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]},
+          {h:[69,51],n:[62,58],p:[42,78],le:[65,67],lh:[70,75],re:[64,68],rh:[69,76],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]},
+          {h:[81,68],n:[72,72],p:[46,84],le:[67,85],lh:[78,93],re:[66,86],rh:[77,93],lk:[28,92],lf:[12,93],rk:[28,92],rf:[12,93]}],
   steps:["Kneel on a mat and anchor your heels under a couch, bar or a partner's hands.","Keep a straight line from knees to head and lower forward as slowly as you can.","Catch yourself with your hands, then push off lightly and pull back up with your hamstrings."],cue:"Too hard? Lower only partway, or use a band around your chest."},
  {id:"plank",cat:"str",name:"Forearm Plank",dur:3.0,level:"Medium",focus:"Core, shoulders",
   frames:[{h:[79,74],n:[70,79],p:[42,85],le:[70,92],lh:[82,92],re:[69,92],rh:[81,92],lk:[29,89],lf:[16,92],rk:[29,89],rf:[16,92]},
@@ -782,23 +800,23 @@ const EX = [
   frames:[P(F,{h:[43,19]}),P(F,{h:[43,19]}),P(F,{h:[57,19]}),P(F,{h:[57,19]})],
   steps:["Stand or sit tall with shoulders relaxed.","Tilt your ear toward one shoulder and hold.","Slowly switch to the other side."],cue:"Let your shoulders drop away from your ears."},
  {id:"sidebend",cat:"stretch",name:"Standing Side Bend",dur:7,level:"Easy",focus:"Obliques, lats",
-  frames:[SIDEL,SIDEL,mirror(SIDEL),mirror(SIDEL)],
+  frames:[SIDEL,SIDEL,mirrorTop(SIDEL),mirrorTop(SIDEL)],
   steps:["Stand with feet hip-width apart.","Reach both arms overhead.","Lean to one side, hold, then lean to the other."],cue:"Reach long rather than collapsing sideways."},
  {id:"fold",cat:"stretch",name:"Forward Fold",dur:6,level:"Easy",focus:"Hamstrings, lower back",
   frames:[S,{h:[61,86],n:[60,77],p:[44,54],c:[56,62],le:[57,85],lh:[54,93],re:[56,85],rh:[53,93],lk:[47,74],lf:[50,94],rk:[46,74],rf:[49,94]},{h:[61,87],n:[60,78],p:[44,54],c:[56,63],le:[57,86],lh:[54,93],re:[56,86],rh:[53,93],lk:[47,74],lf:[50,94],rk:[46,74],rf:[49,94]}],
   steps:["Stand tall, feet hip-width.","Hinge at the hips and fold forward.","Let your head and arms hang. Bend your knees if you need to."],cue:"Breathe out as you sink a little deeper."},
  {id:"quad",cat:"stretch",name:"Standing Quad Stretch",dur:5,level:"Easy",focus:"Quads, hip flexors",
-  frames:[P(S,{rk:[48,75],rf:[36,60],re:[42,45],rh:[37,58],le:[61,33],lh:[73,27]}),P(S,{rk:[48,75],rf:[36,60],re:[42,45],rh:[37,58],le:[61,31],lh:[74,23]})],
+  frames:[P(S,{rk:[48,75],rf:[44,56],re:[47.4,39.9],rh:[45,53],le:[61,33],lh:[73,27]}),P(S,{rk:[48,75],rf:[44,56],re:[47.4,39.9],rh:[45,53],le:[61,31],lh:[74,23]})],
   steps:["Stand on one leg. Hold a wall if you need balance.","Bend the other knee and hold your foot behind you.","Hold, then switch legs halfway through."],cue:"Keep your knees side by side."},
  {id:"armcross",cat:"stretch",name:"Cross-Body Shoulder",dur:7,level:"Easy",focus:"Shoulders, upper back",
-  frames:[ARMX,ARMX,mirror(ARMX),mirror(ARMX)],
+  frames:[ARMX,ARMX,mirrorTop(ARMX),mirrorTop(ARMX)],
   steps:["Bring one arm straight across your chest.","Hug it closer with the other arm.","Hold, then switch arms."],cue:"Keep the stretched shoulder down, not hunched."},
  {id:"butterfly",cat:"stretch",name:"Butterfly",dur:1.8,level:"Easy",focus:"Inner thighs, hips",
   frames:[SIT,P(SIT,{lk:[31,88],rk:[69,88]})],
   steps:["Sit with the soles of your feet together.","Hold your feet and sit up tall.","Gently flutter your knees, or hold them low."],cue:"Lengthen your spine before you lean forward."},
  {id:"hipflexor",cat:"stretch",name:"Hip Flexor Stretch",dur:6,level:"Easy",focus:"Hip flexors, quads",
-  frames:[{h:[48,36],n:[47,45],p:[45,71],le:[53,57],lh:[61,66],re:[52,58],rh:[60,67],lk:[64,72],lf:[65,94],rk:[33,92],rf:[17,94]},
-          {h:[52,33],n:[51,42],p:[50,73],le:[53,30],lh:[54,19],re:[52,30],rh:[53,19],lk:[66,72],lf:[65,94],rk:[34,92],rf:[18,94]}],
+  frames:[{h:[48,39],n:[47,48],p:[45,74],le:[53,60],lh:[61,69],re:[52,61],rh:[60,70],lk:[64,73],lf:[65,94],rk:[33,92],rf:[17,94]},
+          {h:[51,36],n:[50,45],p:[49,76],le:[52,33],lh:[53,22],re:[51,33],rh:[52,22],lk:[65,73],lf:[65,94],rk:[34,92],rf:[18,94]}],
   steps:["Kneel on one knee with the other foot flat in front of you.","Tuck your pelvis and gently push your hips forward.","Reach your arms up for a deeper stretch. Switch sides each round."],cue:"Keep your front knee over your ankle, not past your toes."},
  {id:"chestopen",cat:"stretch",name:"Doorway Chest Opener",dur:6,level:"Easy",focus:"Chest, front of shoulders",
   props:[["line",{x1:36,y1:4,x2:36,y2:96,"stroke-width":3}]],
@@ -807,45 +825,32 @@ const EX = [
   steps:["Stand in a doorway with your forearms on the frame, elbows at shoulder height.","Step one foot forward and lean gently through the door.","Hold and breathe, keeping your shoulders down."],cue:"No doorway? Use a wall corner, one arm at a time."},
  {id:"frog",cat:"stretch",name:"Frog Stretch",dur:6,level:"Medium",focus:"Inner thighs, hips, groin",
   frames:[{h:[75,80],n:[67,80],p:[45,74],c:[56,76],le:[65,92],lh:[78,93],re:[64,92],rh:[77,93],lk:[44,93],lf:[38,94],rk:[45,93],rf:[39,94]},
-          {h:[71,83],n:[63,82],p:[37,77],c:[50,79],le:[63,92],lh:[76,93],re:[62,92],rh:[75,93],lk:[44,93],lf:[38,94],rk:[45,93],rf:[39,94]}],
+          {h:[71,83],n:[63,82],p:[37,77],c:[50,79],le:[65,92],lh:[78,93],re:[64,92],rh:[77,93],lk:[44,93],lf:[38,94],rk:[45,93],rf:[39,94]}],
   steps:["Start on your forearms and knees.","Slide your knees wide apart, ankles in line with your knees.","Slowly rock your hips back and hold where you feel the stretch."],cue:"Go easy. Pad your knees with a towel."},
  {id:"twist",cat:"stretch",name:"Spinal Twist",dur:6,level:"Easy",focus:"Spine, lower back, glutes",
   frames:[{h:[43,55],n:[42,64],p:[40,90],le:[50,74],lh:[57,77],re:[49,75],rh:[56,79],lk:[55,73],lf:[57,92],rk:[58,91],rf:[77,92]},
-          {h:[40,55],n:[41,64],p:[40,90],le:[52,71],lh:[60,67],re:[33,76],rh:[25,90],lk:[55,73],lf:[57,92],rk:[58,91],rf:[77,92]}],
+          {h:[40,55],n:[41,64],p:[40,90],le:[52,71],lh:[60,67],re:[34,76],rh:[31,89],lk:[55,73],lf:[57,92],rk:[58,91],rf:[77,92]}],
   steps:["Sit tall with one leg straight and the other knee bent, foot outside the straight leg.","Hug the bent knee with the opposite arm and place your other hand behind you.","Twist toward the bent knee as you breathe out. Switch sides each round."],cue:"Grow tall on every breath in, twist a little more on every breath out."},
  // Leo Moves flow
  {id:"bearside",cat:"kin",name:"Bear Side Steps",dur:1.4,level:"Medium",focus:"Shoulders, core, hips",
   frames:[BSQ,P(BSQ,{le:[67,81],lh:[73,88],lk:[58,75],lf:[48,89]}),BSQ,P(BSQ,{re:[61,82],rh:[63,89],rk:[52,76],rf:[39,89]})],
   steps:["Get on hands and feet, knees bent and hovering just off the floor.","Step a hand and the opposite foot sideways at the same time.","Follow with the other pair. Take a few steps, then go back the other way."],cue:"Knees stay low. Back flat like a table."},
- {id:"squathand",cat:"kin",name:"Squat to Handstand",dur:3.6,level:"Hard",focus:"Shoulders, legs, balance",
-  frames:[S,
-    {h:[62,60],n:[56,65],p:[38,76],le:[61,79],lh:[64,93],re:[60,79],rh:[63,93],lk:[52,76],lf:[44,94],rk:[51,77],rf:[43,94]},
-    {h:[61,76],n:[59,68],p:[49,47],le:[60,80],lh:[61,93],re:[59,80],rh:[60,93],lk:[40,32],lf:[33,17],rk:[50,68],rf:[44,83]},
-    {h:[60,78],n:[59,69],p:[58,41],le:[60,81],lh:[61,93],re:[59,81],rh:[60,93],lk:[57,22],lf:[56,4],rk:[59,22],rf:[60,4]},
-    {h:[61,76],n:[59,68],p:[49,47],le:[60,80],lh:[61,93],re:[59,80],rh:[60,93],lk:[40,32],lf:[33,17],rk:[50,68],rf:[44,83]},
-    {h:[62,60],n:[56,65],p:[38,76],le:[61,79],lh:[64,93],re:[60,79],rh:[63,93],lk:[52,76],lf:[44,94],rk:[51,77],rf:[43,94]}],
+ {id:"squathand",cat:"kin",name:"Squat to Handstand",dur:5,level:"Hard",focus:"Shoulders, legs, balance",
+  frames:[S,SQH.Q,SQH.T,SQH.K,SQH.M,SQH.H,SQH.M,SQH.K,SQH.T,SQH.Q],
   steps:["Squat down and put your hands flat on the floor in front of your feet.","Shift your weight onto your hands and kick up into a handstand. A wall helps at first.","Come down softly into the squat and stand up."],cue:"Lock your arms and push the floor away. Easier: hop your hips up instead of going all the way."},
- {id:"curlswitch",cat:"stretch",name:"Leg Curl Switch",dur:5,level:"Medium",focus:"Hips, hamstrings, core",
-  frames:[{h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]},
-    {h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[60,74],lf:[52,92],rk:[59,75],rf:[51,92]},
-    {h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]},
-    mirror({h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]}),
-    mirror({h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[60,74],lf:[52,92],rk:[59,75],rf:[51,92]}),
-    mirror({h:[33,55],n:[36,64],p:[45,90],le:[32,77],lh:[28,92],re:[33,77],rh:[29,92],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]})],
+ {id:"curlswitch",cat:"stretch",name:"Leg Curl Switch",dur:3.4,level:"Medium",focus:"Hips, hamstrings, core",
+  frames:[{h:[33,55],n:[36,64],p:[45,90],le:[32,79],lh:[28,93],re:[33,79],rh:[29,93],lk:[64,89],lf:[83,91],rk:[63,90],rf:[82,92]},
+    {h:[33,55],n:[36,64],p:[45,90],le:[32,79],lh:[28,93],re:[33,79],rh:[29,93],lk:[60,74],lf:[52,92],rk:[59,75],rf:[51,92]}],
   steps:["Sit with your hands behind you and both legs out to one side.","Curl your legs in until your heel touches, then stretch them long again.","Turn 180 degrees through the middle so your legs are on the other side and repeat."],cue:"Move slowly and lift your chest as you rotate."},
- {id:"breakdancer",cat:"stretch",name:"Breakdancer Stretch",dur:6,level:"Medium",focus:"Hips, hamstrings, upper back",
+ {id:"breakdancer",cat:"stretch",name:"Breakdancer Stretch",dur:5,level:"Medium",focus:"Hips, hamstrings, upper back",
   frames:[{h:[66,62],n:[59,66],p:[44,75],le:[60,80],lh:[60,93],re:[59,80],rh:[59,93],lk:[62,76],lf:[64,94],rk:[33,86],rf:[17,92]},
-    {h:[68,74],n:[61,72],p:[37,66],le:[63,83],lh:[64,93],re:[62,83],rh:[63,93],lk:[55,79],lf:[73,90],rk:[30,85],rf:[17,92]},
-    {h:[66,62],n:[59,66],p:[44,75],le:[60,80],lh:[60,93],re:[59,80],rh:[59,93],lk:[62,76],lf:[64,94],rk:[33,86],rf:[17,92]},
-    {h:[66,62],n:[59,66],p:[44,75],le:[60,80],lh:[60,93],re:[59,80],rh:[59,93],rk:[62,76],rf:[64,94],lk:[33,86],lf:[17,92]},
-    {h:[68,74],n:[61,72],p:[37,66],le:[63,83],lh:[64,93],re:[62,83],rh:[63,93],rk:[55,79],rf:[73,90],lk:[30,85],lf:[17,92]},
-    {h:[66,62],n:[59,66],p:[44,75],le:[60,80],lh:[60,93],re:[59,80],rh:[59,93],rk:[62,76],rf:[64,94],lk:[33,86],lf:[17,92]}],
+    {h:[68,74],n:[61,72],p:[37,66],le:[61,82.5],lh:[60,93],re:[60,82.5],rh:[59,93],lk:[55,79],lf:[73,90],rk:[30,85],rf:[17,92]}],
   steps:["Start in a deep lunge with both hands on the floor, like the world's greatest stretch.","Push the front leg forward and straighten it while your hips go back, stretching leg and body long.","Pull the leg back into the lunge, then switch sides."],cue:"Keep your back long. Breathe out as you stretch."},
  {id:"vtouch",cat:"str",name:"V-Up Toe Touch",dur:2.4,level:"Medium",focus:"Abs, obliques, hip flexors",
   frames:[{h:[13,89],n:[22,90],p:[49,91],le:[13,84],lh:[5,86],re:[14,85],rh:[6,87],lk:[68,90],lf:[87,91],rk:[67,91],rf:[86,92]},
-    {h:[33,60],n:[36,69],p:[48,92],c:[41,82],le:[47,64],lh:[61,57],re:[33,80],rh:[31,92],lk:[60,76],lf:[70,60],rk:[64,86],rf:[82,90]},
+    {h:[33,60],n:[36,69],p:[48,92],c:[41,82],le:[47,64],lh:[59,58],re:[33,80],rh:[31,92],lk:[60,76],lf:[70,60],rk:[64,86],rf:[82,90]},
     {h:[13,89],n:[22,90],p:[49,91],le:[13,84],lh:[5,86],re:[14,85],rh:[6,87],lk:[68,90],lf:[87,91],rk:[67,91],rf:[86,92]},
-    {h:[33,60],n:[36,69],p:[48,92],c:[41,82],re:[47,64],rh:[61,57],le:[33,80],lh:[31,92],rk:[60,76],rf:[70,60],lk:[64,86],lf:[82,90]}],
+    {h:[33,60],n:[36,69],p:[48,92],c:[41,82],re:[47,64],rh:[59,58],le:[33,80],lh:[31,92],rk:[60,76],rf:[70,60],lk:[64,86],lf:[82,90]}],
   steps:["Lie on your back with your arms overhead and legs long.","Lift your upper body and one leg, and reach to touch that toe with the opposite hand.","Lower with control and switch sides."],cue:"Twist from your ribs, not your neck. Breathe out on the way up."},
  // Yoga
  {id:"downdog",cat:"yoga",name:"Plank to Down Dog",dur:6,level:"Medium",focus:"Shoulders, hamstrings, calves",
@@ -858,7 +863,7 @@ const EX = [
   frames:[TREE1,TREE1,P(TREE1,{le:[43,13],lh:[49,2],re:[57,13],rh:[51,2]}),P(TREE1,{le:[43,13],lh:[49,2],re:[57,13],rh:[51,2]})],
   steps:["Stand on one leg.","Place the other foot on your inner calf or thigh, never the knee.","Bring your hands to your chest, then grow them overhead."],cue:"Fix your eyes on one still point."},
  {id:"catcow",cat:"yoga",name:"Cat-Cow",dur:5,level:"Easy",focus:"Spine, back, neck",
-  frames:[P(ALL4,{c:[55,55],h:[74,80],n:[69,72]}),P(ALL4,{c:[55,82],h:[80,60],n:[70,68]})],
+  frames:[P(ALL4,{c:[55,55],h:[74,80],n:[69,72]}),P(ALL4,{c:[55,82],h:[78,60],n:[70,68]})],
   steps:["Come to hands and knees.","Breathe in: drop your belly and lift your head (cow).","Breathe out: round your back and tuck your chin (cat)."],cue:"Move slowly, one breath per movement."},
  {id:"cobra",cat:"yoga",name:"Cobra",dur:6,level:"Easy",focus:"Lower back, chest",
   frames:[{h:[78,88],n:[68,90],p:[44,90],c:[56,91],le:[62,83],lh:[70,92],re:[61,83],rh:[69,92],lk:[30,92],lf:[16,93],rk:[30,92],rf:[16,93]},
@@ -866,7 +871,7 @@ const EX = [
           {h:[71,65],n:[64,71],p:[44,90],c:[56,86],le:[66,81],lh:[70,92],re:[65,81],rh:[69,92],lk:[30,92],lf:[16,93],rk:[30,92],rf:[16,93]}],
   steps:["Lie on your stomach, hands under your shoulders.","Press gently to lift your chest, hips stay down.","Hold a few breaths, then lower."],cue:"Keep elbows slightly bent and shoulders away from ears."},
  {id:"chair",cat:"yoga",name:"Chair Pose",dur:5,level:"Medium",focus:"Thighs, glutes, shoulders",
-  frames:[P(S,{le:[52,13],lh:[54,1],re:[51,13],rh:[52,1]}),{h:[57,34],n:[53,42],p:[37,66],le:[60,29],lh:[66,16],re:[59,30],rh:[65,17],lk:[55,74],lf:[51,94],rk:[54,75],rf:[50,94]},{h:[57,35],n:[53,43],p:[37,67],le:[60,30],lh:[66,17],re:[59,31],rh:[65,18],lk:[55,75],lf:[51,94],rk:[54,76],rf:[50,94]}],
+  frames:[P(S,{le:[52,13],lh:[54,1],re:[51,13],rh:[52,1]}),{h:[57,34],n:[53,42],p:[37,66],le:[60,29],lh:[66,16],re:[59,30],rh:[65,17],lk:[55,74],lf:[51,94],rk:[53,75],rf:[48,94]},{h:[57,35],n:[53,43],p:[37,67],le:[60,30],lh:[66,17],re:[59,31],rh:[65,18],lk:[55,75],lf:[51,94],rk:[53,76],rf:[48,94]}],
   steps:["Stand with feet together and arms overhead.","Bend your knees and sit back as if into a chair.","Hold and breathe, then rise up."],cue:"Weight in your heels. You should see your toes."}
 ];
 const byId = Object.fromEntries(EX.map(e=>[e.id,e]));
@@ -1156,6 +1161,7 @@ class Figure{
       ? [[1.06,2.6,2.6],[1.0,5.4,5.4],[.95,8.4,8.4],[.84,7.9,7.9],[.7,7.0,7.0],[.52,6.0,6.0],[.34,6.0,6.0],[.15,6.8,6.8],[0,7.1,7.1],[-.12,6.0,6.0]]
       : [[1.06,1.8,2.2],[.97,3.4,3.6],[.86,4.5,3.9],[.74,4.2,3.7],[.6,3.7,3.3],[.45,3.5,3.1],[.3,3.6,3.5],[.14,3.4,4.1],[0,3.2,4.0],[-.1,2.6,3.1]];
     // which side the near (l) limbs are on in a front view, so mirrored poses still work
+    // (arms go by the elbows: a hand can reach across the body, as in a cross-body stretch)
     const n0=N(.5), sideOf=(a1,a2,b1,b2)=>{const k=dot(sub(add(a1,a2),add(b1,b2)),n0);return k>.5?1:-1};
     const J={}; // re-solved joints: shoulder/elbow/hand, hip/knee/foot
     const arm=(e,h,side)=>{
@@ -1180,7 +1186,7 @@ class Figure{
       const straight=dot(unit(sub(q[k],q.p)),unit(sub(q[ft],q[k])))>.96;
       J[k]=straight?lerp(Hp,Ft,l1/(l1+l2)):add(q[k],off,.6); J[ft]=Ft; return Hp;
     };
-    const sA=sideOf(q.le,q.lh,q.re,q.rh), sL=sideOf(q.lk,q.lf,q.rk,q.rf);
+    const sA=sideOf(q.le,q.le,q.re,q.re), sL=sideOf(q.lk,q.lf,q.rk,q.rf);
     const shL=arm("le","lh",sA), shR=arm("re","rh",-sA), hpL=leg("lk","lf",sL), hpR=leg("rk","rf",-sL);
     this.joints=Object.assign({shL,shR,hpL,hpR},J); // the skeleton as drawn, for tools/check-figures.js
     // rotate a shape's direction toward `goal` until no point dips below the floor
@@ -2447,7 +2453,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.22.3";
+const APP_VERSION = "1.23.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
