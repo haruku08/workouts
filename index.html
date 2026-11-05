@@ -690,7 +690,9 @@ const SKATE = shift({h:[44,22],n:[46,31],p:[50,58],le:[40,37],lh:[32,31],re:[46,
 const ALL4 = {h:[78,66],n:[70,70],p:[40,70],c:[55,70],le:[70,82],lh:[70,93],re:[69,82],rh:[69,93],lk:[40,92],lf:[22,93],rk:[39,92],rf:[21,93]};
 const SIDEL = P(F,{n:[46,27],h:[41,19],c:[49,40],le:[39,17],lh:[30,10],re:[47,13],rh:[38,5]});
 const ARMX = P(F,{re:[42,35],rh:[30,33],le:[40,42],lh:[43,35]});
-const W1 = {h:[53,22],n:[50,31],p:[50,60],le:[36,31],lh:[22,31],re:[64,31],rh:[78,31],lk:[38,77],lf:[26,94],rk:[65,72],rf:[68,94]};
+/* Warrior II, facing the viewer: wide stance, front knee bent right over the ankle (thigh close to level),
+   back leg straight, torso upright over the hips, arms level at shoulder height, gaze over the front hand. */
+const W1 = {h:[49,25],n:[50,35],p:[50,62],le:[36,35],lh:[22,35],re:[64,35],rh:[78,35],lk:[29,74],lf:[27,94],rk:[65,78],rf:[77,94]};
 const TREE1 = P(F,{lk:[49,74],lf:[49,94],rk:[65,63],rf:[52,70],le:[41,40],lh:[49,37],re:[59,40],rh:[51,37]});
 const SIT = {h:[50,51],n:[50,60],p:[50,88],le:[42,73],lh:[47,88],re:[58,73],rh:[53,88],lk:[32,82],lf:[47,92],rk:[68,82],rf:[53,92]};
 
@@ -850,7 +852,7 @@ const EX = [
   frames:[YPLANK,{h:[61,85],n:[56,77],p:[36,58],le:[65,85],lh:[74,93],re:[64,85],rh:[73,93],lk:[26,76],lf:[16,93],rk:[25,76],rf:[15,93]},{h:[61,86],n:[56,78],p:[36,57],le:[65,86],lh:[74,93],re:[64,86],rh:[73,93],lk:[26,75],lf:[16,93],rk:[25,75],rf:[15,93]}],
   steps:["Start in a high plank.","Push your hips up and back into an upside-down V.","Press your heels toward the floor, then flow back to plank."],cue:"Spread your fingers wide and push the floor away."},
  {id:"warrior2",cat:"yoga",name:"Warrior II",dur:5,level:"Easy",focus:"Legs, hips, shoulders",
-  frames:[W1,P(W1,{p:[50,62],n:[50,33],h:[53,24],le:[36,33],lh:[22,33],re:[64,33],rh:[78,33],rk:[65,74],lk:[38,78]})],
+  frames:[W1,P(W1,{h:[49,27],n:[50,37],p:[50,65],le:[36,37],lh:[22,37],re:[64,37],rh:[78,37],lk:[29,76],rk:[65,80]})],
   steps:["Step your feet wide apart.","Turn your front foot out and bend that knee over the ankle.","Reach your arms out long and look past your front hand."],cue:"Sink your hips while your arms stay strong."},
  {id:"tree",cat:"yoga",name:"Tree Pose",dur:7,level:"Medium",focus:"Balance, ankles, core",
   frames:[TREE1,TREE1,P(TREE1,{le:[43,13],lh:[49,2],re:[57,13],rh:[51,2]}),P(TREE1,{le:[43,13],lh:[49,2],re:[57,13],rh:[51,2]})],
@@ -1204,8 +1206,8 @@ class Figure{
       if(o.leg){
         // thigh full at the hip, narrowing to the knee; calf swells just below the knee, slim ankle
         set(o.up,seg(a,b,4.3,4.5,2.8,.3)); set(o.low,seg(b,e,2.7,3.2,1.5,.3));
-        // shorts leg, reaching higher when facing the viewer so it hides the thigh's rounded top
-        set(o.cloth,front?tube(lerp(a,b,-.3),lerp(a,b,.42),3.0,4.6):tube(lerp(a,b,-.14),lerp(a,b,.42),4.8,4.6));
+        // shorts leg
+        set(o.cloth,tube(lerp(a,b,-.14),lerp(a,b,.42),4.8,4.6));
         const dn=perp(unit(sub(e,b))); set(o.hi,`M${f(add(lerp(b,e,.12),dn,1.6))}L${f(add(lerp(b,e,.45),dn,1.9))}`);
         const d=unit(sub(e,b));
         if(front){ const pts=grounded(()=>local(e,[1,0],[0,1],FOOT_FRONT),[1,0],[1,0]); set(o.shoe,spline(pts,true)); set(o.sole,`M${f(pts[4])}L${f(pts[3])}`); return; }
@@ -2439,7 +2441,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.22.1";
+const APP_VERSION = "1.22.2";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
