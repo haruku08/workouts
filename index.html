@@ -923,7 +923,8 @@ class Figure{
       o.low=F({fill:sk,stroke:CH.skinLine,"stroke-width":.7});
       o.up=F({fill:sk,stroke:CH.skinLine,"stroke-width":.7});
       o.hi=P({stroke:CH.skinHi,"stroke-width":.9,opacity:far?0:.8});
-      o.cloth=F({fill:leg?(far?CH.shortsFar:CH.shorts):(far?CH.shirtFar:CH.shirt),stroke:leg?CH.shortsLine:CH.shirtLine,"stroke-width":.8});
+      o.cloth=F({fill:leg?(far?CH.shortsFar:CH.shorts):(far?CH.shirtFar:CH.shirt),stroke:leg?"none":CH.shirtLine,"stroke-width":.8});
+      if(leg) o.hem=P({stroke:CH.shortsLine,"stroke-width":.8}); // outline of the shorts leg (sides and hem only)
       if(!leg) o.hand=F({fill:sk,stroke:CH.skinLine,"stroke-width":.7});
       return o;
     };
@@ -1206,8 +1207,11 @@ class Figure{
       if(o.leg){
         // thigh full at the hip, narrowing to the knee; calf swells just below the knee, slim ankle
         set(o.up,seg(a,b,4.3,4.5,2.8,.3)); set(o.low,seg(b,e,2.7,3.2,1.5,.3));
-        // shorts leg
-        set(o.cloth,tube(lerp(a,b,-.14),lerp(a,b,.42),4.8,4.6));
+        // shorts leg: follows the thigh from the hip down to a straight hem just below mid-thigh;
+        // only the sides and hem are outlined, so it joins the shorts without a seam
+        { const d=unit(sub(b,a)), n=perp(d), M=lerp(a,b,.22), Hm=lerp(a,b,.48), wa=4.7, wm=4.7, wh=4.4;
+          set(o.cloth,`M${f(add(a,n,wa))}Q${f(add(M,n,wm*1.04))} ${f(add(Hm,n,wh))}L${f(add(Hm,n,-wh))}Q${f(add(M,n,-wm*1.04))} ${f(add(a,n,-wa))}Q${f(add(a,d,-wa*1.4))} ${f(add(a,n,wa))}Z`);
+          set(o.hem,`M${f(add(M,n,wm*.98))}Q${f(add(lerp(a,b,.36),n,wm*.97))} ${f(add(Hm,n,wh))}L${f(add(Hm,n,-wh))}Q${f(add(lerp(a,b,.36),n,-wm*.97))} ${f(add(M,n,-wm*.98))}`); }
         const dn=perp(unit(sub(e,b))); set(o.hi,`M${f(add(lerp(b,e,.12),dn,1.6))}L${f(add(lerp(b,e,.45),dn,1.9))}`);
         const d=unit(sub(e,b));
         if(front){ const pts=grounded(()=>local(e,[1,0],[0,1],FOOT_FRONT),[1,0],[1,0]); set(o.shoe,spline(pts,true)); set(o.sole,`M${f(pts[4])}L${f(pts[3])}`); return; }
@@ -1218,7 +1222,9 @@ class Figure{
       } else {
         // round deltoid cap, upper arm tapering to the elbow, forearm fuller near the elbow, slim wrist
         set(o.up,seg(a,b,3.2,2.9,2.0,.3)); set(o.low,seg(b,e,2.2,2.3,1.3,.25));
-        set(o.cloth,tube(lerp(a,b,-.12),lerp(a,b,.34),3.6,3.4)); // T-shirt sleeve
+        // T-shirt sleeve: rounded over the shoulder, following the arm to a straight hem
+        { const d=unit(sub(b,a)), n=perp(d), Hm=lerp(a,b,.38), wa=3.5, wh=3.0;
+          set(o.cloth,`M${f(add(a,n,wa))}Q${f(add(lerp(a,b,.2),n,wa*1.02))} ${f(add(Hm,n,wh))}L${f(add(Hm,n,-wh))}Q${f(add(lerp(a,b,.2),n,-wa*1.02))} ${f(add(a,n,-wa))}Q${f(add(a,d,-wa*1.35))} ${f(add(a,n,wa))}Z`); }
         const dn=perp(unit(sub(b,a))); set(o.hi,`M${f(add(lerp(a,b,.3),dn,1.4))}L${f(add(lerp(a,b,.75),dn,1.3))}`);
         let u=unit(sub(e,b));
         if(handsMeet) u=tan(1); // palms together, fingers up
@@ -1230,7 +1236,7 @@ class Figure{
     // shorts in the same colors as the first; in side views it stays behind the body, shaded darker
     if(this.chFront!==front){ this.chFront=front;
       const L=C.farLeg, before=front?C.nearLeg.shoe:C.neck, sk=front?CH.skin:CH.skinFar;
-      [L.shoe,L.sole,L.low,L.up,L.hi,L.cloth].forEach(el=>this.ch.insertBefore(el,before));
+      [L.shoe,L.sole,L.low,L.up,L.hi,L.cloth,L.hem].forEach(el=>this.ch.insertBefore(el,before));
       L.low.setAttribute("fill",sk); L.up.setAttribute("fill",sk); L.cloth.setAttribute("fill",front?CH.shorts:CH.shortsFar); L.hi.setAttribute("opacity",front?.8:0);
       // same for the second arm: beside the body in the same colors when facing the viewer
       const A=C.farArm;
@@ -2441,7 +2447,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.22.2";
+const APP_VERSION = "1.22.3";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
