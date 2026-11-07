@@ -20,6 +20,7 @@ const ALLOW = {
   "squatjump:float": "A jump.",
   "burpee:float": "Ends with a jump, arms overhead.",
   "pullup:float": "Hangs from the bar.",
+  "calfraise:float": "Up on the toes: the whole figure rises with the heel, and the drawing has no separate toes.",
   "dips:balance": "The hands on the bench carry the weight, not only the feet.",
   "lunge:balance": "Stepping forward: the body tips onto the front foot just before it lands, as in every step.",
   "climbers:slide": "The feet switch fast, like running; each foot skims the floor as it leaves and lands.",

@@ -797,6 +797,24 @@ const EX = [
   frames:[{h:[16,86],n:[25,89],p:[50,90],le:[21,80],lh:[15,84],re:[22,80],rh:[16,84],lk:[63,74],lf:[72,93],rk:[62,74],rf:[71,93]},
           {h:[33,66],n:[38,74],p:[50,90],c:[41,86],le:[44,67],lh:[33,64],re:[43,68],rh:[32,65],lk:[63,74],lf:[72,93],rk:[62,74],rf:[71,93]}],
   steps:["Lie on your back, knees bent, hands lightly behind your head.","Curl your shoulders off the floor using your abs.","Lower slowly."],cue:"Don't pull on your neck. Look at the ceiling."},
+ {id:"slsquat",cat:"str",name:"Single-Leg Squat",dur:3.0,level:"Hard",focus:"Quads, glutes, balance",
+  frames:[{h:[51,16],n:[50,26],p:[49,54],le:[53,39],lh:[58,51],re:[52,40],rh:[57,52],lk:[51,74],lf:[51,94],rk:[58,72],rf:[62,91]},
+          {h:[59.5,34],n:[55,43],p:[42,68],le:[69,44],lh:[82,44],re:[68,45],rh:[81,45],lk:[60,76.4],lf:[51,94],rk:[61,68],rf:[80,71]}],
+  steps:["Stand on one leg and lift the other foot just off the floor in front of you.","Push your hips back and bend the standing knee, reaching your arms forward.","Go as low as you can control, then press up through the heel. Switch legs halfway."],cue:"Too hard? Sit down onto a chair behind you and stand back up."},
+ {id:"calfraise",cat:"str",name:"Single-Leg Calf Raise",dur:1.8,level:"Easy",focus:"Calves, ankles, balance",
+  props:[["line",{x1:70,y1:20,x2:70,y2:96,"stroke-width":3}]],
+  frames:[{h:[51,16],n:[50,26],p:[49,54],le:[58,38],lh:[69,42],re:[46,40],rh:[50,52],lk:[51,74],lf:[51,94],rk:[50,74],rf:[45,90]},
+          {h:[51,12.5],n:[50,22.5],p:[49,50.5],le:[58,34.5],lh:[69,42],re:[46,36.5],rh:[50,48.5],lk:[51,70.5],lf:[51,90.5],rk:[50,70.5],rf:[45,86.5]}],
+  steps:["Stand on one foot next to a wall, one hand on it for balance.","Hook the other foot behind your ankle.","Rise up onto the ball of your foot as high as you can, then lower slowly. Switch legs halfway."],cue:"Stand on a step and let the heel drop below it for a bigger stretch."},
+ {id:"copenhagen",cat:"str",name:"Copenhagen Plank",dur:2.8,level:"Hard",focus:"Inner thighs, obliques, core",
+  props:[["rect",{x:4,y:76,width:22,height:4,rx:1,"stroke-width":2}],["line",{x1:8,y1:80,x2:8,y2:96,"stroke-width":2}],["line",{x1:22,y1:80,x2:22,y2:96,"stroke-width":2}]],
+  frames:[{h:[90,78.6],n:[80,78],p:[52,76.4],le:[80,90],lh:[85,91],re:[72,68],rh:[60,72],lk:[34,85],lf:[16,93],rk:[32,75.2],rf:[12,73.5]},
+          {h:[90,78.6],n:[80,78],p:[52,76.4],le:[80,90],lh:[85,91],re:[72,68],rh:[60,72],lk:[33,79.5],lf:[14,82],rk:[32,75.2],rf:[12,73.5]}],
+  steps:["Lie on your side on one forearm, elbow under your shoulder, and rest your top leg on a bench or chair.","Lift your hips so your body makes a straight line.","Raise your bottom leg up to meet the bench, then lower it slowly. Switch sides halfway."],cue:"Easier: rest the top knee on the bench instead of the foot."},
+ {id:"sideplank",cat:"str",name:"Side Plank Leg Raise",dur:2.4,level:"Medium",focus:"Obliques, outer hips, shoulders",
+  frames:[{h:[88,75.8],n:[78.3,78],p:[51,84.2],le:[78,90],lh:[83,91],re:[80,64],rh:[81,51],lk:[31.5,88.6],lf:[12,93],rk:[31.5,87],rf:[12,91.4]},
+          {h:[88,75.8],n:[78.3,78],p:[51,84.2],le:[78,90],lh:[83,91],re:[80,64],rh:[81,51],lk:[31.5,88.6],lf:[12,93],rk:[32.5,76.6],rf:[14,69]}],
+  steps:["Lie on your side on one forearm, elbow under your shoulder, legs stacked.","Lift your hips so your body makes a straight line, top arm reaching up.","Raise your top leg up and lower it with control. Switch sides halfway."],cue:"Keep your hips high and lift the leg straight up, not forward."},
  // Stretch
  {id:"neck",cat:"stretch",name:"Neck Tilts",dur:6,level:"Easy",focus:"Neck, upper traps",
   frames:[P(F,{h:[43,19]}),P(F,{h:[43,19]}),P(F,{h:[57,19]}),P(F,{h:[57,19]})],
@@ -892,7 +910,7 @@ let figStyle = (()=>{ try{ const v=JSON.parse(localStorage.getItem("pp:figStyle"
 /* Exercises drawn facing the viewer; all others are side views facing right.
    Add every new front-facing exercise here: the realistic style uses this to place shoulders and hips apart,
    draw both arms and legs beside the body, and hang free arms straight. Side-view exercises need nothing extra. */
-const FRONT = new Set(["jacks","highknees","skaters","neck","sidebend","armcross","butterfly","warrior2","tree","pullup"]);
+const FRONT = new Set(["jacks","highknees","skaters","neck","sidebend","armcross","butterfly","warrior2","tree","pullup","copenhagen","sideplank"]);
 const CH = {skin:"#B07A50", skinFar:"#9C6942", skinLine:"#6B4126", skinHi:"#C48D62", shirt:"#69BE28", shirtFar:"#4E9A1C", shirtLine:"#2F6A0E", shorts:"#0B2A4F", shortsFar:"#081F3B", shortsLine:"#020F1F", hair:"#1C1714", hairLine:"#0B0807", shoe:"#F4F6F8", shoeLine:"#5C6670", sole:"#C8102E", feat:"#1E130C", lip:"#7A3F2C"};
 const TO = {skin:"#B57A4E", skinFar:"#A06A42", line:"#3A2418", shirt:"#7CCB45", shirtFar:"#5FAE30", shorts:"#1F4F8F", shortsFar:"#173D70", hair:"#1C1512", shoe:"#FFFFFF", eye:"#1C1512", cheek:"#E58A7A", mouth:"#5A2618"};
 /* Doodle style colors: black ink, tan skin, and flat clothing colors printed slightly off the lines. */
@@ -2472,7 +2490,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.24.0";
+const APP_VERSION = "1.25.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
