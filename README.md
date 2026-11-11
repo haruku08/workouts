@@ -4,7 +4,7 @@ A workout app with a built-in interval timer. It's a single `index.html` file wi
 
 ## What it does
 
-- **Home:** a dashboard with a quick timer with its own work, rest, rounds-per-set, sets and set-break settings, your current workout, this week's stats and the routines you added. New users start with an empty dashboard and pick what goes on it from the Catalog.
+- **Home:** a dashboard with a quick timer with its own work, rest, rounds-per-set, sets and set-break settings, your current workout, this week's stats and the routines you added. New users start with an empty dashboard and pick what goes on it from the Catalog. After two or more days in a row, a small "day streak" pill under the date nudges you to keep it going.
 - **My routines:** build, edit and save your own routines (name, work/rest times, repeats, and moves you tap or drag in, then drag to reorder), or copy a ready-made workout and change it. Star up to four to pin them on Home.
 - **Share the app:** the share button in the top bar sends the app's link (by text message, WhatsApp or anything else). People who open it on a phone see short steps to put the app on their home screen.
 - **Editing routines:** "Clear all moves" empties the list in one tap (with Undo) so you can refill it. The editor asks before throwing away unsaved changes. If you change a routine's moves or timing on the Timer, a bar offers to save those changes back to the routine.
