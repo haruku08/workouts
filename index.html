@@ -715,6 +715,7 @@ const mirrorTop = p=>{const o=mirror(p);[o.lk,o.rk,o.lf,o.rf]=[o.rk,o.lk,o.rf,o.
 
 const PLANK = {h:[79,61],n:[70,66],p:[42,79],le:[70,80],lh:[70,93],re:[69,80],rh:[69,93],lk:[29,86],lf:[16,92],rk:[29,86],rf:[16,92]};
 const YPLANK = {h:[81,62],n:[72,67],p:[44,79],le:[73,80],lh:[74,93],re:[72,80],rh:[73,93],lk:[30,86],lf:[16,92],rk:[30,86],rf:[16,92]};
+const FPLANK = {h:[79,74],n:[70,79],p:[42,85],le:[70,92],lh:[82,92],re:[69,92],rh:[81,92],lk:[29,89],lf:[16,92],rk:[29,89],rf:[16,92]};
 const BSQ = {h:[66,66],n:[60,70],p:[40,72],le:[64,82],lh:[68,93],re:[63,82],rh:[67,93],lk:[56,78],lf:[44,94],rk:[55,79],rf:[43,94]};
 const GUARD = P(S,{le:[57,36],lh:[60,26],re:[55,38],rh:[58,27],lk:[54,74],lf:[57,94],rk:[45,74],rf:[41,94]});
 const BSQ2 = P(BSQ,{le:[65,82],lh:[70,93],re:[64,82],rh:[69,93],lf:[51,94],rf:[48,94]});
@@ -840,6 +841,23 @@ const EX = [
   frames:[{h:[88,75.8],n:[78.3,78],p:[51,84.2],le:[78,90],lh:[83,91],re:[80,64],rh:[81,51],lk:[31.5,88.6],lf:[12,93],rk:[31.5,87],rf:[12,91.4]},
           {h:[88,75.8],n:[78.3,78],p:[51,84.2],le:[78,90],lh:[83,91],re:[80,64],rh:[81,51],lk:[31.5,88.6],lf:[12,93],rk:[32.5,76.6],rf:[14,69]}],
   steps:["Lie on your side on one forearm, elbow under your shoulder, legs stacked.","Lift your hips so your body makes a straight line, top arm reaching up.","Raise your top leg up and lower it with control. Switch sides halfway."],cue:"Keep your hips high and lift the leg straight up, not forward."},
+ {id:"shouldertaps",cat:"str",name:"Shoulder Taps",dur:1.8,level:"Medium",focus:"Core, shoulders, stability",
+  frames:[PLANK,P(PLANK,{le:[76,74],lh:[71,67]}),PLANK,P(PLANK,{re:[75,74],rh:[70,67]})],
+  steps:["Start in a high plank, hands under your shoulders and feet a little wider than your hips.","Lift one hand and tap the opposite shoulder, then put it back down.","Switch hands. Keep alternating at a steady pace."],cue:"Keep your hips still: no rocking side to side."},
+ {id:"updowns",cat:"str",name:"Plank Up-Downs",dur:4.8,level:"Hard",focus:"Triceps, shoulders, core",
+  frames:[PLANK,
+    P(mix(PLANK,FPLANK,.25),{le:[76,79],lh:[81,85],re:[68.5,81],rh:[69,93]}),
+    P(mix(PLANK,FPLANK,.8),{le:[70,90],lh:[82,92],re:[66,85],rh:[69,93]}),
+    P(mix(PLANK,FPLANK,.9),{le:[70,91],lh:[82,92],re:[74,84],rh:[80,87]}),
+    FPLANK,
+    P(mix(PLANK,FPLANK,.8),{le:[73,84],lh:[73,87],re:[69,91],rh:[81,92]}),
+    P(mix(PLANK,FPLANK,.8),{le:[66,85],lh:[70,93],re:[69,90],rh:[81,92]}),
+    P(mix(PLANK,FPLANK,.25),{le:[68.5,81],lh:[70,93],re:[75,79],rh:[80,85]})],
+  steps:["Start in a high plank, hands under your shoulders.","Lower onto one forearm, then the other, into a forearm plank.","Press back up one hand at a time. Lead with the other arm next round."],cue:"Feet a bit wider keeps your hips from swaying."},
+ {id:"spiderman",cat:"str",name:"Spider-Man Plank",dur:3.6,level:"Medium",focus:"Obliques, hip flexors, shoulders",
+  frames:[PLANK,P(PLANK,{lk:[33,82.5],lf:[20,84]}),P(PLANK,{p:[43,78],lk:[63,80],lf:[49,84]}),P(PLANK,{lk:[33,82.5],lf:[20,84]}),
+    PLANK,P(PLANK,{rk:[33,82.5],rf:[20,84]}),P(PLANK,{p:[43,78],rk:[62,80],rf:[48,84]}),P(PLANK,{rk:[33,82.5],rf:[20,84]})],
+  steps:["Start in a high plank, hands under your shoulders.","Bring one knee out to the side and up toward the elbow on the same side.","Step it back and switch legs."],cue:"Move slowly and keep your hips low and level."},
  // Stretch
  {id:"neck",cat:"stretch",name:"Neck Tilts",dur:6,level:"Easy",focus:"Neck, upper traps",
   frames:[P(F,{h:[43,19]}),P(F,{h:[43,19]}),P(F,{h:[57,19]}),P(F,{h:[57,19]})],
@@ -880,6 +898,9 @@ const EX = [
  {id:"bearside",cat:"kin",name:"Bear Side Steps",dur:1.4,level:"Medium",focus:"Shoulders, core, hips",
   frames:[BSQ,P(BSQ,{le:[67,81],lh:[73,88],lk:[58,75],lf:[48,89]}),BSQ,P(BSQ,{re:[61,82],rh:[63,89],rk:[52,76],rf:[39,89]})],
   steps:["Get on hands and feet, knees bent and hovering just off the floor.","Step a hand and the opposite foot sideways at the same time.","Follow with the other pair. Take a few steps, then go back the other way."],cue:"Knees stay low. Back flat like a table."},
+ {id:"beartaps",cat:"kin",name:"Bear Shoulder Taps",dur:1.8,level:"Medium",focus:"Shoulders, core, quads",
+  frames:[BSQ,P(BSQ,{le:[65,78],lh:[61,71]}),BSQ,P(BSQ,{re:[64,78],rh:[60,71]})],
+  steps:["Get on hands and feet, knees bent and hovering just off the floor.","Lift one hand and tap the opposite shoulder, then put it back.","Switch hands and keep alternating."],cue:"Knees stay low and your back stays flat like a table."},
  {id:"squathand",cat:"kin",name:"Squat to Handstand",dur:5,level:"Hard",focus:"Shoulders, legs, balance",
   frames:[S,SQH.Q,SQH.T,SQH.K,SQH.M,SQH.H,SQH.M,SQH.K,SQH.T,SQH.Q],
   steps:["Squat down and put your hands flat on the floor in front of your feet.","Shift your weight onto your hands and kick up into a handstand. A wall helps at first.","Come down softly into the squat and stand up."],cue:"Lock your arms and push the floor away. Easier: hop your hips up instead of going all the way."},
@@ -2602,7 +2623,7 @@ function syncStyle(){
 document.querySelectorAll(".segmented button[data-style]").forEach(b=>b.onclick=()=>{figStyle=b.dataset.style;store.set("figStyle",figStyle);syncStyle()});
 /* ---------- Updates ----------
    The app checks version.json next to index.html on GitHub. Bump both APP_VERSION and version.json on each release. */
-const APP_VERSION = "1.27.0";
+const APP_VERSION = "1.28.0";
 let snackTimer=null, newVersion=null;
 function undoSnack(msg,run){ snack(msg,{label:"Undo",run:()=>{ run(); $("snack").hidden=true; }}); clearTimeout(snackTimer); snackTimer=setTimeout(()=>{$("snack").hidden=true},6000); }
 function snack(msg, action){
