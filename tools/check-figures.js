@@ -26,6 +26,14 @@ const ALLOW = {
   "climbers:slide": "The feet switch fast, like running; each foot skims the floor as it leaves and lands.",
   "curlswitch:slide": "The heels drag along the floor as the legs curl in and stretch out, as the steps say.",
   "breakdancer:slide": "The front heel slides forward as the leg straightens, as the steps say.",
+  "tuckjump:float": "A jump.",
+  "jumplunge:float": "A jump: the legs switch in the air.",
+  "jumplunge:balance": "Jumping from one lunge to the other: the back foot leaves the floor first, as in every jump.",
+  "starjump:float": "A jump.",
+  "kneeraise:float": "Hangs from the bar.",
+  "inclinepush:balance": "The hands on the bench carry part of the weight.",
+  "rows:balance": "The hands on the table carry most of the weight.",
+  "wallsit:balance": "Leaning on the wall: the wall carries the back.",
   "vtouch:slide": "The support hand sweeps from overhead to beside the hip; it passes close to the floor on the way.",
 };
 
